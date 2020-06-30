@@ -16,7 +16,7 @@ print("Average GPA    : ", df['GPA'].mean())
 
 ## add assignments to the file
 # copy the first file so we don't overwrite it
-df.to_csv('/io/new_students.csv', index=False)
+df.to_csv('/io/students.csv', index=False)
 
 # add project assignments
 new_data = pd.DataFrame({'Assignment': ['Superman NanoCape', 'Bee Swarm Laser', 'Gravity Inverter', 'Moon Tractor Beam']}) # project assignments
@@ -24,4 +24,5 @@ df.update(new_data) # add them to the csv
 
 ## write new csv
 df.to_csv('/io/new_students.csv', index=False)
+print('CSV data with assignments')
 print(df) # output it
