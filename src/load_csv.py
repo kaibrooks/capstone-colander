@@ -5,29 +5,23 @@ import pandas as pd # loads csv
 
 print("*** RUNNING LOAD_CSV.PY ***\n")
 
-# read CSV
-df = pd.read_csv ('io/data.csv') # load a file as a variable
+## load CSV
+df = pd.read_csv ('/io/students.csv') # load a file as a variable
 print('CSV data')
 print(df) # output it
 
 # examples of data analysis
 print("Total Students : ", df['ID'].count())
 print("Average GPA    : ", df['GPA'].mean())
-print("Number of CE's : ", df['Major'].str.count('CE').sum())
-print("GPA of CE's    : ", ) # ???
-print(df.groupby('Major').size())
 
-# shuffle
-ds = df.sample(frac=1) # frac = portion of rows to shuffle, 1=all
-print('\nShuffle')
-print(ds)
+## add assignments to the file
+# copy the first file so we don't overwrite it
+df.to_csv('/io/new_students.csv', index=False)
 
-# sort alphabetically
-dt = df.sort_values(by=['Name'])
-print('\nSort alphabetically')
-print(dt)
+# add project assignments
+new_data = pd.DataFrame({'Assignment': ['Superman NanoCape', 'Bee Swarm Laser', 'Gravity Inverter', 'Moon Tractor Beam']}) # project assignments
+df.update(new_data) # add them to the csv
 
-# sort by GPA
-du = df.sort_values(by=['GPA'], ascending=False)
-print('\nSort by GPA')
-print(du)
+## write new csv
+df.to_csv('/io/new_students.csv', index=False)
+print(df) # output it

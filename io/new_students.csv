@@ -1,0 +1,18 @@
+Name,ID,GPA,Random,Priority,ESL,Avoid,Assignment,Choice 1,Choice 2,Choice 3,Choice 4,Choice 5
+Kai,2020,1.4,test,,,,Superman NanoCape,A,B,C,E,
+Spike,16,3.2,test,,,,Bee Swarm Laser,B,E,D,,A
+Goku,9000,3.8,test,True,,8999.0,Gravity Inverter,B,A,D,C,E
+Cell,8999,3.1,test,,,9000.0,Moon Tractor Beam,B,D,E,A,C
+Asuka,2,2.4,,,True,,,A,B,D,C,E
+Dio,1,3.3,test,,,,,A,D,B,E,C
+Griffith,666,3.1,test,,,,,D,B,A,E,C
+Light,2398,4.0,test,,,,,E,D,C,B,A
+Vash,192,2.2,test,,,,,E,A,B,C,D
+Joseph,76,3.0,,,,,,A,C,D,B,E
+Alucard,5762,2.9,1101,,,,,D,B,C,E,A
+Piccolo,420,2.6,,,True,,,E,A,C,B,D
+Lucy,5555,3.1,,,,,,C,B,A,D,E
+Nana,8,3.7,,,,,,C,D,E,A,B
+Froppy,2211,3.4,,,True,,,C,E,B,D,A
+Kiki,7523,3.9,,,,,,B,E,A,D,C
+Howl,9981,2.7,,,,,,A,D,E,C,B
