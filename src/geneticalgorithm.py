@@ -435,6 +435,8 @@ class geneticalgorithm():
 
         if self.stop_mniwi==True:
             sys.stdout.write(early_stop_message)
+
+        return self.best_variable
          
          
     def cross(self,x,y,c_type):
