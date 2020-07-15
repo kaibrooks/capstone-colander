@@ -15,7 +15,7 @@ now = datetime.today().strftime('%Y-%m-%d %H:%M:%S') # get the date/time
 print("Container built", now) # print it
 
 # default program mode
-programMode  = 'Assignment'
+programMode = 'Assignment'
 
 # accepted command line arguments
 parser = argparse.ArgumentParser()
@@ -64,10 +64,10 @@ for file in userFiles:
 
 # inform user if the output they provided already exists and terminate program
 if os.path.exists(outputFile) and programMode == 'Assignment':
-    sys.exit("ERROR: {0} already exists in the directory. Enter a unique output file name using the -o FILENAME command. Terminating Program.".format(file))
+    sys.exit("ERROR: {0} already exists in the directory. Enter a unique output file name using the -o FILENAME command. Terminating Program.".format(outputFile))
 
 # call another script
-if not programMode == 'unitTest':
+if not programMode == 'Verbose':
     print('Calling the next function...')
     #os.system('python src/test/test_main.py') # put what file we actually want run here
 #os.system('python src/run_ga.py') # put what file we actually want run here
