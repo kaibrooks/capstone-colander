@@ -14,25 +14,22 @@ from datetime import date, datetime
 now = datetime.today().strftime('%Y-%m-%d %H:%M:%S') # get the date/time
 print("Container built", now) # print it
 
-# default csv file names & program mode
-studentsFile = 'io/students.csv'
-projectsFile = 'io/projects.csv'
-settingsFile = 'io/settings.csv'
-outputFile   = 'io/assignment.csv'
+# default program mode
 programMode  = 'Assignment'
 
 # accepted command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument("-s", "--students", help = "Students CSV filename", required = False)
-parser.add_argument("-p", "--projects", help = "Projects CSV filename", required = False)
-parser.add_argument("-u", "--settings", help = "User Settings CSV filename", required = False)
-parser.add_argument("-o", "--output", help = "Output (assignment) CSV filename", required = False)
+parser.add_argument("-s", "--students", help = "Students CSV filename", required = False, default = 'io/students.csv')
+parser.add_argument("-p", "--projects", help = "Projects CSV filename", required = False, default = 'io/projects.csv' )
+parser.add_argument("-u", "--settings", help = "User Settings CSV filename", required = False, default = 'io/settings.csv')
+parser.add_argument("-o", "--output", help = "Output (assignment) CSV filename", required = False, default = 'io/assignment.csv')
 parser.add_argument("-a", "--assign", help = "Run the program in Assignment mode", required = False, action='store_true')
 parser.add_argument("-c", "--score", help = "Run the program in Scoring mode", required = False, action='store_true')
+parser.add_argument("-v", "--verbose", help = "Run the program in verbose mode", required = False, action='store_true')
 
 argument = parser.parse_args()
 
-# assign any user provided csv file names and mode preference
+# assign csv file names and mode preference
 if argument.students:
     studentsFile = argument.students
 if argument.projects:
@@ -45,6 +42,8 @@ if argument.score:
     programMode = 'Scoring'
 if argument.assign:
     programMode = 'Assignment'
+if argument.verbose:
+    programMode = 'Verbose'
 
 # for debugging, remove when no longer necessary
 print("Students csv is: {0}".format(studentsFile))
@@ -57,13 +56,18 @@ print("Program mode is: {0}".format(programMode))
 userFiles = [studentsFile, projectsFile, settingsFile]
 for file in userFiles:
     if not os.path.exists(file):
+        if not file.endswith('.csv'):
+            sys.exit("ERROR: {0} is neither a '.csv' file nor can it be found in the directory. Input files must have .csv extension. Terminating Program.".format(file))
         sys.exit("ERROR: {0} can not be found. Terminating Program.".format(file))
     if not file.endswith('.csv'):
         sys.exit("ERROR: {0} is not a '.csv' file. Input files must have .csv extension. Terminating Program.".format(file))
 
-# warn user if the output they provided already exists and that the output will be named differently than provided
-if os.path.exists(outputFile):
-    print("WARNING: Output file {0} already exists.".format(outputFile), outputFile.replace('.csv', '(2).csv will be created instead.'))
+# inform user if the output they provided already exists and terminate program
+if os.path.exists(outputFile) and programMode == 'Assignment':
+    sys.exit("ERROR: {0} already exists in the directory. Enter a unique output file name using the -o FILENAME command. Terminating Program.".format(file))
 
 # call another script
-os.system('python src/run_ga.py') # put what file we actually want run here
+if not programMode == 'unitTest':
+    print('Calling the next function...')
+    #os.system('python src/test/test_main.py') # put what file we actually want run here
+#os.system('python src/run_ga.py') # put what file we actually want run here
