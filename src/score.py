@@ -63,6 +63,25 @@ def points( assignment_choice, num_projects, points_max ):
 # weightAvoid: score from settings.csv [int]
 ###
 
+###
+# sample variables and values
+studentID = [1,2,3,4,5,6,7,8,9,10]  # students from 1 to 10
+studentGPA = [3.00,2.99,2.88,2.77,2.66,2.55,2.44,2.33,2.22,2.11]    # student GPAs for 1 to 10
+studentESL = [0,0,1,0,1,0,0,0,1,0]  # students 3, 5, and 9 are ESL students
+studentESL = [3,5,9]    # students 3, 5, and 9 are ESL students
+studentChoice = [1,2,3,1,2,3,1,2,3,1] # student project choice
+studentPriority = [0,0,0,0,1,0,0,0,0,1] # student priority flag
+studentPriority = [5,10] # student priority flag
+studentAvoid = [,3,2,,,,,,3,9] # student avoid choice
+projectID = [1,2,3] # project numbers
+minTeamSize = [2,2,3] # min group size for each project
+maxTeamSize = [4,4,5] # max grou psize for each project
+teamSize = [4,3,3] # group size desired by user
+lowGPAThreshold = [2.40] # min GPA cutoff
+maxLowGPAStudents = [2] # min GPA cutoff students limit
+maxESLStudents = [2] # ESL student limit
+maxRunTime = [30] # program max run time
+studentAssignments = [1,1,2,2,3,3,1,2,1,2]
 
 # This calculates bonus points for having fewer students than maxLowGPAStudents in a group
 def pointMaxLowGPAStudents(studentGPA, lowGPAThreshold, maxLowGPAStudents, weightMaxLowGPAStudents)
@@ -78,6 +97,7 @@ def pointMaxLowGPAStudents(studentGPA, lowGPAThreshold, maxLowGPAStudents, weigh
 def pointsTeamSize(minTeamSize, maxTeamSize, teamSize, weightTeamSize)
     # Look at assignments column
     # Count projectStudent[i] in each projectID
+    for 
     # if minTeamSize < projectStudent[i] < maxTeamSize
         # then weightTeamsize += 50
         # else weightTeamsize += 0
