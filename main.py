@@ -7,7 +7,9 @@ import sys
 import argparse
 import os
 from datetime import datetime
-from load_csv import projectsHandler
+import load_csv
+#import run_ga ...when GA is completed and tested
+#import scoring ...when Scoring is completed and tested
 
 # startup information
 now = datetime.today().strftime('%Y-%m-%d %H:%M:%S')  # get the date/time
@@ -61,14 +63,6 @@ def main():
     if os.path.exists(outputFile) and programMode == 'Assignment':
         sys.exit("ERROR: {0} already exists in the directory. Enter a unique output file name using the -o FILENAME command. Terminating Program.".format(outputFile))
 
-    # for debugging, remove when no longer necessary
-    print("\n*** Debug print to verify file names ***")
-    print("Students csv is: {0}".format(studentsFile))
-    print("Projects csv is: {0}".format(projectsFile))
-    print("Settings csv is: {0}".format(settingsFile))
-    print("Output csv is: {0}".format(outputFile))
-    print("Program mode is: {0}".format(programMode))
-
     return projectsFile, studentsFile, settingsFile, programMode
 
 
@@ -78,8 +72,15 @@ if __name__ == "__main__":
     projFile, studFile, settFile, progMode = main()
 
     # read, parse, and handle errors of all three csv files
-    projectsHandler(projFile)
-    # studentsHandler(studFile) ....will go here
-    # settingsHandler(settFile) ....will go here
+    load_csv.settingsHandler(settFile)
+    load_csv.projectsHandler(projFile)
+    # load_csv.studentsHandler(studFile) ....when complete, load student csv handler
+
+    if progMode == 'Assignment':
+        print("\nProgram running in Assignment mode with a max run time of {0} minutes.".format(load_csv.maxRunTime))
+        # run_ga.geneticAlgorithmFunction() ...when complete, run GA for assignment mode
+    elif progMode == 'Scoring':
+        print("\nProgram running in Scoring mode.")
+        # scoring.scoreFunction() ...when complete, run Scoring function
 
     print("\n*** Program has completed running ***")
