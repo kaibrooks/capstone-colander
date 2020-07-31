@@ -8,6 +8,7 @@ load_csv.settingsHandler()
 load_csv.projectsHandler()
 load_csv.studentsHandler()
 
+# Student 0, 1, 2, ..., 8, 9
 fauxGA = [0, 0, 0, 0, 1, 1, 1, 1, 10, 10]
 
 def pointsStudentChoice():
@@ -15,17 +16,10 @@ def pointsStudentChoice():
     points_max = 100
     num_projects = 5
     points_max = load_csv.weightStudentChoice1
-    print(points_max)
 
-    print(load_csv.minTeamSize[3], 'zzz')
-    #load_csv.minTeamSize[3] = 7
+    #print(load_csv.minTeamSize[3], 'zzz')
 
     for i in load_csv.studentID:
-        #print(load_csv.studentID, 'tag1')
-        print(load_csv.studentID[i], 'studentID')
-        print(fauxGA[i], 'fauxGA')
-        print(load_csv.studentChoice[i], 'tag Choice')
-
         if load_csv.studentChoice[i] == fauxGA[i]:
             totalPSC = totalPSC + math.ceil(points_max - (points_max / num_projects) * (fauxGA[i] - 1))
             print(totalPSC, "totalPSC IN LOOP")
@@ -38,6 +32,38 @@ def pointsStudentChoice():
 
     return totalPSC
 
+def pointsESLStudents():
+    totalPES = 100
+    max_points = load_csv.weightMaxESLStudents / 100
+    maxESL = load_csv.maxESLStudents
+    dog = load_csv.projectIDs
+    v = dog.count(dog)
+    print(v, 'v')
+    ESL_Group = [0] * 100
+    x = 0
+
+    #print(maxESL, max_points, 'max stuff')
+    print(ESL_Group, 'ESL_Group')
+
+    for i in load_csv.studentID:
+        if load_csv.studentESL[i] == 1:
+            print(load_csv.studentESL[i], 'load_csv.studentESL[i]')
+            print(ESL_Group[fauxGA[i]], 'faux')
+            ESL_Group[fauxGA[i]] = ESL_Group[fauxGA[i]] + 1
+
+            #x += 1
+            #if x > load_csv.maxTeamSize
+            
+            if ESL_Group[fauxGA[i]] > maxESL:
+                totalPES = totalPES - (totalPES * max_points)
+                print('I was hit!')
+    print(ESL_Group, '44')
+
+    return totalPES
+
+
+def pointsStudentPriority():
+    totalPSP = 0
 
 def scoringMode(a):
     print("Hello from a function")
@@ -46,6 +72,7 @@ def scoringMode(a):
     print(cat)
 
     score = pointsStudentChoice()
+    score += pointsESLStudents()
 
     print('score =', score)
 
