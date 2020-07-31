@@ -1,37 +1,111 @@
-# load_csv
-# loads a csv and reads it (imagine that)
+# load_csv.py reads and parses all three csv files,
+# then verifies all data in the csv files is valid.
 
-import pandas as pd # loads csv
-import random # make a random assignment for demoing
+import sys
+import pandas as pd
 
-print("*** RUNNING LOAD_CSV.PY ***\n")
 
-## load CSV
-df = pd.read_csv('/io/students.csv') # load a file as a variable
-print('Input CSV data')
-print(df) # output it
+# def projectsHandler(projectsFile):
 
-# examples of data analysis
-print("Total Students : ", df['ID'].count())
-print("Average GPA    : ", df['GPA'].mean())
+#     # load projects csv file
+#     projectsFileData = pd.read_csv(projectsFile)
 
-## add assignments to the file
-# copy the first file so we don't overwrite it
-df.to_csv('/io/students.csv', index=False)
+#     # verify required project csv headers are preset
+#     projectsColumns = ['projectID', 'minTeamSize', 'maxTeamSize']
+#     for col in projectsColumns:
+#         if col not in projectsFileData.columns:
+#             sys.exit("ERROR: Required {0} column header not found in the projects csv file. Terminating Program.".format(col))
 
-## 'assign' a random project
-# make an array of random numbers
-project_assignment = []
-for i in range(0, len(df)):
-    n = random.randint(1,5) # assign random group
-    project_assignment.append(n)
+#     # debug print to verify data has been loaded
+#     print("\n*** Debug print to verify csv contents ***")
+#     print(projectsFileData)
 
-# add that column to the dataframe
-df['Assignment'] = '' # if no 'Assignment' column, create it
-new_data = pd.DataFrame({'Assignment': project_assignment}) # project assignments
-df.update(new_data) # add them to the csv
+#     # function to verify that values listed in csv files are integers
+#     def int_checker(columnName):
+#         intArray = []
+#         for value in projectsFileData[columnName]:
+#             try:
+#                 intArray.append(int(value))
+#             except ValueError:
+#                 sys.exit("ERROR: {0} in the {1} column is not an integer. Terminating Program.".format(value, columnName))
+#         return intArray
 
-## write a new csv
-df.to_csv('/io/new_students.csv', index=False)
-print('\nNew CSV data with assignments')
-print(df) # output it
+#     # verify that all values in program csv file are integers
+#     projectIDs = int_checker('projectID')
+
+#     # verify that there are no duplicate project IDs in the projectID column
+#     if projectsFileData.projectID.duplicated().any():
+#         sys.exit("ERROR: projectid {0} is a duplicate projectID in the csv file. Terminating Program.".format({projectsFileData[projectsFileData.projectID.duplicated()].projectID.iloc[0]}))
+
+#     # if values for team sizes are blank, enter size from settings.csv and then verify all values are integers
+#     projectsFileData['minTeamSize'] = projectsFileData['minTeamSize'].fillna(42)  # 42 needs to be changed to settings.csv value once that code is written
+#     minTeamSize = int_checker('minTeamSize')
+#     projectsFileData['maxTeamSize'] = projectsFileData['maxTeamSize'].fillna(42)
+#     maxTeamSize = int_checker('maxTeamSize')  # TeamSizes not currently returned but may need to be for the scoring function
+
+
+
+def studentsHandler(studentsFile):
+
+    global studentID
+    global studentGPA
+    global studentESL
+    global studentPriority
+    global studentChoiceN
+    global studentAvoidN
+    global assignment
+
+    #flags to indicate that optional headers have been included default False
+    #colPriority = False
+    #colAvoid = False
+
+    #load students csv file
+    studentsFileData = pd.read_csv(studentsFile)
+
+    # debug print to verify data has been loaded
+    #print(studentsFileData)
+
+
+    #Move studentChoices into a separate global dataframe
+    fields = [col for col in studentsFileData.columns if 'studentChoice' in col] # get columns named 'studentChoice'
+    studentChoiceN = pd.read_csv(studentsFile, skipinitialspace=True, usecols=fields) # df with just choices
+
+    #Move studentAvoid into a separate global dataframe
+    fields = [col for col in studentsFileData.columns if 'studentAvoid' in col] # get columns named 'studentAvoid'
+    studentAvoidN = pd.read_csv(studentsFile, skipinitialspace=True, usecols=fields) # df with just avoidances
+
+    print("student avoidances")
+    print(studentAvoidN)
+
+    
+
+    ######Store Data#######
+    # Store single column data
+    studentID = studentsFileData['studentID'].copy()
+    studentGPA = studentsFileData['studentGPA'].copy()
+    studentESL = studentsFileData['studentESL'].copy()
+    studentPriority = studentsFileData['studentPriority'].copy()
+    assignment = studentsFileData['Assignment'].copy()
+
+
+
+    #debug print to verify studentID has been stored
+    #print("Student ID Series Test")
+    #print(studentID)
+
+    #debug print to verify studentGPA has been stored
+    #print("GPA Series Test")
+    #print(studentGPA)
+
+    #debug print to verify studentESL has been stored
+    #print("Student ESL Series Test")
+    #print(studentESL)
+
+    #debug print to verify studentPriority has been stored
+    #print("Student Priority Series Test")
+    #print(studentPriority)
+
+    #debug print to verify Assign has been stored
+    #print("Assignment Series Test")
+    #print(assign)
+    

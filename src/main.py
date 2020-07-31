@@ -7,8 +7,11 @@ import sys
 import argparse
 import os
 from datetime import datetime
-#from load_csv import projectsHandler
-from student_error_checker import studentsHandler
+from load_csv import studentsHandler
+import load_csv
+
+#Code for development
+#from student_error_checker import studentsHandler
 
 # startup information
 now = datetime.today().strftime('%Y-%m-%d %H:%M:%S')  # get the date/time
@@ -80,7 +83,8 @@ if __name__ == "__main__":
 
     # read, parse, and handle errors of all three csv files
     #projectsHandler(projFile)
-    studentsHandler(studFile)
+    load_csv.studentsHandler(studFile)
     # settingsHandler(settFile) ....will go here
+
 
     print("\n*** Program has completed running ***")

@@ -1,4 +1,4 @@
-Name,studentID,studentGPA,Random,studentPriority,ESL,studentAvoid,Assignment,studentChoice1,Choice 2,Choice 3,Choice 4,Choice 5
+Name,studentID,studentGPA,Random,studentPriority,studentESL,studentAvoid,Assignment,studentChoice1,studentChoice2,Choice 3,Choice 4,Choice 5
 Kai,2020,1.4,test,,,,,1,2,3,4,
 Spike,16,3.2,test,,,,,2,5,4,3,1.0
 Goku,9000,3.8,test,True,,8999.0,,2,1,4,3,5.0
