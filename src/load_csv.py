@@ -5,13 +5,10 @@ import sys
 import pandas as pd
 
 
-def projectsHandler(projectsFile):
+def projectsHandler(projectsFileData):
     global minTeamSize
     global maxTeamSize
     global projectIDs
-
-    # load projects csv file
-    projectsFileData = pd.read_csv(projectsFile)
 
     # verify required project csv headers are present
     projectsColumns = ['projectID', 'minTeamSize', 'maxTeamSize']
@@ -19,18 +16,21 @@ def projectsHandler(projectsFile):
         if col not in projectsFileData.columns:
             sys.exit("ERROR: Required {0} column header not found in the projects csv file. Terminating Program.".format(col))
 
-    # function to verify that values listed in the projects csv are integers within required range
+    # function to verify that all require values in projects csv file are integers within the required range
     def int_checker_projects(columnName):
-        intArray = []
+
+        tempArray = []
         for value in projectsFileData[columnName]:
-            try:
-                intArray.append(int(value))
-            except ValueError:
+            if isinstance(value, float):
+                if value.is_integer():
+                    value = int(value)
+            if isinstance(value, int):
+                if (value < 1) or (value > pow(2, 64)):
+                    sys.exit("ERROR: Value {0} in the {1} column must be an integer greater than zero and less than 2^64.".format(value, columnName))
+                tempArray.append(value)
+            else:
                 sys.exit("ERROR: {0} in the {1} column is not an integer. Terminating Program.".format(value, columnName))
-        for value in intArray:
-            if (value < 0) or (value > pow(2, 64)):
-                sys.exit("ERROR: Value {0} in the {1} column must be an integer greater than zero and less than 2^64.".format(value, columnName))
-        return intArray
+        return tempArray
 
     # verify that all values in program csv file are integers
     projectIDs = int_checker_projects('projectID')
@@ -56,7 +56,7 @@ def projectsHandler(projectsFile):
         print("\nWARNING: gap found in projectID sequence in the projects csv file.")
 
 
-def settingsHandler(settingsFile):
+def settingsHandler(settingsFileData):
     global weightMaxLowGPAStudents
     global weightMaxESLStudents
     global weightTeamSize
@@ -70,10 +70,6 @@ def settingsHandler(settingsFile):
     global maxESLStudents
     global lowGPAThreshold
 
-    # load projects csv file
-    settingsFileData = pd.read_csv(settingsFile)
-
-    print(settingsFileData)
     # verify required settings csv headers are present
     settingsColumns = ['name', 'min', 'max', 'points']
     for col in settingsColumns:
@@ -87,15 +83,38 @@ def settingsHandler(settingsFile):
         if row not in settingsFileData['name'].values:
             sys.exit("ERROR: Required {0} row 'name' not found in the settings csv file. Terminating Program.".format(row))
 
-    # function to verify that values listed in the settings csv are integers within range
+    # function to verify values in the csv file are integers.
     def int_checker_settings(value, rowName, minValue):
-        try:
-            tempInt = int(value)
-        except ValueError:
-            sys.exit("ERROR: {0} in the {1} row is not an integer. Terminating Program.".format(value, rowName))
-        if (value < minValue) or (value > pow(2, 64)):
-            sys.exit("ERROR: Value {0} in the {1} column must be an integer greater than zero and less than 2^64.".format(value, rowName))
-        return tempInt
+
+        if isinstance(value, int):
+            if (value < minValue) or (value > pow(2, 64)):
+                 sys.exit("ERROR: Value {0} in the {1} column must be an integer greater than zero and less than 2^64.".format(value, rowName))
+            return value
+
+        # function to verify integer if data type of value is not originally set as int (dtype could be obj or float)
+        def is_integer_settings(value, rowName, minValue):
+            if value.is_integer():
+                tempInt = int(value)
+                if (tempInt < minValue) or (tempInt > pow(2, 64)):
+                    sys.exit("ERROR: Value {0} in the {1} column must be an integer greater than zero and less than 2^64.".format(value, rowName))
+                return tempInt
+            else:
+                sys.exit("ERROR: {0} in the {1} row is not an integer. Terminating Program.".format(value, rowName))
+
+        # if pandas set column data type to float
+        # this would happen when there are only floats or empty fields found in the column
+        if isinstance(value, float):
+            return is_integer_settings(value, rowName, minValue)
+
+        # if pandas set column data type to a python object
+        # this would happen when there are strings found in the column
+        if isinstance(value, object):
+            try:
+                tempInt = float(value)
+            except ValueError:
+                sys.exit("ERROR: {0} in the {1} row is not an integer. Terminating Program.".format(value, rowName))
+            return is_integer_settings(tempInt, rowName, minValue)
+
 
     # verify required values in 'points' column are integers
     # if they are, assign value to global variable for scoring function to use
@@ -125,13 +144,14 @@ def settingsHandler(settingsFile):
 
     # verify that provided maxRunTime is an integer.
     # If it is, set it as maxRunTime for the program, otherwise, use default hour run time.
-    maxRunTime = 60
     try:
         maxRunTime = int(settingsFileData.set_index('name').at['maxRunTime', 'max'])
     except:
-        pass
+        maxRunTime = 60
+        print("WARNING: maxRunTime value in settings csv is invalid. Running with default value of 60 minutes.")
     if maxRunTime < 0:
-        sys.exit("maxRunTime in the settings csv must be an integer between 1 and 2^64.")
+        maxRunTime = 60
+        print("WARNING: maxRunTime in the settings csv is not an integer between 1 and 2^64. Running with default value of 60 minutes.")
 
     # verify that provided lowGPAThreshold is not empty and that it's a float within range
     # If it is, assign value to global variable for scoring function to use.
