@@ -1,4 +1,6 @@
 # Bliss Brass & Jae Lee
+# Functions for scoring the Genetic Algorithm (GA) are stored here
+# ##-##-2020
 
 import math # ceil()
 import load_csv
@@ -10,9 +12,8 @@ load_csv.studentsHandler()
 # Student 0, 1, 2, ..., 8, 9
 fauxGA = [0, 0, 0, 0, 1, 1, 1, 1, 10, 10]
 
-def pointsStudentChoice():
+def pointsStudentChoice(inputGA):
     totalPSC = 0
-    points_max = 100
     num_projects = 5
     points_max = load_csv.weightStudentChoice1
 
@@ -20,67 +21,79 @@ def pointsStudentChoice():
 
     for i in load_csv.studentID:
         if load_csv.studentChoice[i] == fauxGA[i]:
+            #print(fauxGA[i], 'faux')
+            # Replace fauxGA[i] with student choice array of choices 1 - 5
             totalPSC = totalPSC + math.ceil(points_max - (points_max / num_projects) * (fauxGA[i] - 1))
-            print(totalPSC, "totalPSC IN LOOP")
+            #print(totalPSC, "totalPSC IN LOOP")
             
         else:
-            #totalPSC = totalPSC
-            print(totalPSC, "totalPSC")
-
-    print('totalPSC =', totalPSC)
+            totalPSC = totalPSC
+            #print(totalPSC, "totalPSC")
+    #print('totalPSC =', totalPSC)
 
     return totalPSC
 
-def pointsESLStudents():
-    totalPES = 100
-    max_points = load_csv.weightMaxESLStudents / 100
+def pointsESLStudents(inputGA):
+    totalPES = 0
+    point_weight = load_csv.weightMaxESLStudents
     maxESL = load_csv.maxESLStudents
-    dog = load_csv.projectIDs
-    v = dog.count(dog)
-    print(v, 'v')
-    ESL_Group = [0] * 100
-    x = 0
+
+    # Initializing an empty array of 50 to 0's
+    ESL_Group = [0] * 50
 
     #print(maxESL, max_points, 'max stuff')
-    print(ESL_Group, 'ESL_Group')
+    print(ESL_Group, 'ESL_Group Before')
 
     for i in load_csv.studentID:
+        # Checking if a students ESL flag is set to 1
         if load_csv.studentESL[i] == 1:
-            print(load_csv.studentESL[i], 'load_csv.studentESL[i]')
-            print(ESL_Group[fauxGA[i]], 'faux')
+            #print(ESL_Group[fauxGA[i]], 'faux')
+            # The students actual assignment (fauxGA[i]) is used to index into ESL_Group to
+            # track how many ESL students are on that team.
             ESL_Group[fauxGA[i]] = ESL_Group[fauxGA[i]] + 1
 
             #x += 1
             #if x > load_csv.maxTeamSize
             
             if ESL_Group[fauxGA[i]] > maxESL:
-                totalPES = totalPES - (totalPES * max_points)
-                print('I was hit!')
-    print(ESL_Group, '44')
+                totalPES -= point_weight
+                print(totalPES, 'Current total')
+    print(ESL_Group, 'ESL_Group After')
 
     return totalPES
 
 
-def pointsStudentPriority():
+def pointsStudentPriority(inputGA):
     totalPSP = 0
 
-def scoringMode(a):
+    for i in load_csv.studentID:
+        if load_csv.studentPriority[i] == 1:
+            if fauxGA[i] == load_csv.studentChoice:
+                totalPSP += load_csv.weightStudentPriority
+            else:
+                totalPSP -= load_csv.weightStudentPriority
+
+    return totalPSP
+
+def scoringMode(inputGA):
     print("Hello from a function")
+    print(inputGA)
     score = 0
 
-    print(cat)
+    score = pointsStudentChoice(inputGA)
+    print('score after PSC = ', score)
+    score += pointsESLStudents(inputGA)
+    print('score after PES = ', score)
+    score += pointsStudentPriority(inputGA)
 
-    score = pointsStudentChoice()
-    score += pointsESLStudents()
-
-    print('score =', score)
+    print('score grand total =', score)
 
 cat = 'Vera'
 scoringMode(cat)
 
 
 ##############################################################################################
-
+"""
 # sample local variables and values
 studentID = [1,2,3,4,5,6,7,8,9,10]  # students from 1 to 10
 studentGPA = [3.00,2.99,2.88,2.77,2.66,2.55,2.44,2.33,2.22,2.11]    # student GPAs for 1 to 10
@@ -166,4 +179,4 @@ def pointsAvoid():
     else:
         points += weightAvoid
         print(points, 'total points =')
-    return points
+    return points"""
