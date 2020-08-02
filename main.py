@@ -9,8 +9,8 @@ import os
 from datetime import datetime
 import load_csv
 import pandas as pd
-#import run_ga ...when GA is completed and tested
-#import scoring ...when Scoring is completed and tested
+import run_ga
+import score
 
 # startup information
 now = datetime.today().strftime('%Y-%m-%d %H:%M:%S')  # get the date/time
@@ -46,12 +46,15 @@ def main():
         programMode = 'Scoring'
     if argument.assign:
         programMode = 'Assignment'
+        if argument.score:
+            print("\nWARNING: both Scoring (-c) and Assignment (-a) modes selected. Program will run in Assignment mode. ")
 
     # if output user provided already exists when running in Assignment mode, terminate program
     if programMode == 'Assignment' and os.path.exists(outputFile):
         sys.exit("ERROR: {0} already exists in the directory. Enter a unique output file name using the -o FILENAME command. Terminating Program.".format(outputFile))
 
-    # function to verify user provided files exist and that they are csv files
+    # function to verify user provided files exist and that they are csv files by attempting to read file into a data structure
+    # returns data structure assuming all files are csv files, otherwise, terminates program if not a csv file
     def csvFileCheck(csvFileName):
         if not os.path.exists(csvFileName):
             # if original filename not found, add .csv extension and check again
@@ -81,13 +84,12 @@ if __name__ == "__main__":
     # read, parse, and handle errors of all three csv files
     load_csv.settingsHandler(settingsFileData)
     load_csv.projectsHandler(projectsFileData)
-    #load_csv.studentsHandler(studentsFileData) ....when complete, call student csv handler
+    load_csv.studentsHandler(studentsFileData, progMode)
 
     if progMode == 'Assignment':
         print("\nProgram running in Assignment mode with a max run time of {0} minutes.".format(load_csv.maxRunTime))
-        #run_ga.geneticAlgorithmFunction() ...when complete, call GA for assignment mode
+        run_ga.geneticAlgorithm()
     elif progMode == 'Scoring':
-        print("\nProgram running in Scoring mode.")
-        #scoring.scoreFunction() ...when complete, call Scoring function
+        score.scoringMode()
 
     print("\n*** Program has completed running ***")
