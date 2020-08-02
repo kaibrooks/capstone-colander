@@ -43,4 +43,6 @@ def studentsHandler():
     studentESL = [0, 0, 0, 0, 0, 1, 1, 1, 1, 1]
     studentChoice = [0, 0, 0, 0, 1, 2, 4, 4, 11, 100]
     studentPriority = [0, 0, 0, 0, 0, 1, 1, 0, 0, 0]
-    studentAvoid = ["Blank", "Blank", "Blank", 4, 3, "Blank", 1, "Blank", "Blank", "Blank"]
+    studentAvoid1 = ["Blank", "Blank", "Blank", 4, 3, "Blank", 1, "Blank", "Blank", "Blank"]
+
+    #fauxGA = [0, 0, 0, 0, 1, 1, 1, 1, 10, 10]
