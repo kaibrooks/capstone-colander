@@ -1,37 +1,54 @@
-# load_csv
-# loads a csv and reads it (imagine that)
+# load CSV dummy file
 
-import pandas as pd # loads csv
-import random # make a random assignment for demoing
+import pandas as pd
 
-print("*** RUNNING LOAD_CSV.PY ***\n")
+#def projectsHandler():
 
-## load CSV
-df = pd.read_csv('/io/students.csv') # load a file as a variable
-print('Input CSV data')
-print(df) # output it
+global minTeamSize
+global maxTeamSize
+global projectIDs
 
-# examples of data analysis
-print("Total Students : ", df['ID'].count())
-print("Average GPA    : ", df['GPA'].mean())
+#def settingsHandler():
+global weightMaxLowGPAStudents
+global weightMaxESLStudents
+global weightTeamSize
+global weightStudentPriority
+global weightStudentChoice1
+global weightAvoid
+global maxLowGPAStudents
+global maxESLStudents
+global lowGPAThreshold
 
-## add assignments to the file
-# copy the first file so we don't overwrite it
-df.to_csv('/io/students.csv', index=False)
+projectIDs  = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+minTeamSize = [4, 4, 4, 3, 4, 3, 3, 3, 4, 3, 4, 2, 4, 4, 3]
+maxTeamSize = [5, 4, 7, 4, 4, 5, 6, 4, 5, 5, 4, 5, 6, 6, 5]
 
-## 'assign' a random project
-# make an array of random numbers
-project_assignment = []
-for i in range(0, len(df)):
-    n = random.randint(1,5) # assign random group
-    project_assignment.append(n)
+maxESLStudents          = 2
+lowGPAThreshold         = 2.75
+maxLowGPAStudents       = 2
+weightMaxLowGPAStudents = 100
+weightMaxESLStudents    = 75
+weightTeamSize          = 50
+weightStudentPriority   = 100
+weightStudentChoice1    = 75
+weightAvoid             = 60
 
-# add that column to the dataframe
-df['Assignment'] = '' # if no 'Assignment' column, create it
-new_data = pd.DataFrame({'Assignment': project_assignment}) # project assignments
-df.update(new_data) # add them to the csv
+# things the ga needs
+global df
+global df_choices
+global num_projects
+global num_students
+global num_choices
+global max_run_time
+global infile # temp
 
-## write a new csv
-df.to_csv('/io/new_students.csv', index=False)
-print('\nNew CSV data with assignments')
-print(df) # output it
+max_run_time = 5
+
+infile = '/io/students_n50_c5_p15.csv'
+df = pd.read_csv(infile) # load a file as a variable
+fields = [col for col in df.columns if 'studentChoice' in col] # get columns named 'studentChoice'
+df_choices = pd.read_csv(infile, skipinitialspace=True, usecols=fields) # df with just choices
+
+num_students = df['studentID'].count() # number of students (count each ID)
+num_projects = len(projectIDs) # total projects available
+num_choices = len(df_choices.columns)
