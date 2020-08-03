@@ -9,13 +9,15 @@ import time # time the algorithm
 import pandas as pd # loads csv
 from score import points_ch, points_gs
 import load_csv as lc
+from convert_id import fix
 
 # defs
 def objf(soln): # objective function
+    soln = fix(soln)
     y = 0
     y = points_ch(soln) # choices
     y += points_gs(soln) # group size
-
+    
     # timing
     # if time.time()-t0 > max_run_time:
     #     print('stop me') # TODO break here
@@ -33,8 +35,9 @@ num_choices = lc.num_choices
 max_run_time = lc.max_run_time
 
 # hyperparameters
-num_iterations = 2000
-var_bound=np.array([[1,num_projects]]*num_students) # solution shape
+num_iterations = 2400
+#lc.projectIDs  = [1, 2, 4] => num_projects = len(projectIDs)
+var_bound = np.array([[1,num_projects]]*num_students) # solution shape
 ga_params = {'max_num_iteration': num_iterations,\
                    'population_size':100,\
                    'mutation_probability':0.02,\
