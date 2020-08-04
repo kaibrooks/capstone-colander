@@ -1,25 +1,6 @@
-'''
-Copyright 2020 Ryan (Mohammad) Solgi
-Permission is hereby granted, free of charge, to any person obtaining a copy of 
-this software and associated documentation files (the "Software"), to deal in 
-the Software without restriction, including without limitation the rights to use, 
-copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the 
-Software, and to permit persons to whom the Software is furnished to do so, 
-subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
-THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
-SOFTWARE.
-'''
-
-###############################################################################
-###############################################################################
-###############################################################################
+# genetic algorithm
+# original by Ryan Solgi (see EOF)
+# mod by Kai Brooks for http://github.com/kaibrooks/capstone-colander
 
 import numpy as np
 import sys
@@ -255,7 +236,7 @@ class geneticalgorithm():
         
          
     def run(self):
-        
+        """invoke the genetic algorithm"""
         
          
         # Initial Population
@@ -419,9 +400,9 @@ class geneticalgorithm():
                           self.best_function}
         show=' '*100
         sys.stdout.write('\r%s' % (show))
-        sys.stdout.write('\r Best solution:\n %s' % (self.best_variable))
+        #sys.stdout.write('\r Best solution:\n %s' % (self.best_variable))
         #sys.stdout.write('\n\nObjective function: %s' % (self.best_function))
-        sys.stdout.write('\n\nScore: %s' % abs(self.best_function))
+        sys.stdout.write('\nScore: %s' % abs(self.best_function))
         sys.stdout.flush() 
         re=np.array(self.report)
         
@@ -544,4 +525,21 @@ class geneticalgorithm():
 #
             
             
-            
+''' Original:
+Copyright 2020 Ryan (Mohammad) Solgi
+Permission is hereby granted, free of charge, to any person obtaining a copy of 
+this software and associated documentation files (the "Software"), to deal in 
+the Software without restriction, including without limitation the rights to use, 
+copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the 
+Software, and to permit persons to whom the Software is furnished to do so, 
+subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+SOFTWARE.
+'''

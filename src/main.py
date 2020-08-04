@@ -5,7 +5,7 @@
 # don't develop in this
 
 import os
-from datetime import date, datetime
+from datetime import datetime
 
 # startup information
 now = datetime.today().strftime('%Y-%m-%d %H:%M:%S') # get the date/time
