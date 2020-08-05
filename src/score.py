@@ -27,8 +27,16 @@ def points_ch(soln):
 def points_gs(soln):
     total = 0
     for i in range(1, num_projects): # iterate over the solution
-        if np.count_nonzero(soln == i) == 0: # if a project doesn't run
-            total += lc.weightTeamSize # ??? maybe
-        if lc.minTeamSize[i] <= np.count_nonzero(soln == i) <= lc.maxTeamSize[i]: # group size restriction
+        #print('Checking: i=',i,' - min=',lc.minTeamSize[i],'- max=',lc.maxTeamSize[i], ' - ACT=',np.count_nonzero(soln == i))
+        #print('Soln: ',soln)
+        #if np.count_nonzero(soln == i) == 0: # if a project doesn't run
+        #    total += lc.weightTeamSize # ??? maybe
+        if lc.minTeamSize[i] <= np.count_nonzero(soln == (i+1)) <= lc.maxTeamSize[i]: # group size restriction
+            #print('*** TP',i,':',lc.minTeamSize[i],'<',np.count_nonzero(soln == i),'<', lc.maxTeamSize[i])
             total += lc.weightTeamSize # reward for meeting the constraint
     return total
+
+def groupsizes(soln):
+    gs = np.empty(num_projects, dtype=object)
+    for i in range(num_projects):
+        gs[i] = np.count_nonzero(best_soln == (i+1))

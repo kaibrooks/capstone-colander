@@ -11,6 +11,9 @@ import pandas as pd # loads csv
 # imports from the application
 from score import points_ch, points_gs
 import load_csv as lc
+from prints import printError as err
+from prints import printWarning as warn
+from prints import printGeneral as msg
 
 # defs
 def objf(soln): # objective function
@@ -18,14 +21,13 @@ def objf(soln): # objective function
     arguments:
     soln -- the solution to evaluate
     returns:
-    y -- objective function
+    y -- function value
     """
     max_run_time = lc.max_run_time
+    
+    y = points_gs(soln) # group size
     soln = fix(soln) # indexing
-
-    # points
-    y = points_ch(soln) # choices
-    y += points_gs(soln) # group size
+    y += points_ch(soln) # choices
     
     # timing
     # if time.time()-t0 > max_run_time:
@@ -56,19 +58,18 @@ def run_ga():
     num_projects = lc.num_projects
     
     # hyperparameters
-    global num_iterations
-    num_iterations = 2000
-    cut = 1
+    global num_generations
+    num_generations = 2000
 
     var_bound = np.array([[1,num_projects]]*num_students) # solution shape
-    ga_params = {'max_num_iteration': num_iterations,\
+    ga_params = {'max_num_iteration': num_generations,\
                     'population_size':100,\
                     'mutation_probability':0.02,\
                     'elit_ratio': 0.01,\
                     'crossover_probability': 0.5,\
                     'parents_portion': 0.3,\
                     'crossover_type':'uniform',\
-                    'max_iteration_without_improv':num_iterations*cut
+                    'max_iteration_without_improv':num_generations*0.3
                     } 
 
     # model information
@@ -99,7 +100,7 @@ def ga_debug(best_soln):
     """
     num_projects = lc.num_projects
     
-    print('\n:: Debugging output ::')    
+    print(':: Debugging output ::')
     print('Solution:\n',best_soln)
 
     # group sizes
@@ -124,7 +125,7 @@ def ga_debug(best_soln):
 
     print('\nTiming:')
     print('Run time:',total_time)
-    print('Per generation:', total_time/num_iterations)
+    print('Per generation:', total_time/num_generations)
     
 
 ## call things for test

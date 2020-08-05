@@ -19,18 +19,24 @@ global maxLowGPAStudents
 global maxESLStudents
 global lowGPAThreshold
 
+## test case: all-purpose : /io/students_n50_c5_p15.csv
 projectIDs  = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 minTeamSize = [4, 4, 4, 3, 4, 3, 3, 3, 4, 3, 4, 2, 4, 4, 3]
 maxTeamSize = [5, 4, 7, 4, 4, 5, 6, 4, 5, 5, 4, 5, 6, 6, 5]
+
+## test case: samechoice : /io/students_n10_c5_p5_samechoice.csv
+# projectIDs = [1, 2, 3, 4, 5,]
+# minTeamSize = [4, 4, 4, 3, 3]
+# maxTeamSize = [4, 4, 4, 3, 3]
 
 maxESLStudents          = 2
 lowGPAThreshold         = 2.75
 maxLowGPAStudents       = 2
 weightMaxLowGPAStudents = 100
 weightMaxESLStudents    = 75
-weightTeamSize          = 50
+weightTeamSize          = 50 # 50
 weightStudentPriority   = 100
-weightStudentChoice1    = 75
+weightStudentChoice1    = 100 # 100
 weightAvoid             = 60
 
 # things the ga needs
