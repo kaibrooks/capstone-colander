@@ -69,7 +69,7 @@ def run_ga():
                     'crossover_probability': 0.5,\
                     'parents_portion': 0.3,\
                     'crossover_type':'uniform',\
-                    'max_iteration_without_improv':num_generations*0.3,\
+                    'max_iteration_without_improv':num_generations*0.35,\
                     'max_run_time': math.ceil(max_run_time)
                     } 
 

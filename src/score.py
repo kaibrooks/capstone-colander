@@ -26,13 +26,15 @@ def points_ch(soln):
 # group size
 def points_gs(soln):
     total = 0
-    for i in range(1, num_projects): # iterate over the solution
+    for i in range(num_projects): # iterate over the solution
+        if np.count_nonzero(soln == (i+1)) == 0:
+            total += lc.weightTeamSize*0.2 # give small points to prevent spreading students around
         #print('Checking: i=',i,' - min=',lc.minTeamSize[i],'- max=',lc.maxTeamSize[i], ' - ACT=',np.count_nonzero(soln == i))
         #print('Soln: ',soln)
         #if np.count_nonzero(soln == i) == 0: # if a project doesn't run
         #    total += lc.weightTeamSize # ??? maybe
         if lc.minTeamSize[i] <= np.count_nonzero(soln == (i+1)) <= lc.maxTeamSize[i]: # group size restriction
-            #print('*** TP',i,':',lc.minTeamSize[i],'<',np.count_nonzero(soln == i),'<', lc.maxTeamSize[i])
+            #print('*** TP',i,':',lc.minTeamSize[i],'<',np.count_nonzero(soln == (i+1)),'<', lc.maxTeamSize[i])
             total += lc.weightTeamSize # reward for meeting the constraint
     return total
 
