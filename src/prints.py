@@ -1,5 +1,7 @@
 # message printing for localization
 # github.com/kaibrooks/capstone-colander
+#
+# use string interpolation to print with vars: prints.printGeneral(f"there are {var} things")
 
 import sys
 
@@ -13,4 +15,4 @@ def printWarning(msg):
 
 def printGeneral(msg):
     """prints a general message"""
-    print("\n" + msg)
+    print("" + msg)

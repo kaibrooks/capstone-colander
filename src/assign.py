@@ -7,13 +7,14 @@ import numpy as np
 from geneticalgorithm import geneticalgorithm
 import time # time the algorithm
 import pandas as pd # loads csv
+import math
 
 # imports from the application
 from score import points_ch, points_gs
 import load_csv as lc
 from prints import printError as err
 from prints import printWarning as warn
-from prints import printGeneral as msg
+from prints import printGeneral as gen
 
 # defs
 def objf(soln): # objective function
@@ -23,16 +24,11 @@ def objf(soln): # objective function
     returns:
     y -- function value
     """
-    max_run_time = lc.max_run_time
-    
+
     y = points_gs(soln) # group size
     soln = fix(soln) # indexing
     y += points_ch(soln) # choices
     
-    # timing
-    # if time.time()-t0 > max_run_time:
-    #     print('stop me') # TODO break here
-
     return -y # return negative for positive scoring
 
 def fix(soln):
@@ -56,6 +52,10 @@ def run_ga():
     # passed vars
     num_students = lc.num_students
     num_projects = lc.num_projects
+    max_run_time = lc.maxRunTime*60 # convert into seconds
+    
+    # settings
+    np.set_printoptions(precision=2)
     
     # hyperparameters
     global num_generations
@@ -69,7 +69,8 @@ def run_ga():
                     'crossover_probability': 0.5,\
                     'parents_portion': 0.3,\
                     'crossover_type':'uniform',\
-                    'max_iteration_without_improv':num_generations*0.3
+                    'max_iteration_without_improv':num_generations*0.3,\
+                    'max_run_time': math.ceil(max_run_time)
                     } 
 
     # model information
@@ -81,16 +82,13 @@ def run_ga():
                 )
                 
     # output things
-    print('Running for',num_students,'students and',num_projects,'projects:',lc.infile)
+    gen(f'Running for {num_students} students and {num_projects} projects: {lc.infile}')
 
     # hit it
-    t0 = time.time() # go
-    #best_soln # globalize for debug
-    best_soln = model.run() # call the model defined in geneticalgorithm.py
-    t1 = time.time()
     global total_time
-    total_time = t1-t0 # and stop
-    print('\nTime:', total_time)
+    t0 = time.time()
+    best_soln = model.run() # call the model defined in geneticalgorithm.py
+    total_time = time.time() - t0
     return best_soln
 
 def ga_debug(best_soln):
@@ -100,8 +98,8 @@ def ga_debug(best_soln):
     """
     num_projects = lc.num_projects
     
-    print(':: Debugging output ::')
-    print('Solution:\n',best_soln)
+    gen(f'\n:: Debugging output ::')
+    gen(f'Solution:\n {best_soln}')
 
     # group sizes
     global gs 
@@ -111,23 +109,22 @@ def ga_debug(best_soln):
 
     trunc_limit = 22 # truncate the output to fit in the console
     if len(lc.df_choices['studentChoice1'].values.tolist()) > trunc_limit:
-        print('\nChoices (truncated):')
+        gen(f'\nChoices (truncated):')
     else:
-        print('\nDesired choices:')
-    print('1:',lc.df_choices['studentChoice1'].values.tolist()[:trunc_limit])
-    print('2:',lc.df_choices['studentChoice2'].values.tolist()[:trunc_limit])
-    print('3:',lc.df_choices['studentChoice3'].values.tolist()[:trunc_limit])
+        gen(f'\nDesired choices:')
+    gen(f"1: {lc.df_choices['studentChoice1'].values.tolist()[:trunc_limit]}")
+    gen(f"2: {lc.df_choices['studentChoice2'].values.tolist()[:trunc_limit]}")
+    gen(f"3: {lc.df_choices['studentChoice3'].values.tolist()[:trunc_limit]}")
 
-    print('\nGroup sizes:')
-    print('min:',lc.minTeamSize)
-    print('ACT:', gs.tolist())
-    print('max:',lc.maxTeamSize)
+    gen(f'\nGroup sizes:')
+    gen(f'min: {lc.minTeamSize}')
+    gen(f'ACT: {gs.tolist()}')
+    gen(f'max: {lc.maxTeamSize}')
 
-    print('\nTiming:')
-    print('Run time:',total_time)
-    print('Per generation:', total_time/num_generations)
+    gen(f'\nTiming:')
+    gen(f'Run time: {round(total_time, 3)}')
+    gen(f'Per generation: {round(total_time/num_generations, 6)}')
     
-
 ## call things for test
 best_soln = run_ga()
 ga_debug(best_soln)

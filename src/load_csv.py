@@ -18,6 +18,7 @@ global weightAvoid
 global maxLowGPAStudents
 global maxESLStudents
 global lowGPAThreshold
+global maxRunTime
 
 ## test case: all-purpose : /io/students_n50_c5_p15.csv
 projectIDs  = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
@@ -38,6 +39,7 @@ weightTeamSize          = 50 # 50
 weightStudentPriority   = 100
 weightStudentChoice1    = 100 # 100
 weightAvoid             = 60
+maxRunTime              = 120 # minutes
 
 # things the ga needs
 global df
@@ -47,8 +49,6 @@ global num_students
 global num_choices
 global max_run_time
 global infile # temp
-
-max_run_time = 5
 
 infile = '/io/students_n50_c5_p15.csv'
 df = pd.read_csv(infile) # load a file as a variable
