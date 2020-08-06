@@ -45,4 +45,4 @@ def studentsHandler():
     studentPriority = [0, 0, 0, 0, 0, 1, 1, 0, 0, 0]
     studentAvoid1 = ["Blank", "Blank", "Blank", 4, 3, "Blank", 1, "Blank", "Blank", "Blank"]
 
-    #fauxGA = [0, 0, 0, 0, 1, 1, 1, 1, 10, 10]
+    #fauxGA = [0, 0, 0, 0, 1, 1, 1, 1, 9, 9]

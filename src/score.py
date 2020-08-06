@@ -10,7 +10,7 @@ load_csv.projectsHandler()
 load_csv.studentsHandler()
 
 # Student 0, 1, 2, ..., 8, 9
-fauxGA = [0, 0, 0, 0, 1, 1, 1, 1, 10, 10]
+fauxGA = [0, 0, 0, 0, 1, 1, 1, 1, 9, 9]
 
 def pointsStudentChoice(inputGA):
     totalPSC = 0
@@ -75,59 +75,71 @@ def pointsStudentPriority(inputGA):
     return totalPSP
 
 # This calculates bonus points for having fewer students than maxLowGPAStudents in a group
-def pointsMaxLowGPAStudents():
+def pointsMaxLowGPAStudents(inputGA):
     totalPML = 0
     weight_pml = load_csv.weightMaxLowGPAStudents
     minGPA = load_csv.lowGPAThreshold
     maxLow = load_csv.maxLowGPAStudents
-    maxLow_group = [0] * 50
+    maxLow_group = [0] * 10
 
     print(minGPA, ': min GPA cutoff')
     print(maxLow, ': max students with min GPA in a group')
 
-    for i in load_csv.studentID:
-        if load_csv.studentGPA[i] < minGPA:
-            maxLow_group[fauxGA[i]] = maxLow_group[fauxGA[i]] + 1
-            if maxLow_group[fauxGA[i]] < maxLow:
-                totalPML += weight_pml
-                print('total PML score =', totalPML)
+    def group(maxLow_group):
+        for i in load_csv.studentID:
+            if load_csv.studentGPA[i] < minGPA:
+                maxLow_group[fauxGA[i]] = maxLow_group[fauxGA[i]] + 1
+        return maxLow_group
+
+    print(group(maxLow_group))
+
+    for i in range(len(maxLow_group)):
+        if maxLow_group[i] > 0 and maxLow_group[i] <= maxLow:
+            totalPML += weight_pml
+            print('total PML score =', totalPML)      
+        else:
+            print('No bonus!')
 
     return totalPML
 
 # This calculates bonus points for having met group size constraints
-def pointsTeamSize():
+def pointsTeamSize(inputGA):
     totalPTS = 0
     weight_pts = load_csv.weightTeamSize
-    group_size = [0] * 100
+    group_size = [0] * 10
 
-    for i in load_csv.studentID:
-        group_size[fauxGA[i]] = group_size[fauxGA[i]] + 1
+    def group(group_size):
+        for i in load_csv.studentID:
+            group_size[fauxGA[i]] = group_size[fauxGA[i]] + 1
+        return group_size
 
-        print('mininum team size:', load_csv.minTeamSize[i])
-        print('maximum team size:', load_csv.maxTeamSize[i])
-        print('this group has', group_size[fauxGA[i]], 'people')
+    print(group(group_size))
 
-        if load_csv.minTeamSize[i] <= group_size[fauxGA[i]] <= load_csv.maxTeamSize[i]:
-            totalPTS += weight_pts
-            print('total PTS score =', totalPTS)
+    for i in range(len(group_size)):
+        if group_size[i] > 0:
+            print('mininum team size:', load_csv.minTeamSize[i])
+            print('maximum team size:', load_csv.maxTeamSize[i])
+            print('this group has', group_size[i], 'people')
+
+            if load_csv.minTeamSize[i] <= group_size[i] and group_size[i] <= load_csv.maxTeamSize[i]:
+                totalPTS += weight_pts
+                print('total PTS score =', totalPTS)
+            else:
+                print('No bonus!')
 
     return totalPTS
 
 # This calculates bonus for not violating student disallowance constraint
-def pointsAvoid():
+def pointsAvoid(inputGA):
     totalPSA = 0
     weight_psa = load_csv.weightAvoid
-    student_group = [0] * 50
 
-    for i in load_csv.studentID:
-        student_group[fauxGA[i]] = student_group[fauxGA[i]] + 1
-
-        if load_csv.studentID[i] == load_csv.studentAvoid1[i]:
-            totalPSA += 0
-            print('total PSA score =', totalPSA)
-        else:
+    for i in range(len(fauxGA)):
+        if load_csv.studentID[i] != load_csv.studentAvoid1[i]:
             totalPSA += weight_psa
             print('total PSA score =', totalPSA)
+        else:
+            ('No bonus!')
 
     return totalPSA
 
@@ -137,17 +149,17 @@ def scoringMode(inputGA):
     score = 0
     
     #score = pointsStudentChoice(inputGA)
-    print('score after PSC = ', score)
+    #print('score after PSC = ', score)
     #score += pointsESLStudents(inputGA)
-    print('score after PES = ', score)
+    #print('score after PES = ', score)
     #score += pointsStudentPriority(inputGA)
-    print('score after PSP = ', score)
+    #print('score after PSP = ', score)
     
-    score += pointsMaxLowGPAStudents()
-    print('score after PML = ', score)
-    score += pointsTeamSize()
-    print('score after PTS = ', score)
-    score += pointsAvoid()
+    #score += pointsMaxLowGPAStudents(inputGA)
+    #print('score after PML = ', score)
+    #score += pointsTeamSize(inputGA)
+    #print('score after PTS = ', score)
+    score += pointsAvoid(inputGA)
     print('score after PSA = ', score)
 
     print('score grand total =', score)
