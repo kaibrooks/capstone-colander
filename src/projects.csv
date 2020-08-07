@@ -1,4 +1,4 @@
-Name,Identifier,Min Students,Max Students
+Name,projectID,minTeamSize,maxTeamSize
 Project Alpha,0,4,5
 Project Beta,1,4,4
 Project Gamma,10,4,7
