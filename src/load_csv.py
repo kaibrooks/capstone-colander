@@ -49,8 +49,8 @@ weightMaxLowGPAStudents = 0 # 100
 weightMaxESLStudents    = 0 # 75
 weightStudentPriority   = 0 # 100
 weightAvoid             = 0 # 60
-maxRunTime              = 120 # minutes
-weightTeamSize          = 100 # 50
+maxRunTime              = 120 # 120 minutes
+weightTeamSize          = 100 # 100
 weightStudentChoice1    = 100 # 100
 
 df = pd.read_csv(infile) # load a file as a variable

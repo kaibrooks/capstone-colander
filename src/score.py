@@ -16,7 +16,7 @@ def points_ch(soln):
     total = 0
     for i in range(num_students): #C iterate through the solution to get assignment scores
         for j in range(num_choices): #not the same as num_projects
-            if lc.df_choices.iat[i,j] == soln[i]: # (down, right) -- (0,2) is student 1 choice 3
+            if lc.df_choices.iat[i,j] == soln[i]: # (down, right) -- (0,3) is student 1 choice 4
                 total += math.ceil( points_max - (points_max / num_projects)*(j+1 - 1) ) # points function when that's done, need + 1 because its indexed at 0 (choice 1 is j=0)
                 break
             if j == num_choices: # didn't get any of their picks :(
