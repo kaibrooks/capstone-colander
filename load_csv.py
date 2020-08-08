@@ -168,6 +168,6 @@ def settingsHandler(settingsFileData):
         sys.exit("ERROR: lowGPAThreshold 'min' setting requires a 0.00 - 4.00 value. Terminating program.")
 
 
-def studentsHandler(studentsFileData, progMode):
+def studentsHandler(studentsFileData, studentsFile, progMode):
 
     print("\nstudentHandler will be here.")

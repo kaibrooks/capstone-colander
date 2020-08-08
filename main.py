@@ -85,18 +85,18 @@ def main():
     if main.errorFlag is True:
         pt.printError("Program Terminated. See warning(s) above for additional information.")
 
-    return settingsData, projectsData, studentsData, programMode
+    return settingsData, projectsData, studentsData, studentsFile, programMode
 
 
 if __name__ == "__main__":
 
     # command line parser and error handling
-    settingsFileData, projectsFileData, studentsFileData, progMode = main()
+    settingsFileData, projectsFileData, studentsFileData, studentsFile, progMode = main()
 
     # read, parse, and handle errors of all three csv files
     lc.settingsHandler(settingsFileData)
     lc.projectsHandler(projectsFileData)
-    lc.studentsHandler(studentsFileData, progMode)
+    lc.studentsHandler(studentsFileData, studentsFile, progMode)
 
     if progMode == 'Assignment':
         pt.printGeneral("Program running in Assignment mode with a max run time of {0} minutes.".format(lc.maxRunTime))
@@ -104,4 +104,4 @@ if __name__ == "__main__":
     elif progMode == 'Scoring':
         score.scoringMode()
 
-    pt.printGeneral("Program has completed running")
+    pt.printGeneral("** Program has completed running **")
