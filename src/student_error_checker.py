@@ -138,25 +138,40 @@ def studentsHandler(studentsFile):
         if (value < 0.0) or (value > 4.0):
             print('ERROR: GPA outside of acceptable range')
 
-    #Iterate through studentAvoid?????????
+    #Validate studentAvoid
     clmns = list(studentAvoidN) 
-    sAvoidMatch = False
+    
 
   
     for cind in clmns:                   #shuffle through the columns
         for rind in studentAvoidN.index: #shuffle through the rows
             if pd.isna(studentAvoidN[cind][rind]) == False:     #Ignore empty elements
+                sAvoidMatch = False
                 for i in studentID.index:          #shuffle through the studentIDs
                     if (studentAvoidN[cind][rind] == studentID[i]): # if a match is found flip flag
-                        print ('Match Found')
-                        print(studentAvoidN[cind][rind])
+                        #print ('Match Found')
+                        #print(studentAvoidN[cind][rind])
                         sAvoidMatch = True
                 if sAvoidMatch == False:
+                    print('ERROR: No match found for studentAvoid value' ) 
+                    #print(studentAvoidN[cind][rind])  
+
+    #print(load_csv.projectIDs[0])
+    
+
+    #Validate studentChoice
+    clmns = list(studentChoiceN) 
+
+    for cind in clmns:                   #shuffle through the columns
+        for rind in studentChoiceN.index: #shuffle through the rows
+            if pd.isna(studentChoiceN[cind][rind]) == False:     #Ignore empty elements
+                sChoiceMatch = False
+                for i in range(len(load_csv.projectIDs)):          #shuffle through the studentIDs
+                    if (studentChoiceN[cind][rind] == load_csv.projectIDs[i]): # if a match is found flip flag
+                        #print ('Match Found for studentChoice')
+                        #print(studentChoiceN[cind][rind])
+                        sChoiceMatch = True
+                if sChoiceMatch == False:
                     print('ERROR: No match found for value' ) 
-                    print(studentAvoidN[cind][rind])  
-
-    print(load_csv.projectID)
-
-
-
-
+                    print(studentChoiceN[cind][rind])
+  

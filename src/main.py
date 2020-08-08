@@ -8,6 +8,7 @@ import argparse
 import os
 from datetime import datetime
 import load_csv
+import student_error_checker
 import pandas as pd
 #import run_ga ...when GA is completed and tested
 #import scoring ...when Scoring is completed and tested
@@ -18,6 +19,7 @@ print("Program started", now)  # print it
 
 
 def main():
+    global studentsFile
 
     # default program mode
     programMode = 'Assignment'
@@ -81,7 +83,7 @@ if __name__ == "__main__":
     # read, parse, and handle errors of all three csv files
     load_csv.settingsHandler(settingsFileData)
     load_csv.projectsHandler(projectsFileData)
-    #load_csv.studentsHandler(studentsFileData) ....when complete, call student csv handler
+    student_error_checker.studentsHandler(studentsFile) 
 
     if progMode == 'Assignment':
         print("\nProgram running in Assignment mode with a max run time of {0} minutes.".format(load_csv.maxRunTime))
