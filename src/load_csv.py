@@ -63,7 +63,6 @@ def studentsHandler(studentsFile):
     #print("student avoidances")
     #print(studentAvoidN)
 
-    
 
     ######Store Data#######
     # Store single column data
@@ -87,10 +86,6 @@ def studentsHandler(studentsFile):
     studentESL = [0, 0, 0, 0, 0, 1, 1, 1, 1, 1]
     studentChoice = [0, 0, 0, 0, 1, 2, 4, 4, 11, 100]
     studentPriority = [0, 0, 0, 0, 0, 1, 1, 0, 0, 0]
-<<<<<<< HEAD
-    studentAvoid = ["Blank", "Blank", "Blank", 4, 3, "Blank", 1, "Blank", "Blank", "Blank"]'''
-=======
     studentAvoid1 = ["Blank", "Blank", "Blank", 4, 3, "Blank", 1, "Blank", "Blank", "Blank"]
 
-    #fauxGA = [0, 0, 0, 0, 1, 1, 1, 1, 9, 9]
->>>>>>> e6e06533e2ffec70e5bbe166a5284876705a5929
+    #fauxGA = [0, 0, 0, 0, 1, 1, 1, 1, 9, 9]'''
