@@ -1,3 +1,5 @@
+import sys
+import pandas as pd
 
 def projectsHandler():
 	global minTeamSize
@@ -27,10 +29,52 @@ def settingsHandler():
     weightMaxESLStudents    = 75
     weightTeamSize          = 50
     weightStudentPriority   = 100
-    weightStudentChoice1    = 75
+    weightStudentChoice1    = 100
     weightAvoid             = 60
 
-def studentsHandler():
+def studentsHandler(studentsFile):
+    global studentID
+    global studentGPA
+    global studentESL
+    global studentPriority
+    global studentChoiceN
+    global studentAvoidN
+    global assignment
+
+    #flags to indicate that optional headers have been included default False
+    #colPriority = False
+    #colAvoid = False
+
+    #load students csv file
+    studentsFileData = pd.read_csv(studentsFile)
+
+    # debug print to verify data has been loaded
+    #print(studentsFileData)
+
+
+    #Move studentChoices into a separate global dataframe
+    fields = [col for col in studentsFileData.columns if 'studentChoice' in col] # get columns named 'studentChoice'
+    studentChoiceN = pd.read_csv(studentsFile, skipinitialspace=True, usecols=fields) # df with just choices
+
+    #Move studentAvoid into a separate global dataframe
+    fields = [col for col in studentsFileData.columns if 'studentAvoid' in col] # get columns named 'studentAvoid'
+    studentAvoidN = pd.read_csv(studentsFile, skipinitialspace=True, usecols=fields) # df with just avoidances
+
+    #print("student avoidances")
+    #print(studentAvoidN)
+
+    
+
+    ######Store Data#######
+    # Store single column data
+    studentID = studentsFileData['studentID'].copy()
+    studentGPA = studentsFileData['studentGPA'].copy()
+    studentESL = studentsFileData['studentESL'].copy()
+    studentPriority = studentsFileData['studentPriority'].copy()
+    assignment = studentsFileData['Assignment'].copy()
+
+
+'''def studentsHandler():
     global studentID
     global studentGPA
     global studentESL
@@ -43,4 +87,4 @@ def studentsHandler():
     studentESL = [0, 0, 0, 0, 0, 1, 1, 1, 1, 1]
     studentChoice = [0, 0, 0, 0, 1, 2, 4, 4, 11, 100]
     studentPriority = [0, 0, 0, 0, 0, 1, 1, 0, 0, 0]
-    studentAvoid = ["Blank", "Blank", "Blank", 4, 3, "Blank", 1, "Blank", "Blank", "Blank"]
+    studentAvoid = ["Blank", "Blank", "Blank", 4, 3, "Blank", 1, "Blank", "Blank", "Blank"]'''
