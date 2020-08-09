@@ -112,17 +112,41 @@ def pointsTeamSize(inputArray):
 
     return totalPTS
 
-# This calculates bonus for not violating student disallowance constraint
+# This calculates penalty for violating studentAvoid constraint
 def pointsAvoid(inputArray):
     totalPSA = 0
     weight_psa = load_csv.weightAvoid
+    clear = [0] * 10
+    bad = [0] * 10
+    penalty = 0
+    
+    print('==============================================')
+    for j in range(len(load_csv.projectIDs)):
+        print('Group ID: ',load_csv.projectIDs[j])
+        for i in range(len(fauxGA)):
+            if range(fauxGA[i] == j):
+                print('group: ', fauxGA[i], 'studentID: ', load_csv.studentID[i], 'avoid: ', load_csv.studentAvoid1[i])
+    
+                if (i in load_csv.studentID) == (i in load_csv.studentAvoid1) and (i in fauxGA) == (i in load_csv.studentID):
+                    #if (0 in fauxGA) == (0 in load_csv.studentID):
+                    #    pass
+                    print('match detected')
+                    bad[i] += 1
+                    break
+                else:
+                    print('no match')
+                    clear[i] += 1
+        print('==============================================')
 
-    for i in range(len(inputArray)):
-        if load_csv.studentID[i] != load_csv.studentAvoid1[i]:
-            totalPSA += weight_psa
-            print('total PSA score =', totalPSA)
-        else:
-            ('No bonus!')
+    for i in range(len(fauxGA)):
+            if bad[i] > 0:
+                print('match detected in group: ', fauxGA[i])
+                penalty += 1
+
+    print('penalty: ', penalty)
+    totalPSA -= (weight_psa * penalty)
+    print('PSA score in loop',totalPSA)
+    #print('Current score: ', totalPSA)
 
     return totalPSA
 
