@@ -6,6 +6,17 @@ import pandas as pd
 import prints as pt
 
 
+# function verify that there are no duplicate required column names
+# ignore any duplicate non-required fields
+def findDuplicateCols(fileData, requiredCols, fileName):
+    columnsArray = fileData.columns.str.rsplit('.', n=1).str[0] # separate each column name into an array of strings
+    mask = columnsArray.isin(requiredCols) & columnsArray.duplicated() # create an array of bools, indicating if there is or isn't a duplicate from our req. columns
+    for dup in mask:
+        if dup:
+            duplicateColumns = fileData.columns[mask]
+            pt.printError("Found a duplicate required column in the {0}: {1}. Terminating Program.".format(fileName, duplicateColumns))
+
+
 def projectsHandler(projectsFileData):
     global minTeamSize
     global maxTeamSize
@@ -16,6 +27,9 @@ def projectsHandler(projectsFileData):
     for col in projectsColumns:
         if col not in projectsFileData.columns:
             pt.printError("Required {0} column header not found in the projects csv file. Terminating Program.".format(col))
+
+    # call function to verify there are no duplicates of required columns
+    findDuplicateCols(projectsFileData, projectsColumns, 'Projects CSV file')
 
     # function to verify that all require values in projects csv file are integers within the required range
     def int_checker_projects(columnName):
@@ -81,6 +95,9 @@ def settingsHandler(settingsFileData):
     for col in settingsColumns:
         if col not in settingsFileData.columns:
             pt.printError("Required {0} column header not found in the settings csv file. Terminating Program.".format(col))
+
+    # call function to verify there are no duplicates of required columns
+    findDuplicateCols(settingsFileData, settingsColumns, 'Settings CSV file')
 
     # verify required settings csv rows are present
     settingsRows = ['teamSize', 'lowGPAThreshold', 'maxLowGPAStudents', 'maxESLStudents', 'maxRunTime', 'weightMaxLowGPAStudents',
