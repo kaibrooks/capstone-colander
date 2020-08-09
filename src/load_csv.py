@@ -3,6 +3,9 @@
 
 import sys
 import pandas as pd
+#For studentsHandler()
+from pandas.api.types import is_numeric_dtype
+from pandas.api.types import is_bool_dtype
 
 
 def projectsHandler(projectsFileData):
@@ -170,3 +173,132 @@ def settingsHandler(settingsFileData):
         sys.exit("ERROR: lowGPAThreshold 'min' setting requires a 0.00 - 4.00 value. Terminating program.")# load_csv.py reads and parses all three csv files,
 # then verifies all data in the csv files is valid.
 
+def studentsHandler(studentsFile):
+
+    global studentID
+    global studentGPA
+    global studentESL
+    global studentPriority
+    global studentChoiceN
+    global studentAvoidN
+
+    #Todo: flags to indicate that optional columns have been found in the csv (default False)
+    #colPriority = False
+    #colAvoid = False
+
+    print('\nstudentHandler() begin:')
+
+    #Load csv file
+    studentsFileData = pd.read_csv(studentsFile)
+    # debug print 
+    #print(studentsFileData)
+
+
+    ### Store Data
+
+    print('Loading global variables...')
+
+    #Create studentChoiceN global dataframe
+    fields = [col for col in studentsFileData.columns if 'studentChoice' in col] 
+    studentChoiceN = pd.read_csv(studentsFile, skipinitialspace=True, usecols=fields) 
+
+    #Create studentAvoidN global dataframe
+    fields = [col for col in studentsFileData.columns if 'studentAvoid' in col] 
+    studentAvoidN = pd.read_csv(studentsFile, skipinitialspace=True, usecols=fields) 
+
+    #Create global series
+    studentID = studentsFileData['studentID'].copy()
+    studentGPA = studentsFileData['studentGPA'].copy()
+    studentESL = studentsFileData['studentESL'].fillna(False)
+    studentPriority = studentsFileData['studentPriority'].fillna(False)
+
+
+    ### Validate Data
+    print('Verifying data...')
+
+    #Verify required columns are present 
+    studentsColumns = ['studentID', 'studentChoice1', 'studentGPA','studentESL']
+    for col in studentsColumns:
+       if col not in studentsFileData.columns:
+           sys.exit("ERROR: Required {0} column header not found in the students csv file. Terminating Program.".format(col))
+
+    #Verify studentID contains numbers
+    if is_numeric_dtype(studentID) == False:
+         print('Error studentID type incorrect ')
+         sys.exit("ERROR: Unexpected data type found in studentID. Terminating Program.")        
+    #else:
+        #debug print
+        #print('studentID type correct')
+    
+    #Verify studentGPA contains numbers
+    if is_numeric_dtype(studentGPA) == False:
+         print('Error studentGPA type incorrect ')
+         sys.exit("ERROR: Unexpected data type found in studentGPA. Terminating Program.")        
+    #else:
+        #debug print
+        #print('studentGPA type correct')
+    
+    #Verify studentPriority contains booleans
+    if is_bool_dtype(studentPriority) == False:
+         print('Error studentPriority type incorrect ')
+         sys.exit("ERROR: Unexpected data type found in studentPriority. Terminating Program.")        
+    #else:
+        #debug print
+        #print('studentPriority type correct')
+     
+    #Verify studenChoiceN contains numbers
+    clmn = list(studentChoiceN) 
+    for i in clmn: 
+        if is_numeric_dtype(studentChoiceN[i]) == False:
+            print('Error studentChoice type incorrect ')
+            sys.exit("ERROR: Unexpected data type found in studentChoice. Terminating Program.")        
+        #else:
+            #debug print
+            #print('studentChoice type correct')
+
+    #Verify studentAvoidN contains numbers
+    clmn = list(studentAvoidN) 
+    for i in clmn: 
+        if is_numeric_dtype(studentAvoidN[i]) == False:
+            print('Error studentAvoid type incorrect ')
+            sys.exit("ERROR: Unexpected data type found in studentAvoid. Terminating Program.")        
+        #else:
+            #debug print
+            #print('studentAvoid type correct')
+
+    #Check studentID for duplicate
+    if studentID.duplicated().any():
+        print('ERROR: studentID duplicate')
+    
+    #Check studentGPA within range
+    for value in studentGPA:
+        if (value < 0.0) or (value > 4.0):
+            print('ERROR: GPA outside of acceptable range')
+
+    #Verify studentAvoidN contains valid student ids
+    clmns = list(studentAvoidN) 
+    for cid in clmns:                   
+        for rid in studentAvoidN.index: 
+            if pd.isna(studentAvoidN[cid][rid]) == False:     #If element not empty
+                sAvoidMatch = False
+                for i in studentID.index:          #Find matching id in global studentID
+                    if (studentAvoidN[cid][rid] == studentID[i]): 
+                        sAvoidMatch = True
+                        break
+                if sAvoidMatch == False:
+                    print("ERROR: No matching student id found for studentAvoid = {0:n}".format(studentAvoidN[cid][rid])) 
+
+    #Verify studentChoiceN contains valid project ids
+    clmns = list(studentChoiceN) 
+    for cid in clmns:                   
+        for rid in studentChoiceN.index:
+            if pd.isna(studentChoiceN[cid][rid]) == False:     #If element not empty
+                sChoiceMatch = False
+                for i in range(len(projectIDs)):   #Find matching id in global projectIDs
+                    if (studentChoiceN[cid][rid] == projectIDs[i]): 
+                        sChoiceMatch = True
+                        break
+                if sChoiceMatch == False:
+                    print("ERROR: No matching project id found for studentChoice = {0:n}".format(studentChoiceN[cid][rid])) 
+  
+    print('studentHandler done.\n')
