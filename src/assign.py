@@ -6,7 +6,6 @@
 import numpy as np
 from geneticalgorithm import geneticalgorithm
 import time # time the algorithm
-import pandas as pd # loads csv
 import math
 
 # imports from the application
@@ -70,7 +69,7 @@ def run_ga():
                     'parents_portion': 0.3,\
                     'crossover_type':'uniform',\
                     'max_iteration_without_improv':num_generations*0.35,\
-                    'max_run_time': math.ceil(max_run_time)
+                    'max_run_time': math.ceil(max_run_time) 
                     } 
 
     # model information
