@@ -279,11 +279,11 @@ class geneticalgorithm():
         t=1
         counter=0
         while t<=self.iterate:
-            
-            if time.time()-t0 > int(self.param['max_run_time']): # early stop for run time
-                ##print('\nStopping early', time.time()-t0)
-                t=self.iterate
-                self.stop_time=True
+            ##
+            # if time.time()-t0 > int(self.param['max_run_time']): # early stop for run time
+            #     print('\nStopping early', time.time()-t0)
+            #     t=self.iterate
+            #     self.stop_time=True
             
             self.progress(t,self.iterate,status=status_message)
             
@@ -419,8 +419,8 @@ class geneticalgorithm():
         #plt.savefig(sys.stdout.buffer)
 
         ## stop due to time
-        if self.stop_time==True:
-            sys.stdout.write(time_stop_message)
+        # if self.stop_time==True:
+        #     sys.stdout.write(time_stop_message)
 
         if self.stop_mniwi==True:
             sys.stdout.write(early_stop_message)
