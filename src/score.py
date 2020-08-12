@@ -30,7 +30,7 @@ def pointsESLStudents(inputArray):
     maxESL = load_csv.maxESLStudents
 
     # Initializing an empty array to 0's
-    ESL_Group = [0] * len(load_csv.studentID)
+    ESL_Group = [0] * len(load_csv.projectIDs)
     #print(ESL_Group, 'ESL_Group Before')
     for i in range(len(load_csv.studentID)):
         # Checking if a students ESL flag is set to 1
