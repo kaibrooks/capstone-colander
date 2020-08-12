@@ -120,14 +120,15 @@ def pointsAvoid(inputArray):
     bad = [0] * 10
     penalty = 0
     
+    # loop for checking for matches (violations) for each group 
     print('==============================================')
     for j in range(len(load_csv.projectIDs)):
         print('Group ID: ',load_csv.projectIDs[j])
-        for i in range(len(fauxGA)):
-            if range(fauxGA[i] == j):
-                print('group: ', fauxGA[i], 'studentID: ', load_csv.studentID[i], 'avoid: ', load_csv.studentAvoid1[i])
+        for i in range(len(inputArray)):
+            if range(inputArray[i] == j):
+                print('group: ', inputArray[i], 'studentID: ', load_csv.studentID[i], 'avoid: ', load_csv.studentAvoidN[i])
     
-                if (i in load_csv.studentID) == (i in load_csv.studentAvoid1) and (i in fauxGA) == (i in load_csv.studentID):
+                if (i in load_csv.studentID) == (i in load_csv.studentAvoidN) and (i in inputArray) == (i in load_csv.studentID):
                     #if (0 in fauxGA) == (0 in load_csv.studentID):
                     #    pass
                     print('match detected')
@@ -138,11 +139,13 @@ def pointsAvoid(inputArray):
                     clear[i] += 1
         print('==============================================')
 
-    for i in range(len(fauxGA)):
+    # counts how many groups violoated
+    for i in range(len(inputArray)):
             if bad[i] > 0:
-                print('match detected in group: ', fauxGA[i])
+                print('match detected in group: ', inputArray[i])
                 penalty += 1
 
+    # 
     print('penalty: ', penalty)
     totalPSA -= (weight_psa * penalty)
     print('PSA score in loop',totalPSA)
@@ -158,19 +161,19 @@ def scoringMode(inputArray):
     print(inputArray)
     score = 0
     
-    score = pointsStudentChoice(inputArray)
-    print('score after PSC = ', score)
-    score += pointsESLStudents(inputArray)
-    print('score after PES = ', score)
-    score += pointsStudentPriority(inputArray)
-    print('score after PSP = ', score)
+    #score = pointsStudentChoice(inputArray)
+    #print('score after PSC = ', score)
+    #score += pointsESLStudents(inputArray)
+    #print('score after PES = ', score)
+    #score += pointsStudentPriority(inputArray)
+    #print('score after PSP = ', score)
     
-    #score += pointsMaxLowGPAStudents(inputArray)
+    score += pointsMaxLowGPAStudents(inputArray)
     print('score after PML = ', score)
     #score += pointsTeamSize(inputArray)
-    print('score after PTS = ', score)
+    #print('score after PTS = ', score)
     #score += pointsAvoid(inputArray)
-    print('score after PSA = ', score)
+    #print('score after PSA = ', score)
 
     print('score grand total =', score)
 
