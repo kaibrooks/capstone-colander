@@ -182,6 +182,7 @@ def studentsHandler(studentsFile):
     global studentPriority
     global studentChoiceN
     global studentAvoidN
+    global numStudents
 
     #Error Flag
     errFlg = False
@@ -213,6 +214,7 @@ def studentsHandler(studentsFile):
     studentGPA = studentsFileData['studentGPA'].copy()
     studentESL = studentsFileData['studentESL'].fillna(False)
     studentPriority = studentsFileData['studentPriority'].fillna(False)
+    numStudents = studentsFileData['studentID'].count()
 
 
     ### Validate Data
