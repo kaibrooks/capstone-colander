@@ -89,7 +89,7 @@ def pointsMaxLowGPAStudents(inputArray):
 def pointsTeamSize(inputArray):
     totalPTS = 0
     weight_pts = load_csv.weightTeamSize
-    group_size = [0] * len(load_csv.porjectIDs)
+    group_size = [0] * len(load_csv.projectIDs)
 
     def group(group_size):
         for i in load_csv.studentID:
