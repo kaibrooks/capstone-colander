@@ -63,7 +63,7 @@ def pointsMaxLowGPAStudents(inputArray):
     weight_pml = load_csv.weightMaxLowGPAStudents
     minGPA = load_csv.lowGPAThreshold
     maxLow = load_csv.maxLowGPAStudents
-    maxLow_group = [0] * 10
+    maxLow_group = [0] * len(load_csv.projectIDs)
 
     print(minGPA, ': min GPA cutoff')
     print(maxLow, ': max students with min GPA in a group')
@@ -89,7 +89,7 @@ def pointsMaxLowGPAStudents(inputArray):
 def pointsTeamSize(inputArray):
     totalPTS = 0
     weight_pts = load_csv.weightTeamSize
-    group_size = [0] * 10
+    group_size = [0] * len(load_csv.porjectIDs)
 
     def group(group_size):
         for i in load_csv.studentID:
@@ -116,8 +116,8 @@ def pointsTeamSize(inputArray):
 def pointsAvoid(inputArray):
     totalPSA = 0
     weight_psa = load_csv.weightAvoid
-    clear = [0] * 10
-    bad = [0] * 10
+    clear = [0] * len(load_csv.projectIDs)
+    bad = [0] * len(load_csv.projectIDs)
     penalty = 0
     
     # loop for checking for matches (violations) for each group 
