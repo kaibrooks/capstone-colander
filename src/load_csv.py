@@ -61,3 +61,6 @@ global numStudents
 numStudents = df['studentID'].count() # number of students (count each ID)
 # num_projects = len(projectIDs) # total projects available
 # num_choices = len(df_choices.columns)
+
+global effort
+effort = 2

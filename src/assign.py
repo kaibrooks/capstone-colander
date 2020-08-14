@@ -14,7 +14,7 @@ import time # time the algorithm
 # imports from the application
 import load_csv
 import prints
-from score import pointsAvoid, pointsESLStudents, pointsMaxLowGPAStudents, pointsStudentChoice, pointsStudentPriority, pointsTeamSize
+import score
 
 # defs
 def objf(soln): # objective function
@@ -26,12 +26,12 @@ def objf(soln): # objective function
     """
  
     soln = fix(soln) # indexing
-    y = pointsTeamSize(soln)
-    y += pointsStudentPriority(soln)
-    y += pointsAvoid(soln)
-    y += pointsESLStudents(soln)
-    y += pointsMaxLowGPAStudents(soln)
-    y += pointsStudentChoice(soln)
+    y = score.pointsTeamSize(soln)
+    y += score.pointsStudentPriority(soln)
+    y += score.pointsAvoid(soln)
+    y += score.pointsESLStudents(soln)
+    y += score.pointsMaxLowGPAStudents(soln)
+    y += score.pointsStudentChoice(soln)
     
     return -y # return negative for positive scoring
 
@@ -48,8 +48,10 @@ def fix(soln):
         new_id[i] = load_csv.projectIDs[int(soln[i])-1]
     return new_id
 
-def run_ga():
+def run_ga(verbose=1):
     """run the genetic algorithm
+    arguments:
+    verbose (optional, default True) -- (1/0) outputs running text and progress bar
     returns:
     best_soln -- the best solution
     """
@@ -61,10 +63,7 @@ def run_ga():
     np.set_printoptions(precision=2) # output 2 past the decimal
     
     # hyperparameters
-    global num_generations
-    global ga_effort
-    ga_effort = 2.5
-    num_generations = num_students*num_projects*ga_effort # scale generations based on input size
+    num_generations = num_students*num_projects*load_csv.effort # scale generations based on input size
 
     var_bound = np.array([[1,num_projects]]*num_students) # solution shape
     ga_params = {'max_num_iteration': num_generations,\
@@ -74,7 +73,8 @@ def run_ga():
                     'crossover_probability': 0.5,\
                     'parents_portion': 0.3,\
                     'crossover_type':'uniform',\
-                    'max_iteration_without_improv':num_generations*0.15,\
+                    'max_iteration_without_improv':num_generations*0.35,\
+                    'verbose':verbose,\
                     }
 
     # max_num_iteration <int> -- stop after this many generations
@@ -94,13 +94,12 @@ def run_ga():
                 algorithm_parameters=ga_params
                 )
     # function=objf -- function to minimize
-    # dimension=num_students -- length
+    # dimension=num_students -- chromosome length
     # variable_type=int -- data type
-    # variable_boundaries=var_bound -- data range per element 
+    # variable_boundaries=var_bound -- data range per gene 
     # algorithm_parameters=ga_params -- ga settings from above
-    verbose = 1
-    if verbose:        
-        prints.printGeneral(f'Running {num_generations} with input: {load_csv.infile}')
+    if verbose:       
+        prints.printGeneral(f'Running {num_generations} generations with input: {load_csv.infile}')
 
     # hit it
     global total_time
@@ -109,40 +108,6 @@ def run_ga():
     total_time = time.time() - t0
     
     return best_soln
-
-def ga_debug(best_soln):
-    """genetic algorithm debugging output
-    arguments:
-    best_soln (req) -- the best solution the ga outputs
-    """
-    num_projects = load_csv.num_projects
-    
-    prints.printGeneral(f'\n:: Debugging output ::')
-    prints.printGeneral(f'Solution:\n {best_soln}')
-
-    # group sizes
-    global gs 
-    gs = np.empty(num_projects, dtype=object)
-    for i in range(num_projects):
-        gs[i] = np.count_nonzero(best_soln == (i+1))
-
-    trunc_limit = 22 # truncate the output to fit in the console
-    if len(load_csv.df_choices['studentChoice1'].values.tolist()) > trunc_limit:
-        prints.printGeneral(f'\nChoices (truncated):')
-    else:
-        prints.printGeneral(f'\nDesired choices:')
-    prints.printGeneral(f"1: {load_csv.df_choices['studentChoice1'].values.tolist()[:trunc_limit]}")
-    prints.printGeneral(f"2: {load_csv.df_choices['studentChoice2'].values.tolist()[:trunc_limit]}")
-    prints.printGeneral(f"3: {load_csv.df_choices['studentChoice3'].values.tolist()[:trunc_limit]}")
-
-    prints.printGeneral(f'\nGroup sizes:')
-    prints.printGeneral(f'min: {load_csv.minTeamSize}')
-    prints.printGeneral(f'ACT: {gs.tolist()}')
-    prints.printGeneral(f'max: {load_csv.maxTeamSize}')
-
-    prints.printGeneral(f'\nTiming:')
-    prints.printGeneral(f'Run time: {round(total_time, 3)}')
-    prints.printGeneral(f'Per generation: {round(total_time/num_generations, 6)}')
     
 ## call things for test
-best_soln = run_ga()
+best_soln = run_ga() # run_ga(verbose=0) for silence
