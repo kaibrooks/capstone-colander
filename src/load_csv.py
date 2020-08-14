@@ -174,7 +174,7 @@ def settingsHandler(settingsFileData):
         sys.exit("ERROR: lowGPAThreshold 'min' setting requires a 0.00 - 4.00 value. Terminating program.")# load_csv.py reads and parses all three csv files,
 # then verifies all data in the csv files is valid.
 
-def studentsHandler(studentsFile):
+def studentsHandler(studentsFile, progMode):
 
     global studentID
     global studentGPA
@@ -182,6 +182,7 @@ def studentsHandler(studentsFile):
     global studentPriority
     global studentChoiceN
     global studentAvoidN
+    global studentAssignment
     global numStudents
 
     #Error Flag
@@ -203,7 +204,7 @@ def studentsHandler(studentsFile):
     studentsColumns = ['studentID', 'studentChoice1', 'studentGPA','studentESL']
     for col in studentsColumns:
        if col not in studentsFileData.columns:
-           prints.err("ERROR: Required {0} column header not found in the students csv file. Terminating Program.".format(col))
+           prints.err("Required {0} column header not found in the students csv file. Terminating Program.".format(col))
 
     #Create studentChoiceN global dataframe
     fields = [col for col in studentsFileData.columns if 'studentChoice' in col] 
@@ -217,12 +218,12 @@ def studentsHandler(studentsFile):
     numStudents = studentsFileData['studentID'].count()
 
 
-    ### Validate Data
+    ### Validate required data
     prints.gen('Verifying data...')
 
     #Verify studentID contains numbers
     if is_numeric_dtype(studentID) == False:
-         prints.logerr("ERROR: Unexpected data type found in studentID.")
+         prints.logerr("Unexpected data type found in studentID.")
          errFlg = True
     #else:
         #debug print
@@ -230,7 +231,7 @@ def studentsHandler(studentsFile):
     
     #Verify studentGPA contains numbers
     if is_numeric_dtype(studentGPA) == False:
-         prints.logerr("ERROR: Unexpected data type found in studentGPA.")        
+         prints.logerr("Unexpected data type found in studentGPA.")        
          errFlg = True
     #else:
         #debug print
@@ -240,7 +241,7 @@ def studentsHandler(studentsFile):
     clmn = list(studentChoiceN) 
     for i in clmn: 
         if is_numeric_dtype(studentChoiceN[i]) == False:
-            prints.logerr("ERROR: Unexpected data type found in studentChoice.")        
+            prints.logerr("Unexpected data type found in studentChoice.")        
             errFlg = True
         #else:
             #debug print
@@ -248,7 +249,7 @@ def studentsHandler(studentsFile):
 
     #Verify studentESL contains booleans
     if is_bool_dtype(studentESL) == False:
-            prints.logerr("ERROR: Unexpected data type found in studentPriority.")        
+            prints.logerr("Unexpected data type found in studentPriority.")        
             errFlg = True
         #else:
             #debug print
@@ -327,6 +328,34 @@ def studentsHandler(studentsFile):
                         errFlg = True
     else:
         prints.warn('studentAvoid NOT found')
+
+    #Check for Assign column when in Assign mode
+    if progMode == 'Scoring':
+        if 'assignment' in studentsFileData.columns:
+            
+            #Store assignment column
+            studentAssignment = studentsFileData['assignment'].copy()
+
+            #Verify assignment contains numbers
+            if is_numeric_dtype(studentAssignment) == False:
+                prints.logerr("Unexpected data type found in assignment column.")        
+                errFlg = True   
+            
+            #Verify assignment contains valid projects
+            for i in range(len(studentAssignment)): #maybe wrong double check this....
+                if pd.isna(studentAssignment[i]) == False:     #If element not empty
+                    prints.err("Empty field found in Assignment column.")
+                else:
+                    sAssignmentMatch = False
+                    for j in range(len(projectIDs)):   #Find matching id in global projectIDs
+                        if (studentAssignment[i] == projectIDs[j]): 
+                            sAssignmentMatch = True
+                            break
+                    if sAssignmentMatch == False:
+                        prints.logerr("No matching project id found for assignment = {0:n}".format(studentAssignment[i]))
+                        errFlg = True 
+        else:
+            prints.err("No assignment column found. Terminating program.")
 
     prints.gen('studentHandler done.')
 

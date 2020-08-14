@@ -79,10 +79,11 @@ if __name__ == "__main__":
     # command line parser and error handling
     settingsFileData, projectsFileData, studentsFileData, progMode = main()
 
+    progMode = 'Scoring'
     # read, parse, and handle errors of all three csv files
     load_csv.settingsHandler(settingsFileData)
     load_csv.projectsHandler(projectsFileData)
-    load_csv.studentsHandler(studentsFile) 
+    load_csv.studentsHandler(studentsFile, progMode) 
 
     if progMode == 'Assignment':
         print("\nProgram running in Assignment mode with a max run time of {0} minutes.".format(load_csv.maxRunTime))
@@ -90,5 +91,6 @@ if __name__ == "__main__":
     elif progMode == 'Scoring':
         print("\nProgram running in Scoring mode.")
         #scoring.scoreFunction() ...when complete, call Scoring function
+
 
     print("\n*** Program has completed running ***")
