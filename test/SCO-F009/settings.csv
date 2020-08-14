@@ -9,4 +9,4 @@ weightMaxESLStudents,,,0
 weightTeamSize,,,0
 weightStudentPriority,,,0
 weightStudentChoice1,,,0
-weightAvoid,,,0 # needs filling
+weightAvoid,,,100 # needs filling
