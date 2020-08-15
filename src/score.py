@@ -7,7 +7,7 @@ import load_csv
 
 load_csv.settingsHandler()
 load_csv.projectsHandler()
-load_csv.studentsHandler('io/students.csv')
+load_csv.studentsHandler('students.csv')
 
 def pointsStudentChoice(inputArray):
     totalPSC = 0
