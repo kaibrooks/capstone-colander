@@ -1,7 +1,0 @@
-Name,Description,Value,Score
-Team Size,Project team has appropriate number of students,4,600
-GPA ,Project has appropriate number of students inside low GPA threshold ,3.0,400
-ESL Students,Project has appropriate number of ESL Students,1,400
-Priority Student,Student with Priority flag gets first choice,NA,600
-Runtime,Second to force stop computation after (3600 = 1hr),3600,NA
-First Choice,Student gets first choice (further choices divided down),NA,100
