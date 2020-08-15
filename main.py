@@ -3,16 +3,21 @@
 # main.py parses command line arguments, handles command line errors,
 # and calls remaining functions from other files.
 
+
+
 import argparse
 import os
 from datetime import datetime
 import pandas as pd
+
 # imports below are other python files used in this project
 # which are required to call their functions from main
 import load_csv as lc
 import assign
 import score
 import prints as pt
+import load_csv
+
 
 # startup information
 now = datetime.today().strftime('%Y-%m-%d %H:%M:%S')  # get the date/time
@@ -49,6 +54,7 @@ def main():
         programMode = 'Scoring'
     if argument.assign:
         programMode = 'Assignment'
+
         if argument.score:
             pt.printWarning("both Scoring (-c) and Assignment (-a) modes selected. Program will run in Assignment mode.")
 
@@ -89,15 +95,17 @@ def main():
     return settingsData, projectsData, studentsData, studentsFile, programMode
 
 
+
 if __name__ == "__main__":
 
     # command line parser and error handling
+
     settingsFileData, projectsFileData, studentsFileData, studentsFile, progMode = main()
 
     # read, parse, and handle errors of all three csv files
     lc.settingsHandler(settingsFileData)
     lc.projectsHandler(projectsFileData)
-    lc.studentsHandler(studentsFileData, studentsFile, progMode)
+    lc.studentsHandler(studentsFileData, progMode)
 
     if progMode == 'Assignment':
         pt.printGeneral("Program running in Assignment mode with a max run time of {0} minutes.".format(lc.maxRunTime))
