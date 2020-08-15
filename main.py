@@ -26,6 +26,7 @@ def main():
 
     # accepted command line arguments
     parser = argparse.ArgumentParser()
+
     parser.add_argument("-s", "--students", help="Students CSV filename", required=False, default='students.csv')
     parser.add_argument("-p", "--projects", help="Projects CSV filename", required=False, default='projects.csv')
     parser.add_argument("-u", "--settings", help="User Settings CSV filename", required=False, default='settings.csv')
