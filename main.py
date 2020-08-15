@@ -3,28 +3,35 @@
 # main.py parses command line arguments, handles command line errors,
 # and calls remaining functions from other files.
 
-import sys
+
+
 import argparse
 import os
 from datetime import datetime
 import pandas as pd
+
+# imports below are other python files used in this project
+# which are required to call their functions from main
+import load_csv as lc
+import assign
+import score
+import prints as pt
 import load_csv
-#import run_ga ...when GA is completed and tested
-#import scoring ...when Scoring is completed and tested
+
 
 # startup information
 now = datetime.today().strftime('%Y-%m-%d %H:%M:%S')  # get the date/time
-print("Program started", now)  # print it
+pt.printGeneral("Program started {0}".format(now))  # print it
 
 
 def main():
-    global studentsFile
 
     # default program mode
     programMode = 'Assignment'
 
     # accepted command line arguments
     parser = argparse.ArgumentParser()
+
     parser.add_argument("-s", "--students", help="Students CSV filename", required=False, default='students.csv')
     parser.add_argument("-p", "--projects", help="Projects CSV filename", required=False, default='projects.csv')
     parser.add_argument("-u", "--settings", help="User Settings CSV filename", required=False, default='settings.csv')
@@ -48,22 +55,32 @@ def main():
     if argument.assign:
         programMode = 'Assignment'
 
-    # if output user provided already exists when running in Assignment mode, terminate program
-    if programMode == 'Assignment' and os.path.exists(outputFile):
-        sys.exit("ERROR: {0} already exists in the directory. Enter a unique output file name using the -o FILENAME command. Terminating Program.".format(outputFile))
+        if argument.score:
+            pt.printWarning("both Scoring (-c) and Assignment (-a) modes selected. Program will run in Assignment mode.")
 
-    # function to verify user provided files exist and that they are csv files
+    # if output user provided already exists when running in Assignment mode, warn user
+    if programMode == 'Assignment' and os.path.exists(outputFile):
+        pt.printWarning("output file {0} already exists in the directory and will be overwritten with new assignments.".format(outputFile))
+
+    # function to verify user provided files exist and that they are csv files by attempting to read file into a data structure
+    # returns data structure assuming all files are csv files
+    # otherwise, sets an errorFlag to True to terminate program after each filed is checked
+    main.errorFlag = False
     def csvFileCheck(csvFileName):
         if not os.path.exists(csvFileName):
             # if original filename not found, add .csv extension and check again
             tempFileName = csvFileName + '.csv'
             if not os.path.exists(tempFileName):
-                sys.exit("ERROR: {0} csv file can not be found. Terminating Program.".format(csvFileName))
+                pt.printWarning("{0} csv file can not be found. Terminating program.".format(csvFileName))
+                main.errorFlag = True
+                return 0
             csvFileName = tempFileName
         try:
             tempDataStruct = pd.read_csv(csvFileName)
         except ValueError:
-            sys.exit("ERROR: {0} is not a valid csv file. Terminating Program.".format(csvFileName))
+            pt.printWarning("{0} is not a valid csv file. Terminating Program.".format(csvFileName))
+            main.errorFlag = True
+            return 0
         return tempDataStruct
 
     # load projects csv file
@@ -71,26 +88,29 @@ def main():
     projectsData = csvFileCheck(projectsFile)
     studentsData = csvFileCheck(studentsFile)
 
-    return settingsData, projectsData, studentsData, programMode
+    # terminate program if any errors detected in the csvFileCheck function
+    if main.errorFlag is True:
+        pt.printError("Program Terminated. See warning(s) above for additional information.")
+
+    return settingsData, projectsData, studentsData, studentsFile, programMode
+
 
 
 if __name__ == "__main__":
 
     # command line parser and error handling
-    settingsFileData, projectsFileData, studentsFileData, progMode = main()
 
-    progMode = 'Scoring'
+    settingsFileData, projectsFileData, studentsFileData, studentsFile, progMode = main()
+
     # read, parse, and handle errors of all three csv files
-    load_csv.settingsHandler(settingsFileData)
-    load_csv.projectsHandler(projectsFileData)
-    load_csv.studentsHandler(studentsFile, progMode) 
+    lc.settingsHandler(settingsFileData)
+    lc.projectsHandler(projectsFileData)
+    lc.studentsHandler(studentsFileData, progMode)
 
     if progMode == 'Assignment':
-        print("\nProgram running in Assignment mode with a max run time of {0} minutes.".format(load_csv.maxRunTime))
-        #run_ga.geneticAlgorithmFunction() ...when complete, call GA for assignment mode
+        pt.printGeneral("Program running in Assignment mode with a max run time of {0} minutes.".format(lc.maxRunTime))
+        assign.ga()
     elif progMode == 'Scoring':
-        print("\nProgram running in Scoring mode.")
-        #scoring.scoreFunction() ...when complete, call Scoring function
+        score.scoringMode()
 
-
-    print("\n*** Program has completed running ***")
+    pt.printGeneral("** Program has completed running **")

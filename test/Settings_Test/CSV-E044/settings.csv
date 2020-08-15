@@ -1,9 +1,9 @@
 name,min,max,points
 teamSize,3,5,
-lowGPAThreshold,2.15,,
+lowGPAThreshold,tolerance,,
 maxLowGPAStudents,,2,
 maxESLStudents,,2,
-maxRunTime,,60,
+maxRunTime,,2,
 weightMaxLowGPAStudents,,,100
 weightMaxESLStudents,,,75
 weightTeamSize,,,90
