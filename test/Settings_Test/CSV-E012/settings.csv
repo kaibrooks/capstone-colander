@@ -1,9 +1,9 @@
-name,min,max,points
+name,min,max_amooy,points
 teamSize,3,5,
-lowGPAThreshold,2.15,,
+lowGPAThreshold,2.56,,
 maxLowGPAStudents,,2,
 maxESLStudents,,2,
-maxRunTime,,60,
+maxRunTime,,2,
 weightMaxLowGPAStudents,,,100
 weightMaxESLStudents,,,75
 weightTeamSize,,,90
