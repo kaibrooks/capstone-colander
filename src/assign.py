@@ -2,14 +2,9 @@
 # kai brooks
 # github.com/kaibrooks/capstone-colander
 
-# how to call the genetic algorithm:
-# k = run_ga()
-# k is a numpy.ndarray (array of integers)
-
 # standard libraries
 import numpy as np
 from geneticalgorithm import geneticalgorithm
-import time # time the algorithm
 
 # imports from the application
 import load_csv
@@ -53,19 +48,14 @@ def run_ga(verbose=1):
     arguments:
     verbose (optional, default True) -- (1/0) outputs running text and progress bar
     returns:
-    best_soln -- the best solution
+    best_soln -- numpty array of the best solution
     """
-    # passed vars
-    num_students = load_csv.numStudents
-    num_projects = len(load_csv.projectIDs) # total projects available
-    
-    # settings
-    np.set_printoptions(precision=2) # output 2 past the decimal
-    
-    # hyperparameters
-    num_generations = num_students*num_projects*load_csv.effort # scale generations based on input size
 
-    var_bound = np.array([[1,num_projects]]*num_students) # solution shape
+    # vars
+    num_projects = len(load_csv.projectIDs) # total projects available
+    num_generations = load_csv.numStudents*num_projects*load_csv.effort # scale generations based on input size
+
+    var_bound = np.array([[1,num_projects]]*load_csv.numStudents) # solution shape
     ga_params = {'max_num_iteration': num_generations,\
                     'population_size':100,\
                     'mutation_probability':0.02,\
@@ -88,13 +78,13 @@ def run_ga(verbose=1):
 
     # model information
     model=geneticalgorithm(function=objf,\
-                dimension=num_students,\
+                dimension=load_csv.numStudents,\
                 variable_type='int',\
                 variable_boundaries=var_bound,\
                 algorithm_parameters=ga_params
                 )
     # function=objf -- function to minimize
-    # dimension=num_students -- chromosome length
+    # dimension=load_csv.numStudents -- chromosome length
     # variable_type=int -- data type
     # variable_boundaries=var_bound -- data range per gene 
     # algorithm_parameters=ga_params -- ga settings from above
@@ -102,12 +92,7 @@ def run_ga(verbose=1):
         prints.printGeneral(f'Running {num_generations} generations with input: {load_csv.infile}')
 
     # hit it
-    global total_time
-    t0 = time.time()
-    best_soln = model.run() # call the model defined in geneticalgorithm.py
-    total_time = time.time() - t0
-    
-    return best_soln
-    
+    return model.run() # run the model defined in geneticalgorithm.py
+
 ## call things for test
 best_soln = run_ga() # run_ga(verbose=0) for silence
