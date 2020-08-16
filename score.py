@@ -13,7 +13,6 @@ def pointsStudentChoice(inputArray):
     totalPSC = 0
     number_choices = 5
     points_max = load_csv.weightStudentChoice1
-
     
     # Students = rows (y), ProjectChoices = columns (x)
     for y in range(len(load_csv.studentID)):
@@ -104,7 +103,6 @@ def pointsTeamSize(inputArray):
     totalPTS = 0
     weight_pts = load_csv.weightTeamSize
     group_size = [0] * len(load_csv.projectIDs)
-    #print(group_size)
 
     def group(group_size):
         for i in range(len(load_csv.studentID)):
@@ -133,39 +131,20 @@ def pointsTeamSize(inputArray):
 def pointsAvoid(inputArray):
     totalPSA = 0
     weight_psa = load_csv.weightAvoid
-    #clear = [0] * len(load_csv.studentID)
-    #bad = [0] * len(load_csv.studentID)
-    #penalty = 0
 
-    #print(load_csv.studentID)
-    #for i in load_csv.studentID:
-    #    print(load_csv.studentID[0])
-
-    #print(load_csv.studentAvoidN)
-    #for i in load_csv.studentAvoidN:
-    #    print(load_csv.studentAvoidN[0])
-
+    print(weight_psa)
     clear = 0
     bad = 0
     
-    # loop for checking for matches (violations) for each group 
-    #print('==============================================')
+    # loop for checking for matches (violations) for each group
     for j in range(len(load_csv.projectIDs)):
         #print('Group ID: ',load_csv.projectIDs[j])
         for i in range(len(inputArray)):
             if range(inputArray[i] == j):
                 #print('group: ', load_csv.projectIDs, 'studentID: ', load_csv.studentID[i], 'avoid: ', load_csv.studentAvoidN[i])
                 if (i in load_csv.studentID) == (i in load_csv.studentAvoidN): #(i in inputArray) == (i in load_csv.studentID):
-                    #print(load_csv.studentID)
-                    #print('match detected')
-                    bad += 1
 
-                else:
-                    #print(load_csv.studentID[i])
-                    #print(load_csv.studentAvoidN[i])
-                    #print('no match')
-                    clear += 1
-        #print('==============================================')
+                    bad += 1
 
     # counts how many groups violoated
     #for i in range(len(inputArray)):
