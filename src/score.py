@@ -14,7 +14,7 @@ def pointsStudentChoice(inputArray):
     number_choices = 5
     points_max = load_csv.weightStudentChoice1
 
-
+    
     # Students = rows (y), ProjectChoices = columns (x)
     for y in range(len(load_csv.studentID)):
         for x in range(len(load_csv.studentChoiceN.columns)):
@@ -90,9 +90,9 @@ def pointsMaxLowGPAStudents(inputArray):
     #print('Number of students < minGPA for each group: ', maxgroup(maxLow_group))
 
     for i in range(len(maxLow_group)):
-        if maxLow_group[i] >= 0 and maxLow_group[i] <= maxLow and group_size[i] > 0:
+        if maxLow_group[i] >= 0 and maxLow_group[i] <= maxLow and group_size[i] > 0: 
             totalPML += weight_pml
-            #print('total PML score =', totalPML)
+            #print('total PML score =', totalPML) 
         else:
             #print('No bonus!')
             pass
@@ -147,8 +147,8 @@ def pointsAvoid(inputArray):
 
     clear = 0
     bad = 0
-
-    # loop for checking for matches (violations) for each group
+    
+    # loop for checking for matches (violations) for each group 
     #print('==============================================')
     for j in range(len(load_csv.projectIDs)):
         #print('Group ID: ',load_csv.projectIDs[j])
@@ -191,14 +191,14 @@ def scoringMode(inputArray):
 
     print('Assignment: ', inputArray)
     score = 0
-
+    
     score = pointsStudentChoice(inputArray)
     print('score after PSC = ', score)
     score += pointsESLStudents(inputArray)
     print('score after PES = ', score)
     score += pointsStudentPriority(inputArray)
     print('score after PSP = ', score)
-
+    
     score += pointsMaxLowGPAStudents(inputArray)
     print('score after PML = ', score)
     score += pointsTeamSize(inputArray)
