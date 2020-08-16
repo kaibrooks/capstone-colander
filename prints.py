@@ -13,7 +13,7 @@ def warn(msg):
 
 def gen(msg):
     """prints a general message"""
-    print("\n" + msg)
+    print(msg)
 
 def logerr(msg):
     """prints an error message"""
