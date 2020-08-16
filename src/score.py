@@ -101,6 +101,8 @@ def pointsTeamSize(inputArray):
             group_size[inputArray[i]] = group_size[inputArray[i]] + 1
         return group_size
 
+    group(group_size)
+
     for i in range(len(group_size)):
         if group_size[i] > 0:
             if load_csv.minTeamSize[i] <= group_size[i] and group_size[i] <= load_csv.maxTeamSize[i]:
@@ -119,8 +121,7 @@ def pointsAvoid(inputArray):
     for j in range(len(load_csv.projectIDs)):
         for i in range(len(inputArray)):
             if range(inputArray[i] == j):
-                if (i in load_csv.studentID) == (
-                        i in load_csv.studentAvoidN):  # (i in inputArray) == (i in load_csv.studentID):
+                if (i in load_csv.studentID) == (i in load_csv.studentAvoidN):  # (i in inputArray) == (i in load_csv.studentID):
                     # print('match detected')
                     bad += 1
 
