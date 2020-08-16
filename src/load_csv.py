@@ -10,6 +10,7 @@ def projectsHandler(projectsFileData):
     global maxTeamSize
     global projectIDs
 
+    
     # verify required project csv headers are present
     projectsColumns = ['projectID', 'minTeamSize', 'maxTeamSize']
     for col in projectsColumns:
@@ -166,7 +167,6 @@ def settingsHandler(settingsFileData):
         sys.exit("The lowGPAThreshold 'min' value is not a float. Terminating program.")
     if (lowGPAThreshold < 0) or (lowGPAThreshold > 4.00) or (pd.isna(lowGPAThreshold)):
         sys.exit("ERROR: lowGPAThreshold 'min' setting requires a 0.00 - 4.00 value. Terminating program.")
-
 
 def projectsHandler(projectsFileData):
     global minTeamSize
@@ -509,5 +509,3 @@ def studentsHandler(studentsFile, progMode):
     #Exit when error conditions met
     if errFlg == True:
         prints.err("Invalid data found in input CSV files. Terminating program.")
-
-    print("\nstudentHandler will be here.")
