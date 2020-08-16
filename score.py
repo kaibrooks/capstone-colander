@@ -5,15 +5,16 @@
 import math # ceil()
 import load_csv
 
-load_csv.settingsHandler()
-load_csv.projectsHandler()
-load_csv.studentsHandler('students.csv')
+#load_csv.settingsHandler()
+#load_csv.projectsHandler('projects.csv')
+#load_csv.studentsHandler('students.csv')
 
 def pointsStudentChoice(inputArray):
     totalPSC = 0
     number_choices = 5
     points_max = load_csv.weightStudentChoice1
 
+    
     # Students = rows (y), ProjectChoices = columns (x)
     for y in range(len(load_csv.studentID)):
         for x in range(len(load_csv.studentChoiceN.columns)):
@@ -30,7 +31,9 @@ def pointsESLStudents(inputArray):
     maxESL = load_csv.maxESLStudents
 
     # Initializing an empty array to 0's
-    ESL_Group = [0] * len(load_csv.projectIDs)
+    ESL_Group = [0] * len(load_csv.studentID)
+
+    print(load_csv.projectIDs)
     #print(ESL_Group, 'ESL_Group Before')
     for i in range(len(load_csv.studentID)):
         # Checking if a students ESL flag is set to 1
@@ -63,8 +66,8 @@ def pointsMaxLowGPAStudents(inputArray):
     weight_pml = load_csv.weightMaxLowGPAStudents
     minGPA = load_csv.lowGPAThreshold
     maxLow = load_csv.maxLowGPAStudents
-    maxLow_group = [0] * len(load_csv.projectIDs)
-    group_size = [0] * len(load_csv.projectIDs)
+    maxLow_group = [0] * len(load_csv.studentID)
+    group_size = [0] * len(load_csv.studentID)
     #print(group_size)
     #print(minGPA, ': min GPA cutoff')
     #print(maxLow, ': max students with min GPA in a group')
@@ -183,6 +186,7 @@ def scoringMode(inputArray):
     # Delete this when hooked up to real GA/Array input
     # Student 0, 1, 2, ..., 15, 16
     # Project 0, 1, 2, ..., 8, 9
+    #print(load_csv.projectIDs)
     inputArray = [0, 0, 2, 0, 1, 1, 1, 1, 9, 9, 2, 3, 4, 5, 6, 4, 4]
 
     print('Assignment: ', inputArray)
@@ -203,6 +207,8 @@ def scoringMode(inputArray):
     print('score after PSA = ', score)
 
     print('score grand total =', score)
+
+    return score
 
 cat = 'Vera'
 scoringMode(cat)
