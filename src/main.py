@@ -64,14 +64,14 @@ def main():
             # if original filename not found, add .csv extension and check again
             tempFileName = csvFileName + '.csv'
             if not os.path.exists(tempFileName):
-                prints.logerr("{0} csv file can not be found. Terminating program.".format(csvFileName))
+                prints.logerr("{0} csv file can not be found.".format(csvFileName))
                 main.errorFlag = True
                 return 0
             csvFileName = tempFileName
         try:
             tempDataStruct = pd.read_csv(csvFileName)
         except ValueError:
-            pt.logerr("{0} is not a valid csv file. Terminating Program.".format(csvFileName))
+            prints.logerr("{0} is not a valid csv file.".format(csvFileName))
             main.errorFlag = True
             return 0
         return tempDataStruct
