@@ -9,7 +9,7 @@ def err(msg):
 
 def warn(msg):
     """prints a warning"""
-    print("\nWARNING: " + msg)
+    print("\nWarning: " + msg)
 
 def gen(msg):
     """prints a general message"""
