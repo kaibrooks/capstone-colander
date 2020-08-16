@@ -186,7 +186,7 @@ def studentsHandler(studentsFile, progMode):
     global numStudents
 
     #Error Flag
-    errFlg = False
+    global errFlg = False
 
     prints.gen('\nstudentHandler() begin:')
 
@@ -361,4 +361,4 @@ def studentsHandler(studentsFile, progMode):
 
     #Exit when error conditions met
     if errFlg == True:
-        prints.err("Invalid data found in Students CSV file. Terminating program.")
+        prints.err("Invalid data found in input CSV files. Terminating program.")
