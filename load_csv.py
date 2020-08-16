@@ -134,6 +134,7 @@ def settingsHandler(settingsFileData):
                 return tempInt
             else:
                 prints.logerr("{0} in the {1} row is not an integer.".format(value, rowName))
+                errFlg = True
                 return 0
 
         # if pandas set column data type to float
@@ -195,8 +196,10 @@ def settingsHandler(settingsFileData):
         lowGPAThreshold = float(settingsFileData.set_index('name').at['lowGPAThreshold', 'min'])
     except:
         prints.logerr("The lowGPAThreshold 'min' value is not a float.")
+        errFlg = True
     if (lowGPAThreshold < 0) or (lowGPAThreshold > 4.00) or (pd.isna(lowGPAThreshold)):
         prints.logerr("lowGPAThreshold 'min' setting requires a 0.00 - 4.00 value.")
+        errFlg = True
 
 
 def studentsHandler(studentsFile, progMode):
