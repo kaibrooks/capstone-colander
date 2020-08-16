@@ -3,14 +3,18 @@
 
 import sys
 
-def printError(msg):
+def err(msg):
     """prints and error message and exits"""
     sys.exit("\nERROR: " + msg)
 
-def printWarning(msg):
+def warn(msg):
     """prints a warning"""
-    print("\nWARNING: " + msg)
+    print("\nWarning: " + msg)
 
-def printGeneral(msg):
+def gen(msg):
     """prints a general message"""
-    print("" + msg)
+    print(msg)
+
+def logerr(msg):
+    """prints an error message"""
+    print("\nERROR: " + msg)
