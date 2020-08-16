@@ -19,7 +19,7 @@ def objf(soln): # objective function
     returns:
     y -- function value
     """
- 
+
     soln = fix(soln) # indexing
     y = score.pointsTeamSize(soln)
     y += score.pointsStudentPriority(soln)
@@ -27,7 +27,7 @@ def objf(soln): # objective function
     y += score.pointsESLStudents(soln)
     y += score.pointsMaxLowGPAStudents(soln)
     y += score.pointsStudentChoice(soln)
-    
+
     return -y # return negative for positive scoring
 
 def fix(soln):
@@ -73,7 +73,7 @@ def run_ga(verbose=1):
     # elit_ration <float in [0,1]> -- elite ratio
     # crossover_probability <float in [0,1]>  -- probability of crossover for each gene
     # parents_portion <float in [0,1]> -- ratio of parents in each generation
-    # crossover_type <string> -- 'uniform', 'one_point', or 'two_point' 
+    # crossover_type <string> -- 'uniform', 'one_point', or 'two_point'
     # max_iteration_without_improv <int> -- stop early after this many successive generations without improvement
 
     # model information
@@ -86,13 +86,10 @@ def run_ga(verbose=1):
     # function=objf -- function to minimize
     # dimension=load_csv.numStudents -- chromosome length
     # variable_type=int -- data type
-    # variable_boundaries=var_bound -- data range per gene 
+    # variable_boundaries=var_bound -- data range per gene
     # algorithm_parameters=ga_params -- ga settings from above
-    if verbose:       
-        prints.printGeneral(f'Running {num_generations} generations with input: {load_csv.infile}')
+    if verbose:
+        prints.gen(f'Running {num_generations} generations with input: {load_csv.infile}')
 
     # hit it
     return model.run() # run the model defined in geneticalgorithm.py
-
-## call things for test
-best_soln = run_ga() # run_ga(verbose=0) for silence
