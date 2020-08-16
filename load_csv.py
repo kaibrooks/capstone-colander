@@ -4,6 +4,7 @@
 import sys
 import pandas as pd
 import prints
+
 #For studentsHandler()
 from pandas.api.types import is_numeric_dtype
 from pandas.api.types import is_bool_dtype
@@ -13,6 +14,9 @@ def projectsHandler(projectsFileData):
     global minTeamSize
     global maxTeamSize
     global projectIDs
+    global errFlg
+
+    errFlg = False
 
     # verify required project csv headers are present
     projectsColumns = ['projectID', 'minTeamSize', 'maxTeamSize']
@@ -184,10 +188,8 @@ def studentsHandler(studentsFile, progMode):
     global studentAvoidN
     global studentAssignment
     global numStudents
-
-    #Error Flag
-    global errFlg = False
-
+     
+    
     prints.gen('\nstudentHandler() begin:')
 
     #Load csv file
@@ -203,12 +205,26 @@ def studentsHandler(studentsFile, progMode):
        if col not in studentsFileData.columns:
            prints.err("Required {0} column header not found in the students csv file. Terminating Program.".format(col))
     
-    #Find duplicate required columns
-    #findDuplicateCols(studentsFileData, studentsColumns, studentsFile)
 
     #Create studentChoiceN global dataframe
     fields = [col for col in studentsFileData.columns if 'studentChoice' in col] 
     studentChoiceN = pd.read_csv(studentsFile, skipinitialspace=True, usecols=fields)  
+
+    ### Find duplicate required columns
+
+    #Append list of column names to include studentChoice columns
+    studentsColumns.extend(studentChoiceN)
+    
+    if 'studentAvoid' in studentsFileData.columns:
+        
+        #Create studentAvoidN global dataframe
+        fields = [col for col in studentsFileData.columns if 'studentAvoid' in col] 
+        studentAvoidN = pd.read_csv(studentsFile, skipinitialspace=True, usecols=fields)
+        
+        #Append list of column names to include studentAvoid columns
+        studentsColumns.extend(studentAvoidN)
+
+    findDuplicateCols(studentsFileData, studentsColumns, studentsFile)
 
     #Create global series
     studentID = studentsFileData['studentID'].copy()
@@ -304,13 +320,9 @@ def studentsHandler(studentsFile, progMode):
     else:
         prints.warn('studentPriority column not found')
 
-    #Check for optional studentAvoid 
+    #Verify studentAvoid data
     if 'studentAvoid' in studentsFileData.columns:
         
-        #Create studentAvoidN global dataframe
-        fields = [col for col in studentsFileData.columns if 'studentAvoid' in col] 
-        studentAvoidN = pd.read_csv(studentsFile, skipinitialspace=True, usecols=fields)
-
         #Verify studentAvoidN contains numbers
         clmn = list(studentAvoidN) 
         for i in clmn: 
