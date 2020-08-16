@@ -3,10 +3,10 @@
 
 import sys
 import pandas as pd
-import prints as pt
+import prints
 
 
-# function verify that there are no duplicate required column names
+# function verifies that there are no duplicate required column names
 # ignore any duplicate non-required fields
 def findDuplicateCols(fileData, requiredCols, fileName):
     columnsArray = fileData.columns.str.rsplit('.', n=1).str[0] # separate each column name into an array of strings
@@ -14,19 +14,20 @@ def findDuplicateCols(fileData, requiredCols, fileName):
     for dup in mask:
         if dup:
             duplicateColumns = fileData.columns[mask]
-            pt.printError("Found a duplicate required column in the {0}: {1}. Terminating Program.".format(fileName, duplicateColumns))
+            prints.err("Found a duplicate required column in the {0}: {1}. Terminating Program.".format(fileName, duplicateColumns))
 
 
 def projectsHandler(projectsFileData):
     global minTeamSize
     global maxTeamSize
     global projectIDs
+    global errFlg
 
     # verify required project csv headers are present
     projectsColumns = ['projectID', 'minTeamSize', 'maxTeamSize']
     for col in projectsColumns:
         if col not in projectsFileData.columns:
-            pt.printError("Required {0} column header not found in the projects csv file. Terminating Program.".format(col))
+            prints.err("Required {0} column header not found in the projects csv file. Terminating Program.".format(col))
 
     # call function to verify there are no duplicates of required columns
     findDuplicateCols(projectsFileData, projectsColumns, 'Projects CSV file')
@@ -40,16 +41,19 @@ def projectsHandler(projectsFileData):
                 try:
                     value = float(value)
                 except ValueError:
-                    pt.printError("{0} in the {1} column is not an integer. Terminating Program.".format(value, columnName))
+                    prints.logerr("{0} in the {1} column is not an integer.".format(value, columnName))
+                    errFlg = True
             if isinstance(value, float):
                 if value.is_integer():
                     value = int(value)
             if isinstance(value, int):
                 if (value < 1) or (value > pow(2, 64)):
-                    pt.printError("Value {0} in the {1} column must be an integer greater than zero and less than 2^64. Terminating Program".format(value, columnName))
+                    prints.logerr("Value {0} in the {1} column must be an integer greater than zero and less than 2^64.".format(value, columnName))
+                    errFlg = True
                 tempArray.append(value)
             else:
-                pt.printError("{0} in the {1} column is not an integer. Terminating Program.".format(value, columnName))
+                prints.logerr("{0} in the {1} column is not an integer.".format(value, columnName))
+                errFlg = True
         return tempArray
 
     # verify that all values in program csv file are integers
@@ -57,7 +61,7 @@ def projectsHandler(projectsFileData):
 
     # verify that there are no duplicate project IDs in the projectID column
     if projectsFileData.projectID.duplicated().any():
-        pt.printError("projectid {0} is a duplicate projectID in the csv file. Terminating Program.".format({projectsFileData[projectsFileData.projectID.duplicated()].projectID.iloc[0]}))
+        prints.logerr("projectid {0} is a duplicate projectID in the csv file.".format({projectsFileData[projectsFileData.projectID.duplicated()].projectID.iloc[0]}))
 
     # if values for team sizes are blank, enter size from settings.csv and then verify all values are integers
     projectsFileData['minTeamSize'] = projectsFileData['minTeamSize'].fillna(defaultMinTeamSize)
@@ -68,12 +72,12 @@ def projectsHandler(projectsFileData):
     # verify minTeamSize is not greater than maxTeamSize
     for min,max,pid in zip(minTeamSize,maxTeamSize,projectIDs):
         if min > max:
-            pt.printError("minTeamSize is greater than maxTeamSize for projectID {0}.".format(pid))
+            prints.logerr("minTeamSize is greater than maxTeamSize for projectID {0}.".format(pid))
 
     # warn user if gap found in projectID sequence that starts a projectID '1'
     projectIDGap = projectIDs[-1]*(projectIDs[-1] + projectIDs[0]) / 2 - sum(projectIDs)
     if projectIDGap > 0:
-        pt.printWarning("gap found in projectID sequence in the projects csv file.")
+        prints.warn("gap found in projectID sequence in the projects csv file.")
 
 
 def settingsHandler(settingsFileData):
@@ -89,12 +93,15 @@ def settingsHandler(settingsFileData):
     global maxLowGPAStudents
     global maxESLStudents
     global lowGPAThreshold
+    global errFlg
+
+    errFlg = False
 
     # verify required settings csv headers are present
     settingsColumns = ['name', 'min', 'max', 'points']
     for col in settingsColumns:
         if col not in settingsFileData.columns:
-            pt.printError("Required {0} column header not found in the settings csv file. Terminating Program.".format(col))
+            prints.err("Required {0} column header not found in the settings csv file. Terminating Program.".format(col))
 
     # call function to verify there are no duplicates of required columns
     findDuplicateCols(settingsFileData, settingsColumns, 'Settings CSV file')
@@ -104,14 +111,17 @@ def settingsHandler(settingsFileData):
                        'weightMaxESLStudents', 'weightTeamSize', 'weightStudentPriority', 'weightStudentChoice1', 'weightAvoid']
     for row in settingsRows:
         if row not in settingsFileData['name'].values:
-            pt.printError("Required {0} row 'name' not found in the settings csv file. Terminating Program.".format(row))
+            prints.err("Required {0} row not found in the settings csv file. Terminating Program.".format(row))
+        if len(settingsFileData[settingsFileData['name'] == row]) > 1:
+            prints.err("Required {0} row is duplicated in the settings csv file. Terminating Program.".format(row))
 
     # function to verify values in the csv file are integers.
     def int_checker_settings(value, rowName, minValue):
 
         if isinstance(value, int):
             if (value < minValue) or (value > pow(2, 64)):
-                 pt.printError("Value {0} in the {1} column must be an integer greater than zero and less than 2^64. Terminating Program".format(value, rowName))
+                prints.logerr("Value {0} in the {1} column must be an integer greater than zero and less than 2^64.".format(value, rowName))
+                errFlg = True
             return value
 
         # function to verify integer if data type of value is not originally set as int (dtype could be obj or float)
@@ -119,10 +129,12 @@ def settingsHandler(settingsFileData):
             if value.is_integer():
                 tempInt = int(value)
                 if (tempInt < minValue) or (tempInt > pow(2, 64)):
-                    pt.printError("Value {0} in the {1} column must be an integer greater than zero and less than 2^64. Terminating Program".format(value, rowName))
+                    prints.logerr("Value {0} in the {1} column must be an integer greater than zero and less than 2^64.".format(value, rowName))
+                    errFlg = True
                 return tempInt
             else:
-                pt.printError("{0} in the {1} row is not an integer. Terminating Program.".format(value, rowName))
+                prints.logerr("{0} in the {1} row is not an integer.".format(value, rowName))
+                return 0
 
         # if pandas set column data type to float
         # this would happen when there are only floats or empty fields found in the column
@@ -135,7 +147,8 @@ def settingsHandler(settingsFileData):
             try:
                 tempInt = float(value)
             except ValueError:
-                pt.printError("{0} in the {1} row is not an integer. Terminating Program.".format(value, rowName))
+                prints.logerr("{0} in the {1} row is not an integer.".format(value, rowName))
+                errFlg = True
             return is_integer_settings(tempInt, rowName, minValue)
 
 
@@ -171,21 +184,21 @@ def settingsHandler(settingsFileData):
         maxRunTime = int(settingsFileData.set_index('name').at['maxRunTime', 'max'])
     except:
         maxRunTime = 60
-        pt.printWarning("maxRunTime value in settings csv is not an integer. Running with default value of 60 minutes.")
+        prints.warn("maxRunTime value in settings csv is not an integer. Running with default value of 60 minutes.")
     if maxRunTime < 0:
         maxRunTime = 60
-        pt.printWarning("maxRunTime in the settings csv is not a value between 1 and 2^64. Running with default value of 60 minutes.")
+        prints.warn("maxRunTime in the settings csv is not a value between 1 and 2^64. Running with default value of 60 minutes.")
 
     # verify that provided lowGPAThreshold is not empty and that it's a float within range
     # If it is, assign value to global variable for scoring function to use.
     try:
         lowGPAThreshold = float(settingsFileData.set_index('name').at['lowGPAThreshold', 'min'])
     except:
-        pt.printError("The lowGPAThreshold 'min' value is not a float. Terminating program.")
+        prints.logerr("The lowGPAThreshold 'min' value is not a float.")
     if (lowGPAThreshold < 0) or (lowGPAThreshold > 4.00) or (pd.isna(lowGPAThreshold)):
-        pt.printError("lowGPAThreshold 'min' setting requires a 0.00 - 4.00 value. Terminating program.")
+        prints.logerr("lowGPAThreshold 'min' setting requires a 0.00 - 4.00 value.")
 
 
-def studentsHandler(studentsFileData, studentsFile, progMode):
+def studentsHandler(studentsFile, progMode):
 
     print("\nstudentHandler will be here.")
