@@ -1,0 +1,6 @@
+name,projectID,minTeamSize,maxTeamSize
+Project Alpha,1,4,5.5
+Project Beta,2,4,7.7
+Project Gamma,10,4,8.8
+Project Delta,11,3,9.9
+Project Epsilon,100,4,10.12
