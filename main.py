@@ -14,14 +14,14 @@ import pandas as pd
 # which are required to call their functions from main
 import load_csv as lc
 import assign
-import score
+#import score
 import prints as pt
 import load_csv
 
 
 # startup information
 now = datetime.today().strftime('%Y-%m-%d %H:%M:%S')  # get the date/time
-pt.printGeneral("Program started {0}".format(now))  # print it
+pt.gen("Program started {0}".format(now))  # print it
 
 
 def main():
@@ -102,15 +102,16 @@ if __name__ == "__main__":
 
     settingsFileData, projectsFileData, studentsFileData, studentsFile, progMode = main()
 
+    progMode = 'Scoring'
     # read, parse, and handle errors of all three csv files
     lc.settingsHandler(settingsFileData)
     lc.projectsHandler(projectsFileData)
-    lc.studentsHandler(studentsFileData, progMode)
+    lc.studentsHandler(studentsFile, progMode)
 
     if progMode == 'Assignment':
-        pt.printGeneral("Program running in Assignment mode with a max run time of {0} minutes.".format(lc.maxRunTime))
+        pt.gen("Program running in Assignment mode with a max run time of {0} minutes.".format(lc.maxRunTime))
         assign.ga()
     elif progMode == 'Scoring':
         score.scoringMode()
 
-    pt.printGeneral("** Program has completed running **")
+    pt.gen("** Program has completed running **")
