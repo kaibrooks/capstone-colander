@@ -215,16 +215,10 @@ def studentsHandler(studentsFile, progMode):
     global studentAvoidN
     global studentAssignment
     global numStudents
-
-
-    prints.gen('\nstudentHandler() begin:')
+    global errFlg
 
     #Load csv file
     studentsFileData = pd.read_csv(studentsFile)
-
-    ### Store Data
-
-    prints.gen('Loading global variables...')
 
     #Verify required columns are present
     studentsColumns = ['studentID', 'studentChoice1', 'studentGPA','studentESL']
@@ -261,7 +255,6 @@ def studentsHandler(studentsFile, progMode):
     numStudents = studentsFileData['studentID'].count()
 
     ### Validate data
-    prints.gen('Verifying data...')
 
     #Check for Assign column when in Assign mode
     if progMode == 'Scoring':
@@ -372,8 +365,6 @@ def studentsHandler(studentsFile, progMode):
                         errFlg = True
     else:
         prints.warn('studentAvoid NOT found')
-
-    prints.gen('studentHandler done.')
 
     #Exit when error conditions met
     if errFlg == True:
