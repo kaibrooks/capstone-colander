@@ -73,8 +73,6 @@ def pointsMaxLowGPAStudents(inputArray):
 
     maxgroup(maxLow_group)
     sizegroup(group_size)
-    print(maxLow_group)
-    print(group_size)
 
     for i in range(len(maxLow_group)):
         if maxLow_group[i] >= 0 and maxLow_group[i] <= maxLow and group_size[i] > 0: 
@@ -96,7 +94,6 @@ def pointsTeamSize(inputArray):
         return group_size
 
     group(group_size)
-    print(group_size)
 
     for i in range(len(group_size)):
         if group_size[i] > 0:
@@ -113,27 +110,22 @@ def pointsAvoid(inputArray):
     bad = 0
     weight_psa = load_csv.weightAvoid
 
-    print('==============================================')
     for j in range(len(load_csv.projectIDs)):
-        print('Group ID:',load_csv.projectIDs[j])
+        #print('Group ID:',load_csv.projectIDs[j])
         for i in range(len(inputArray)):
             if inputArray[i] == j:                    
-                print('ID:',load_csv.studentID[i],'Avoid:',load_csv.studentAvoid1[i])
+                #print('ID:',load_csv.studentID[i],'Avoid:',load_csv.studentAvoid1[i])
                 if load_csv.studentAvoid1[i] == load_csv.studentID[j]:
-                    print('match detected!','student:',load_csv.studentID[j],',matches with Avoid:',load_csv.studentAvoid1[i])
+                    #print('match detected!','student:',load_csv.studentID[j],',matches with Avoid:',load_csv.studentAvoid1[i])
                     bad += 1                
                 if load_csv.studentAvoid1[j] == load_csv.studentID[i]:
-                    print('match detected!','student:',load_csv.studentID[i],',matches with Avoid:',load_csv.studentAvoid1[j])
+                    #print('match detected!','student:',load_csv.studentID[i],',matches with Avoid:',load_csv.studentAvoid1[j])
                     bad += 1  
                 if any(load_csv.studentAvoid1) == load_csv.studentID[i]:
-                    print('match detected!','student:',load_csv.studentID[i],',matches with Avoid:',load_csv.studentAvoid1[i])
-                    bad += 1
-                else:
-                    continue                         
-        print('==============================================')
+                    #print('match detected!','student:',load_csv.studentID[i],',matches with Avoid:',load_csv.studentAvoid1[i])
+                    bad += 1                       
 
-
-    print('bad: ',bad)
+    #print('bad: ',bad)
     totalPSA -= (weight_psa * bad)
 
     return totalPSA
@@ -144,16 +136,16 @@ def scoringMode(inputArray):
     print('Assignment: ', inputArray)
     score = 0
     
-    #score = pointsStudentChoice(inputArray)
+    score = pointsStudentChoice(inputArray)
     print('score after PSC = ', score)
-    #score += pointsESLStudents(inputArray)
+    score += pointsESLStudents(inputArray)
     print('score after PES = ', score)
-    #score += pointsStudentPriority(inputArray)
+    score += pointsStudentPriority(inputArray)
     print('score after PSP = ', score)
     
-    #score += pointsMaxLowGPAStudents(inputArray)
+    score += pointsMaxLowGPAStudents(inputArray)
     print('score after PML = ', score)
-    #score += pointsTeamSize(inputArray)
+    score += pointsTeamSize(inputArray)
     print('score after PTS = ', score)
     score += pointsAvoid(inputArray)
     print('score after PSA = ', score)
@@ -161,6 +153,3 @@ def scoringMode(inputArray):
     print('score grand total =', score)
 
     return score
-
-cat = 'Vera'
-scoringMode(cat)
