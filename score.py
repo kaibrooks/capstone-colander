@@ -4,7 +4,6 @@
 
 import math # ceil()
 import load_csv
-import numpy as np
 
 def pointsStudentChoice(inputArray):
     totalPSC = 0
@@ -111,31 +110,21 @@ def pointsTeamSize(inputArray):
 # This calculates penalty for violating studentAvoid constraint
 def pointsAvoid(inputArray):
     totalPSA = 0
-    weight_psa = load_csv.weightAvoid
-    avoid_size = [0] * len(load_csv.projectIDs)
     bad = 0
+    weight_psa = load_csv.weightAvoid
 
-    def Avoid(avoid_size):
-        for i in range(len(inputArray)):
-            if load_csv.studentID == load_csv.studentAvoidN:
-                avoid_size[inputArray[i]] = avoid_size[inputArray[i]] + 1
-        return avoid_size
-
-    Avoid(avoid_size)
-    print(avoid_size)
-
-    # loop for checking for matches (violations) for each group 
     print('==============================================')
     for j in range(len(load_csv.projectIDs)):
-        print('Group ID: ',load_csv.projectIDs[j])
+        print('Group ID:',load_csv.projectIDs[j])
         for i in range(len(inputArray)):
-            if range(inputArray[i] == j):
-                print(inputArray)
-                if (i in load_csv.studentID) == (i in load_csv.studentAvoidN):
-                    print('match detected')
-                    bad += 1
-                else:
-                    pass
+            if inputArray[i] == j:
+                print('ID:',load_csv.studentID[i],'Avoid:',load_csv.studentAvoid1[i])
+                if load_csv.studentAvoid1[i] == load_csv.studentID[j]:
+                    print('match detected!','student:',load_csv.studentID[j],',matches with Avoid:',load_csv.studentAvoid1[i])
+                    bad += 1                
+                if load_csv.studentAvoid1[j] == load_csv.studentID[i]:
+                    print('match detected!','student:',load_csv.studentID[i],',matches with Avoid:',load_csv.studentAvoid1[j])
+                    bad += 1  
         print('==============================================')
 
     print('bad: ',bad)
@@ -156,9 +145,9 @@ def scoringMode(inputArray):
     #score += pointsStudentPriority(inputArray)
     print('score after PSP = ', score)
     
-    score += pointsMaxLowGPAStudents(inputArray)
+    #score += pointsMaxLowGPAStudents(inputArray)
     print('score after PML = ', score)
-    score += pointsTeamSize(inputArray)
+    #score += pointsTeamSize(inputArray)
     print('score after PTS = ', score)
     score += pointsAvoid(inputArray)
     print('score after PSA = ', score)
