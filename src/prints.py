@@ -20,7 +20,7 @@ def logerr(msg):
     print("\nERROR: " + msg)
 
 def debug(msg):
-    """prints an debugging message"""
+    """prints a debugging message"""
     debugMode = 1
     if debugMode:
         print("" + msg)
