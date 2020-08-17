@@ -30,7 +30,7 @@ print('\n::: SCO-F005 :::')
 cor_score = 200
 # correct and ready to test - DY
 ​
-# SCO-F006 - group size constraint with default values 
+# SCO-F006 - group size constraint with default values
 print('\n::: SCO-F006 :::')
 cor_score = 200
 # correct and ready to test - DY
@@ -52,3 +52,7 @@ cor_score = -800
 # SCO-F010 - maxLowGPAStudents constraint
 print('\n::: SCO-F010 :::')
 cor_score = 0
+
+# SCO-F011 - different studentChoiceN's filled
+print('\n::: SCO-F011 :::')
+cor_score = 550
