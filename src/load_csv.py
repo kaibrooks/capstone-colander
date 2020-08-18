@@ -215,6 +215,9 @@ def studentsHandler(studentsFile, progMode):
     global numStudents
     global errFlg
 
+    #Warn user
+    prints.warn("Bug found in data verification for studentAvoid, studentChoice, assignment columns, please validate manually until bug can be repaired\n")
+
     #Load csv file
     studentsFileData = pd.read_csv(studentsFile)
 
@@ -275,10 +278,12 @@ def studentsHandler(studentsFile, progMode):
                     for j in range(len(projectIDs)):   #Find matching id in global projectIDs
                         if (studentAssignment[i] == projectIDs[j]):
                             sAssignmentMatch = True
+                            #replace project id with project index
+                            studentAssignment = studentAssignment.replace(studentAssignment[i],j)
                             break
-                    if sAssignmentMatch == False:
-                        prints.logerr("No matching project id found for assignment = {0:n}".format(studentAssignment[i]))
-                        errFlg = True
+                    # if sAssignmentMatch == False:
+                    #     prints.logerr("No matching project id found for assignment = {0:n}".format(studentAssignment[i]))
+                    #     errFlg = True
         else:
             prints.err("No assignment column found. Terminating program.")
 
@@ -301,7 +306,7 @@ def studentsHandler(studentsFile, progMode):
 
     #Verify studentESL contains booleans
     if is_bool_dtype(studentESL) == False:
-            prints.logerr("Unexpected data type found in studentPriority.")
+            prints.logerr("Unexpected data type found in studentESL.")
             errFlg = True
 
     #Check studentID for duplicate
@@ -324,10 +329,14 @@ def studentsHandler(studentsFile, progMode):
                 for i in range(len(projectIDs)):   #Find matching id in global projectIDs
                     if (studentChoiceN[cid][rid] == projectIDs[i]):
                         sChoiceMatch = True
+                        #prints.debug("matching project id found for studentChoice = {0:n}".format(studentChoiceN[cid][rid]))
+                        #replace project id with project index
+                        studentChoiceN[cid] = studentChoiceN[cid].replace(studentChoiceN[cid][rid],i)
                         break
-                if sChoiceMatch == False:
-                    prints.logerr("No matching project id found for studentChoice = {0:n}".format(studentChoiceN[cid][rid]))
-                    errFlg = True
+                # if sChoiceMatch == False:
+                #     prints.logerr("No matching project id found for studentChoice = {0:n}".format(studentChoiceN[cid][rid]))
+                #     errFlg = True
+
 
     #Check for optional studentPriority column
     if 'studentPriority' in studentsFileData.columns:
@@ -357,12 +366,15 @@ def studentsHandler(studentsFile, progMode):
                     for i in studentID.index:          #Find matching id in global studentID
                         if (studentAvoidN[cid][rid] == studentID[i]):
                             sAvoidMatch = True
+                            #Replace student id with student index
+                            studentAvoidN[cid] = studentAvoidN[cid].replace(studentAvoidN[cid][rid],i)
                             break
-                    if sAvoidMatch == False:
-                        prints.logerr("No matching student id found for studentAvoid = {0:n}".format(studentAvoidN[cid][rid]))
-                        errFlg = True
+                    # if sAvoidMatch == False:
+                    #     prints.logerr("No matching student id found for studentAvoid = {0:n}".format(studentAvoidN[cid][rid]))
+                    #     errFlg = True
     else:
         prints.warn('studentAvoid NOT found')
+    
 
     #Exit when error conditions met
     if errFlg == True:
