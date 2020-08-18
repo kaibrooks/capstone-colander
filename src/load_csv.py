@@ -155,7 +155,6 @@ def settingsHandler(settingsFileData):
                 errFlg = True
             return is_integer_settings(tempInt, rowName, minValue)
 
-
     # verify required values in 'points' column are integers
     # if they are, assign value to global variable for scoring function to use
     weightMaxLowGPAStudents = int_checker_settings(
@@ -190,9 +189,7 @@ def settingsHandler(settingsFileData):
         effort = 20
     if effort < 0 or effort > 100:
         effort = 20
-        prints.warn("'effort' in the settings csv is not an int between 1 and 100. Running with default value of 60 minutes.")
-
-    print(effort)
+        prints.warn("'effort' in the settings csv is not an int between 1 and 100. Running with default value of 20.")
 
     # verify that provided lowGPAThreshold is not empty and that it's a float within range
     # If it is, assign value to global variable for scoring function to use.
