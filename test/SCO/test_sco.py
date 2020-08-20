@@ -1,13 +1,12 @@
 # run scoring tests
 # kai brooks
 # github.com/kaibrooks
-​
+
 import sys
+import unittest
 sys.path.insert(1, 'src/') # look for imports in the project root
 from score import pointsStudentChoice, pointsESLStudents, pointsStudentPriority, pointsMaxLowGPAStudents, pointsTeamSize, pointsAvoid
-​
-print('*** RUNNING TEST_SCO.PY ***')
-​
+
 # SCO-F001 - 'all-purpose' score
 print('\n::: SCO-F001 :::')
 cor_score = 700 # correct score
