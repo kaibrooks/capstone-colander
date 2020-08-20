@@ -24,8 +24,8 @@ install-python3-macos:
 
 test:
 		@echo "\n${BLUE}Running tests...${NC}\n"
-		python3 -m unittest discover -s test -p 'test_*.py'
-		python3 -m unittest -v test/test_demo.py
+		@python3 -m unittest discover -s test -v -p 'test_*.py'
+		#python3 -m unittest -v 'test/SCO/test_sco.py'
 
 lint:
 		@echo "\n${BLUE}Running Flake8 against source and test files...${NC}\n"
