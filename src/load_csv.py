@@ -230,6 +230,9 @@ def studentsHandler(studentsFile, progMode):
     fields = [col for col in studentsFileData.columns if 'studentChoice' in col]
     studentChoiceN = pd.read_csv(studentsFile, skipinitialspace=True, usecols=fields)
 
+    #Sort studentChoiceN columns sequentially
+    studentChoiceN = studentChoiceN.reindex(sorted(studentChoiceN.columns), axis=1)
+
     ### Find duplicate required columns
 
     #Append list of column names to include studentChoice columns
@@ -334,10 +337,6 @@ def studentsHandler(studentsFile, progMode):
                 if sChoiceMatch == False:
                     prints.logerr("No matching project id found for studentChoice = {0:n}".format(studentChoiceN[cid][rid]))
                     errFlg = True
-        
-    
-
-
 
     #Check for optional studentPriority column
     if 'studentPriority' in studentsFileData.columns:
