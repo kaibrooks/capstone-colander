@@ -239,7 +239,8 @@ def studentsHandler(studentsFile, progMode):
     #Append list of column names to include studentChoice columns
     studentsColumns.extend(studentChoiceN)
 
-    if 'studentAvoid' in studentsFileData.columns:
+
+    if 'studentAvoid1' in studentsFileData.columns:
 
         #Create studentAvoidN global dataframe
         fields = [col for col in studentsFileData.columns if 'studentAvoid' in col]
@@ -352,7 +353,7 @@ def studentsHandler(studentsFile, progMode):
         prints.warn('studentPriority column not found')
 
     #Verify studentAvoid data
-    if 'studentAvoid' in studentsFileData.columns:
+    if 'studentAvoid1' in studentsFileData.columns:
 
         #Verify studentAvoidN contains numbers
         clmn = list(studentAvoidN)
