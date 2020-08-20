@@ -214,6 +214,7 @@ def studentsHandler(studentsFile, progMode):
     global studentAssignment
     global numStudents
     global errFlg
+    global numStudentChoices
 
 
     #Load csv file
@@ -254,7 +255,10 @@ def studentsHandler(studentsFile, progMode):
     studentGPA = studentsFileData['studentGPA'].copy()
     studentESL = studentsFileData['studentESL'].fillna(False)
     studentPriority = studentsFileData['studentPriority'].fillna(False)
+    
+    #Define global variable
     numStudents = studentsFileData['studentID'].count()
+    numStudentChoices = len(studentChoiceN.columns)
 
     ### Validate data
 
