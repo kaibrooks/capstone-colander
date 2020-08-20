@@ -1,10 +1,8 @@
-# macos makefile
+# makefile
+# kai brooks
+# github.com/kaibrooks/capstone-colander
 
-# packages
-#pip3 install -r requirements.txt # install from requirements.txt
-#pip3 install cycler func-timeout kiwisolver matplotlib numpy pandas Pillow pyparsing python-dateutil pytz setuptools six wheel # as listed in the docker image (docker exec cc pip list)
-
-.PHONY: install test lint build-docker run-docker clean-docker help
+.PHONY: install install-python3-macos test lint build-docker run-docker stop-docker version help
 
 BLUE='\033[0;34m'
 NC='\033[0m' # no color
@@ -50,7 +48,11 @@ help:
 	@echo ''
 	@echo 'Usage: make [TARGET]'
 	@echo 'Targets:'
-	@echo '  install   - does install things	'
-	@echo '  test	    - does test things	'
-	@echo '  lint	    - run the flake8 linter '
-	@echo '  version    - display version from git tags '
+	@echo '  install                - install python packages	'
+	@echo '  install-python3-macos	- install homebrew and python3 for macOS	'
+	@echo '  test					- run tests	'
+	@echo '  lint					- run the flake8 linter '
+	@echo '  build-docker			- build the docker container'
+	@echo '  run-docker				- run the docker container'
+	@echo '  stop-docker			- stop the docker container'
+	@echo '  version				- display version from git tags '
