@@ -222,7 +222,9 @@ studentChoiceN = []
 studentAvoidN = []
 studentAssignment = []
 numStudents = []
-studentAvoid1 = [17,2020,None,None,None,2,None,None,None,None,None,None,None,None,None,None,192]
+studentAvoid1 = [17,2020,8999,9000,None,2,None,None,None,None,None,None,None,None,None,5555,192]
+studentAvoid2 = [None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None]
+studentAvoid3 = [None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None]
 
 def studentsHandler(studentsFile, progMode):
 
