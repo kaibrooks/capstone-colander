@@ -4,29 +4,28 @@
 
 import math # ceil()
 import load_csv
-<<<<<<< HEAD
 import pandas as pd
-=======
->>>>>>> 999f90e588330e6ee596c4e9f75ea9287d2301b4
 import prints
 
 
 def pointsStudentChoice(groupAssignments):
     totalPSC = 0
-    number_choices = load_csv.numStudents # Replace with Zoe's studentHandler variable
+    maxNumChoices = load_csv.numStudents
     maxScore = load_csv.weightStudentChoice1
-    print(load_csv.studentID)
 
     # This outputs a higher score the closer the students assigned choice was to their first
     # Students = rows (y), ProjectChoices = columns (x)
     for y in range(len(load_csv.studentID)):
         for x in range(len(load_csv.studentChoiceN.columns)):
             if pd.isna(load_csv.studentChoiceN.iat[y, x]) == True:
-                pass
-            elif load_csv.studentChoiceN.iat[y, x] == groupAssignments[y]:
-                q = number_choices - len(load_csv.studentChoiceN.columns) # Test for student gaming
-                totalPSC = totalPSC + math.ceil(maxScore - q * (maxScore / number_choices) - (maxScore / number_choices) * x)
-                #totalPSC = totalPSC + math.ceil(maxScore - (maxScore / number_choices) * (q + x))
+                totalPSC = totalPSC + math.ceil(maxScore - (maxScore / maxNumChoices) * x)
+                
+            elif pd.isna(load_csv.studentChoiceN.iat[y, x]) == False:
+                if load_csv.studentChoiceN.iat[y, x] == groupAssignments[y]:
+                    totalPSC = totalPSC + math.ceil(maxScore - (maxScore / maxNumChoices) * x)
+                    #q = maxNumChoices - len(load_csv.studentChoiceN.columns) # Test for student gaming
+                    #totalPSC = totalPSC + math.ceil(maxScore - q * (maxScore / maxNumChoices) - (maxScore / maxNumChoices) * x)
+                    #totalPSC = totalPSC + math.ceil(maxScore - (maxScore / maxNumChoices) * (q + x))
     return totalPSC
 
 
@@ -36,6 +35,7 @@ def pointsESLStudents(groupAssignments):
     totalPES = len(groupAssignments) * pointWeight; # Maximum possible score
     groupESL = [0] * len(load_csv.projectIDs) # Initializing an empty array to 0's
 
+    # groupESL[i] is the number of ESL students on team i
     for i in range(len(load_csv.studentID)):
         # Checking if a students ESL flag is set
         if load_csv.studentESL[i] == True:
