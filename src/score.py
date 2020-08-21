@@ -65,7 +65,7 @@ def pointsStudentPriority(groupAssignments):
     return totalPSP
 
 # This calculates bonus points for having fewer students than maxLowGPAStudents in a group
-def pointsMaxLowGPAStudents(inputArray):
+def pointsMaxLowGPAStudents(groupAssignments):
     totalPML = 0
     weightPML = load_csv.weightMaxLowGPAStudents
     minGPA = load_csv.lowGPAThreshold       # loads minimum GPA constraint
@@ -78,8 +78,8 @@ def pointsMaxLowGPAStudents(inputArray):
     # loop for counting maxLowGPA students and group sizes
     for i in range(len(load_csv.studentID)):
         if load_csv.studentGPA[i] < minGPA:
-            maxLowGroup[inputArray[i]] += 1
-        groupSize[inputArray[i]] += 1
+            maxLowGroup[groupAssignments[i]] += 1
+        groupSize[groupAssignments[i]] += 1
 
     prints.debug('groups with lowGPA students:',maxLowGroup)
     prints.debug('groups with # of studetns:',groupSize)
@@ -93,7 +93,7 @@ def pointsMaxLowGPAStudents(inputArray):
     return totalPML
 
 # This calculates bonus points for having met group size constraints
-def pointsTeamSize(inputArray):
+def pointsTeamSize(groupAssignments):
     totalPTS = 0
     weightPTS = load_csv.weightTeamSize
     # initialize groupSize - counts how many students there are in per group
@@ -101,7 +101,7 @@ def pointsTeamSize(inputArray):
 
     # loop for counting group size
     for i in range(len(load_csv.studentID)):
-        groupSize[inputArray[i]] += 1
+        groupSize[groupAssignments[i]] += 1
 
     prints.debug('group size:',groupSize)
     prints.debug('min size:',load_csv.minTeamSize)
@@ -118,41 +118,41 @@ def pointsTeamSize(inputArray):
     return totalPTS
 
 # This calculates penalty for violating studentAvoid constraint
-def pointsAvoid(inputArray):
+def pointsAvoid(groupAssignments):
     totalPSA = 0
     weightPSA = load_csv.weightAvoid
     # initializes bad - counts how many avoid matches happen per group
     bad = 0
 
     for i in range(len(load_csv.studentID)):
-        prints.debug('=========== Assignment:',load_csv.projectIDs[inputArray[i]],[i],'===========')
+        prints.debug('=========== Assignment:',load_csv.projectIDs[groupAssignments[i]],[i],'===========')
         for j in range(len(load_csv.studentAvoid1)):
             prints.debug([i],'student:',load_csv.studentID[i])
             prints.debug([j],'avoid1:',load_csv.studentAvoid1[j])
             # iterates through student ID and Avoid columns for possible violation
             if load_csv.studentID[i] == load_csv.studentAvoid1[j]:
                 # only counts violation if in same group
-                if load_csv.projectIDs[inputArray[i]] == load_csv.projectIDs[inputArray[j]]:
+                if load_csv.projectIDs[groupAssignments[i]] == load_csv.projectIDs[groupAssignments[j]]:
                     prints.debug('match detected in the same group!')
                     bad += 1
 
     for i in range(len(load_csv.studentID)):
-        prints.debug('=========== Assignment:',load_csv.projectIDs[inputArray[i]],[i],'===========')
+        prints.debug('=========== Assignment:',load_csv.projectIDs[groupAssignments[i]],[i],'===========')
         for j in range(len(load_csv.studentAvoid2)):
             prints.debug([i],'student:',load_csv.studentID[i])
             prints.debug([j],'avoid2:',load_csv.studentAvoid2[j])
             if load_csv.studentID[i] == load_csv.studentAvoid2[j]:
-                if load_csv.projectIDs[inputArray[i]] == load_csv.projectIDs[inputArray[j]]:
+                if load_csv.projectIDs[groupAssignments[i]] == load_csv.projectIDs[groupAssignments[j]]:
                     prints.debug('match detected in the same group!')
                     bad += 1
  
     for i in range(len(load_csv.studentID)):
-        prints.debug('=========== Assignment:',load_csv.projectIDs[inputArray[i]],[i],'===========')
+        prints.debug('=========== Assignment:',load_csv.projectIDs[groupAssignments[i]],[i],'===========')
         for j in range(len(load_csv.studentAvoid3)):
             prints.debug([i],'student:',load_csv.studentID[i])
             prints.debug([j],'avoid3:',load_csv.studentAvoid3[j])
             if load_csv.studentID[i] == load_csv.studentAvoid3[j]:
-                if load_csv.projectIDs[inputArray[i]] == load_csv.projectIDs[inputArray[j]]:
+                if load_csv.projectIDs[groupAssignments[i]] == load_csv.projectIDs[groupAssignments[j]]:
                     prints.debug('match detected in the same group!')
                     bad += 1
 
@@ -162,23 +162,23 @@ def pointsAvoid(inputArray):
 
     return totalPSA
 
-def scoringMode(inputArray):
+def scoringMode(groupAssignments):
 
-    print('\nAssignment:\n', inputArray)
+    prints.debug(f"\nAssignment:\n', {groupAssignments}")
     score = 0
 
-    score = pointsStudentChoice(inputArray)
+    score = pointsStudentChoice(groupAssignments)
     print('score after PSC = ', score)
-    score += pointsESLStudents(inputArray)
+    score += pointsESLStudents(groupAssignments)
     print('score after PES = ', score)
-    score += pointsStudentPriority(inputArray)
+    score += pointsStudentPriority(groupAssignments)
     print('score after PSP = ', score)
 
-    score += pointsMaxLowGPAStudents(inputArray)
+    score += pointsMaxLowGPAStudents(groupAssignments)
     print('score after PML = ', score)
-    score += pointsTeamSize(inputArray)
+    score += pointsTeamSize(groupAssignments)
     print('score after PTS = ', score)
-    score += pointsAvoid(inputArray)
+    score += pointsAvoid(groupAssignments)
     print('score after PSA = ', score)
 
     print('score grand total =', score)
