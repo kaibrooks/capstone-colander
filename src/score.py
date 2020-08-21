@@ -10,24 +10,31 @@ import prints
 
 def pointsStudentChoice(groupAssignments):
     totalPSC = 0
-    maxNumChoices = load_csv.numStudents
+    maxNumChoices = 5
+    #maxNumChoices = load_csv.numStudentChoices
     maxScore = load_csv.weightStudentChoice1
 
-    # This outputs a higher score the closer the students assigned choice was to their first
+    # This outputs the score for each student's choice's based on their actual assignment
     # Students = rows (y), ProjectChoices = columns (x)
     for y in range(len(load_csv.studentID)):
         for x in range(len(load_csv.studentChoiceN.columns)):
+            # If NaN is detected gives score based on x position then breaks
+            prints.debug(f"ID {load_csv.studentID.iat[y]}, Choice {load_csv.studentChoiceN.iat[y, x]}")
+
             if pd.isna(load_csv.studentChoiceN.iat[y, x]) == True:
                 totalPSC = totalPSC + math.ceil(maxScore - (maxScore / maxNumChoices) * x)
-                
+                prints.debug(f"Score {totalPSC}")
+
+                break
+            
+            # If an assignment match is detected gives score based on position x then breaks
             elif pd.isna(load_csv.studentChoiceN.iat[y, x]) == False:
                 if load_csv.studentChoiceN.iat[y, x] == groupAssignments[y]:
                     totalPSC = totalPSC + math.ceil(maxScore - (maxScore / maxNumChoices) * x)
-                    #q = maxNumChoices - len(load_csv.studentChoiceN.columns) # Test for student gaming
-                    #totalPSC = totalPSC + math.ceil(maxScore - q * (maxScore / maxNumChoices) - (maxScore / maxNumChoices) * x)
-                    #totalPSC = totalPSC + math.ceil(maxScore - (maxScore / maxNumChoices) * (q + x))
-    return totalPSC
+                    prints.debug(f"Score {totalPSC}")
 
+                    break
+    return totalPSC
 
 def pointsESLStudents(groupAssignments):
     pointWeight = load_csv.weightMaxESLStudents
@@ -39,15 +46,12 @@ def pointsESLStudents(groupAssignments):
     for i in range(len(load_csv.studentID)):
         # Checking if a students ESL flag is set
         if load_csv.studentESL[i] == True:
-            # The students actual assignment (groupAssignments[i]) is used to index into groupESL to
-            # track how many ESL students are on that team.
             groupESL[groupAssignments[i]] += 1
 
             if groupESL[groupAssignments[i]] > maxESL:
                 totalPES -= pointWeight
 
     return totalPES
-
 
 def pointsStudentPriority(groupAssignments):
     totalPSP = 0
