@@ -90,7 +90,7 @@ def settingsHandler(settingsFileData):
     global weightStudentPriority
     global weightStudentChoice1
     global weightAvoid
-    global maxRunTime
+    global effort
     global defaultMaxTeamSize
     global defaultMinTeamSize
     global maxLowGPAStudents
@@ -110,7 +110,7 @@ def settingsHandler(settingsFileData):
     findDuplicateCols(settingsFileData, settingsColumns, 'Settings CSV file')
 
     # verify required settings csv rows are present
-    settingsRows = ['teamSize', 'lowGPAThreshold', 'maxLowGPAStudents', 'maxESLStudents', 'maxRunTime', 'weightMaxLowGPAStudents',
+    settingsRows = ['teamSize', 'lowGPAThreshold', 'maxLowGPAStudents', 'maxESLStudents', 'weightMaxLowGPAStudents',
                        'weightMaxESLStudents', 'weightTeamSize', 'weightStudentPriority', 'weightStudentChoice1', 'weightAvoid']
     for row in settingsRows:
         if row not in settingsFileData['name'].values:
@@ -155,7 +155,6 @@ def settingsHandler(settingsFileData):
                 errFlg = True
             return is_integer_settings(tempInt, rowName, minValue)
 
-
     # verify required values in 'points' column are integers
     # if they are, assign value to global variable for scoring function to use
     weightMaxLowGPAStudents = int_checker_settings(
@@ -182,16 +181,15 @@ def settingsHandler(settingsFileData):
     maxESLStudents = int_checker_settings(
         (settingsFileData.set_index('name').at['maxESLStudents', 'max']), 'maxESLStudents', 1)
 
-    # verify that provided maxRunTime is an integer.
-    # If it is, set it as maxRunTime for the program, otherwise, use default hour run time.
+    # verify that provided 'effort' value is an integer.
+    # If it is, set it as effort for the program, otherwise, use default
     try:
-        maxRunTime = int(settingsFileData.set_index('name').at['maxRunTime', 'max'])
+        effort = int(settingsFileData.set_index('name').at['effort', 'max'])
     except:
-        maxRunTime = 60
-        prints.warn("maxRunTime value in settings csv is not an integer. Running with default value of 60 minutes.")
-    if maxRunTime < 0:
-        maxRunTime = 60
-        prints.warn("maxRunTime in the settings csv is not a value between 1 and 2^64. Running with default value of 60 minutes.")
+        effort = 20
+    if effort < 0 or effort > 100:
+        effort = 20
+        prints.warn("'effort' in the settings csv is not an int between 1 and 100. Running with default value of 20.")
 
     # verify that provided lowGPAThreshold is not empty and that it's a float within range
     # If it is, assign value to global variable for scoring function to use.

@@ -18,3 +18,9 @@ def gen(msg):
 def logerr(msg):
     """prints an error message"""
     print("\nERROR: " + msg)
+
+def debug(msg):
+    """prints a debugging message"""
+    debugMode = 1
+    if debugMode:
+        print("" + msg)

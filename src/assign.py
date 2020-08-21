@@ -20,7 +20,6 @@ def objf(soln): # objective function
     y -- function value
     """
 
-    soln = fix(soln) # indexing
     y = score.pointsTeamSize(soln)
     y += score.pointsStudentPriority(soln)
     y += score.pointsAvoid(soln)
@@ -29,19 +28,6 @@ def objf(soln): # objective function
     y += score.pointsStudentChoice(soln)
 
     return -y # return negative for positive scoring
-
-def fix(soln):
-    """convert sequential ga output array into project id array
-    arguments:
-    soln (req) -- ga output solution to convert
-    returns:
-    new_id -- array of project IDs
-    """
-    # eg, input: [1, 2, 3] // output: [1, 3, 6] -- assume no project number 2, 4, 5
-    new_id = [0]* len(soln)
-    for i in range(len(soln)):
-        new_id[i] = load_csv.projectIDs[int(soln[i])-1]
-    return new_id
 
 def run_ga(verbose=1):
     """run the genetic algorithm
