@@ -2,57 +2,57 @@
 # Functions for scoring the Genetic Algorithm (GA) are stored here
 # ##-##-2020
 
-import math  # ceil()
+import math # ceil()
 import load_csv
+import pandas as pd
+import prints
 
 
-def pointsStudentChoice(inputArray):
+def pointsStudentChoice(groupAssignments):
     totalPSC = 0
-    number_choices = 5
-    points_max = load_csv.weightStudentChoice1
+    number_choices = load_csv.numStudents # Replace with Zoe's studentHandler variable
+    maxScore = load_csv.weightStudentChoice1
+    print(load_csv.studentID)
 
+    # This outputs a higher score the closer the students assigned choice was to their first
     # Students = rows (y), ProjectChoices = columns (x)
     for y in range(len(load_csv.studentID)):
         for x in range(len(load_csv.studentChoiceN.columns)):
-            if load_csv.studentChoiceN.iat[y, x] == inputArray[y]:
-                totalPSC = totalPSC + math.ceil(points_max - (points_max / number_choices) * x)
-                # ddd = math.ceil(points_max - (points_max / number_choices) * x)
-                # print(load_csv.studentChoiceN.iat[y, x], '<-- Choice', ddd, '<-- score', y, '<-- studentID', totalPSC, '<-- totalPSC IN LOOP')
-
+            if pd.isna(load_csv.studentChoiceN.iat[y, x]) == True:
+                pass
+            elif load_csv.studentChoiceN.iat[y, x] == groupAssignments[y]:
+                q = number_choices - len(load_csv.studentChoiceN.columns) # Test for student gaming
+                totalPSC = totalPSC + math.ceil(maxScore - q * (maxScore / number_choices) - (maxScore / number_choices) * x)
+                #totalPSC = totalPSC + math.ceil(maxScore - (maxScore / number_choices) * (q + x))
     return totalPSC
 
 
-def pointsESLStudents(inputArray):
-    totalPES = 0
-    point_weight = load_csv.weightMaxESLStudents
+def pointsESLStudents(groupAssignments):
+    pointWeight = load_csv.weightMaxESLStudents
     maxESL = load_csv.maxESLStudents
+    totalPES = len(groupAssignments) * pointWeight; # Maximum possible score
+    groupESL = [0] * len(load_csv.projectIDs) # Initializing an empty array to 0's
 
-    # Initializing an empty array to 0's
-    ESL_Group = [0] * len(load_csv.studentID)
-
-    # print(ESL_Group, 'ESL_Group Before')
     for i in range(len(load_csv.studentID)):
-        # Checking if a students ESL flag is set to 1
-        if load_csv.studentESL[i] == 1:
-            # The students actual assignment (inputArray[i]) is used to index into ESL_Group to
+        # Checking if a students ESL flag is set
+        if load_csv.studentESL[i] == True:
+            # The students actual assignment (groupAssignments[i]) is used to index into groupESL to
             # track how many ESL students are on that team.
-            ESL_Group[inputArray[i]] = ESL_Group[inputArray[i]] + 1
+            groupESL[groupAssignments[i]] += 1
 
-            if ESL_Group[inputArray[i]] > maxESL:
-                totalPES -= point_weight
-                # print(totalPES, 'Current total')
-    # print(ESL_Group, 'ESL_Group After')
+            if groupESL[groupAssignments[i]] > maxESL:
+                totalPES -= pointWeight
 
     return totalPES
 
 
-def pointsStudentPriority(inputArray):
+def pointsStudentPriority(groupAssignments):
     totalPSP = 0
 
     # Checks if priority flag is set then checks if they got their first choice
     for i in range(len(load_csv.studentID)):
-        if load_csv.studentPriority[i] == 1:
-            if inputArray[i] == load_csv.studentChoiceN.iat[i, 0]:
+        if load_csv.studentPriority[i] == True:
+            if groupAssignments[i] == load_csv.studentChoiceN.iat[i, 0]:
                 totalPSP += load_csv.weightStudentPriority
 
     return totalPSP
