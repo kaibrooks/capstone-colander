@@ -13,18 +13,26 @@ import prints
 
 def pointsStudentChoice(groupAssignments):
     totalPSC = 0
-    number_choices = 5 # Replace with Zoe's studentHandler variable
+    maxNumChoices = 5
+    #maxNumChoices = load_csv.numStudents
     maxScore = load_csv.weightStudentChoice1
-    print(load_csv.studentID)
+
+    # This outputs a higher score the closer the students assigned choice was to their first
     # Students = rows (y), ProjectChoices = columns (x)
     for y in range(len(load_csv.studentID)):
         for x in range(len(load_csv.studentChoiceN.columns)):
+            prints.debug(f"ID {load_csv.studentID.iat[y]}, Choice {load_csv.studentChoiceN.iat[y, x]}")
             if pd.isna(load_csv.studentChoiceN.iat[y, x]) == True:
-                pass
-            elif load_csv.studentChoiceN.iat[y, x] == groupAssignments[y]:
-                q = number_choices - len(load_csv.studentChoiceN.columns) # Test for student gaming
-                totalPSC = totalPSC + math.ceil(maxScore - q * (maxScore / number_choices) - (maxScore / number_choices) * x)
-                #totalPSC = totalPSC + math.ceil(maxScore - (maxScore / number_choices) * (q + x))
+                totalPSC = totalPSC + math.ceil(maxScore - (maxScore / maxNumChoices) * x)
+                prints.debug(f"Score {totalPSC}")
+                break
+                
+            elif pd.isna(load_csv.studentChoiceN.iat[y, x]) == False:
+                if load_csv.studentChoiceN.iat[y, x] == groupAssignments[y]:
+                    totalPSC = totalPSC + math.ceil(maxScore - (maxScore / maxNumChoices) * x)
+                    
+                    prints.debug(f"Score {totalPSC}")
+                    break
     return totalPSC
 
 def pointsESLStudents(groupAssignments):
@@ -171,7 +179,7 @@ def pointsAvoid(groupAssignments):
     return totalPSA
 
 def scoringMode(groupAssignments): 
-    groupAssignments = [0, 0, 2, 0, 1, 1, 1, 1, 9, 9, 2, 3, 4, 5, 6, 4, 4]
+    groupAssignments = [0, 5, 2, 3, 1, 1, 1, 1, 9, 9, 2, 3, 4, 5, 6, 4, 4]
 
     print('Assignment: ', groupAssignments)
     score = 0
@@ -183,11 +191,11 @@ def scoringMode(groupAssignments):
     score += pointsStudentPriority(groupAssignments)
     print('score after PSP = ', score)
     
-    score += pointsMaxLowGPAStudents(groupAssignments)
+    #score += pointsMaxLowGPAStudents(groupAssignments)
     print('score after PML = ', score)
-    score += pointsTeamSize(groupAssignments)
+    #score += pointsTeamSize(groupAssignments)
     print('score after PTS = ', score)
-    score += pointsAvoid(groupAssignments)
+    #score += pointsAvoid(groupAssignments)
     print('score after PSA = ', score)
 
     print('score grand total =', score)
