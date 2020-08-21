@@ -210,16 +210,18 @@ def studentsHandler(studentsFile, progMode):
     global studentESL
     global studentPriority
     global studentChoiceN
-    global studentAvoidN
+    global studentAvoid
     global studentAssignment
     global numStudents
     global errFlg
+    global numStudentChoices
+
 
     #Load csv file
     studentsFileData = pd.read_csv(studentsFile)
 
     #Verify required columns are present
-    studentsColumns = ['studentID', 'studentChoice1', 'studentGPA','studentESL']
+    studentsColumns = ['studentID', 'studentChoice1', 'studentGPA','studentESL','studentAvoid1']
     for col in studentsColumns:
        if col not in studentsFileData.columns:
            prints.err("Required {0} column header not found in the students csv file. Terminating Program.".format(col))
@@ -229,20 +231,12 @@ def studentsHandler(studentsFile, progMode):
     fields = [col for col in studentsFileData.columns if 'studentChoice' in col]
     studentChoiceN = pd.read_csv(studentsFile, skipinitialspace=True, usecols=fields)
 
-    ### Find duplicate required columns
+    #Sort studentChoiceN columns sequentially
+    studentChoiceN = studentChoiceN.reindex(sorted(studentChoiceN.columns), axis=1)
 
     #Append list of column names to include studentChoice columns
     studentsColumns.extend(studentChoiceN)
-
-    if 'studentAvoid' in studentsFileData.columns:
-
-        #Create studentAvoidN global dataframe
-        fields = [col for col in studentsFileData.columns if 'studentAvoid' in col]
-        studentAvoidN = pd.read_csv(studentsFile, skipinitialspace=True, usecols=fields)
-
-        #Append list of column names to include studentAvoid columns
-        studentsColumns.extend(studentAvoidN)
-
+    #Find duplicate required columns
     findDuplicateCols(studentsFileData, studentsColumns, studentsFile)
 
     #Create global series
@@ -250,9 +244,13 @@ def studentsHandler(studentsFile, progMode):
     studentGPA = studentsFileData['studentGPA'].copy()
     studentESL = studentsFileData['studentESL'].fillna(False)
     studentPriority = studentsFileData['studentPriority'].fillna(False)
-    numStudents = studentsFileData['studentID'].count()
+    studentAvoid = studentsFileData['studentAvoid1'].copy()
 
-    ### Validate data
+    
+    #Define global variable
+    numStudents = len(studentsFileData)
+    numStudentChoices = len(studentChoiceN.columns)
+
 
     #Check for Assign column when in Assign mode
     if progMode == 'Scoring':
@@ -267,21 +265,35 @@ def studentsHandler(studentsFile, progMode):
                 errFlg = True
 
             #Verify assignment contains valid projects
-            for i in range(len(studentAssignment)):
-                if pd.isna(studentAssignment[i]) == True:     #If element empty
-                    prints.err("Empty field found in Assignment column.")
+            for student in range(numStudents):
+                if pd.isna(studentAssignment[student]) == True:     #If element empty
+                    prints.err("Empty field found in row {0} Assignment column.".format(student))
                 else:
                     sAssignmentMatch = False
                     for j in range(len(projectIDs)):   #Find matching id in global projectIDs
-                        if (studentAssignment[i] == projectIDs[j]):
+                        if (studentAssignment[student] == projectIDs[j]):
                             sAssignmentMatch = True
+                            #replace project id with project index
+                            studentAssignment.at[student] = j
                             break
                     if sAssignmentMatch == False:
-                        prints.logerr("No matching project id found for assignment = {0:n}".format(studentAssignment[i]))
+                        prints.logerr("No matching project id found for assignment = {0:n}".format(studentAssignment[student]))
                         errFlg = True
         else:
             prints.err("No assignment column found. Terminating program.")
 
+    #Verify studentID has no NaN values
+    for student in range(numStudents):
+        if pd.isna(studentID[student]) == True:     #If element empty
+            prints.logerr("Empty element found in row {0} of the studentID column".format(student))
+            errFlg = True
+    
+    #Verify studentGPA has no NaN values
+    for student in range(numStudents):
+        if pd.isna(studentGPA[student]) == True:     #If element empty
+            prints.logerr("Empty element found in row {0} of the studentGPA column".format(student))
+            errFlg = True
+    
     #Verify studentID contains numbers
     if is_numeric_dtype(studentID) == False:
          prints.logerr("Unexpected data type found in studentID.")
@@ -301,7 +313,7 @@ def studentsHandler(studentsFile, progMode):
 
     #Verify studentESL contains booleans
     if is_bool_dtype(studentESL) == False:
-            prints.logerr("Unexpected data type found in studentPriority.")
+            prints.logerr("Unexpected data type found in studentESL.")
             errFlg = True
 
     #Check studentID for duplicate
@@ -309,11 +321,32 @@ def studentsHandler(studentsFile, progMode):
         prints.logerr('Duplicate studentID found')
         errFlg = True
 
+    
+    #Verify studentAvoid contains numbers
+    if is_numeric_dtype(studentAvoid) == False:
+         prints.logerr("Unexpected data type found in studentAvoid.")
+         errFlg = True
+
     #Check studentGPA within range
     for value in studentGPA:
         if (value < 0.0) or (value > 4.0):
             prints.logerr('{0} outside of acceptable GPA range'.format(value))
             errFlg = True
+
+
+    #Verify studentAvoid contains valid student IDs
+    for student in range(numStudents):
+        if pd.isna(studentAvoid[student]) == False:     #If element not empty
+            sAvoidMatch = False
+            for j in studentID.index:   #Find matching id in studentIDs
+               if (studentAvoid[student] == studentID[j]):
+                    sAvoidMatch = True
+                    #replace student id with student index
+                    studentAvoid.at[student] = j
+                    break
+            if sAvoidMatch == False:
+                prints.logerr("No matching student id found for student = {0:n} in studentAvoid1 column".format(studentAvoid[student]))
+                errFlg = True
 
     #Verify studentChoiceN contains valid project ids
     clmns = list(studentChoiceN)
@@ -324,7 +357,10 @@ def studentsHandler(studentsFile, progMode):
                 for i in range(len(projectIDs)):   #Find matching id in global projectIDs
                     if (studentChoiceN[cid][rid] == projectIDs[i]):
                         sChoiceMatch = True
+                        #replace project id with project index
+                        studentChoiceN.at[rid,cid] = i
                         break
+                
                 if sChoiceMatch == False:
                     prints.logerr("No matching project id found for studentChoice = {0:n}".format(studentChoiceN[cid][rid]))
                     errFlg = True
@@ -338,32 +374,6 @@ def studentsHandler(studentsFile, progMode):
     else:
         prints.warn('studentPriority column not found')
 
-    #Verify studentAvoid data
-    if 'studentAvoid' in studentsFileData.columns:
-
-        #Verify studentAvoidN contains numbers
-        clmn = list(studentAvoidN)
-        for i in clmn:
-            if is_numeric_dtype(studentAvoidN[i]) == False:
-                prints.logerr("Unexpected data type found in studentAvoid.")
-                errFlg = True
-
-        #Verify studentAvoidN contains valid student ids
-        clmns = list(studentAvoidN)
-        for cid in clmns:
-            for rid in studentAvoidN.index:
-                if pd.isna(studentAvoidN[cid][rid]) == False:     #If element not empty
-                    sAvoidMatch = False
-                    for i in studentID.index:          #Find matching id in global studentID
-                        if (studentAvoidN[cid][rid] == studentID[i]):
-                            sAvoidMatch = True
-                            break
-                    if sAvoidMatch == False:
-                        prints.logerr("No matching student id found for studentAvoid = {0:n}".format(studentAvoidN[cid][rid]))
-                        errFlg = True
-    else:
-        prints.warn('studentAvoid NOT found')
-
-    #Exit when error conditions met
+    #Exits when error conditions met
     if errFlg == True:
         prints.err("Invalid data found in input CSV files. Terminating program.")
