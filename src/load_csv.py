@@ -248,10 +248,9 @@ def studentsHandler(studentsFile, progMode):
 
     
     #Define global variable
-    numStudents = studentsFileData['studentID'].count()
+    numStudents = len(studentsFileData)
     numStudentChoices = len(studentChoiceN.columns)
 
-    print(numStudents)
 
     #Check for Assign column when in Assign mode
     if progMode == 'Scoring':
@@ -267,7 +266,7 @@ def studentsHandler(studentsFile, progMode):
 
             #Verify assignment contains valid projects
             for student in range(numStudents):
-                if pd.isna(studentAssignment[i]) == True:     #If element empty
+                if pd.isna(studentAssignment[student]) == True:     #If element empty
                     prints.err("Empty field found in row {0} Assignment column.".format(student))
                 else:
                     sAssignmentMatch = False
@@ -275,7 +274,7 @@ def studentsHandler(studentsFile, progMode):
                         if (studentAssignment[student] == projectIDs[j]):
                             sAssignmentMatch = True
                             #replace project id with project index
-                            studentAssignment.at[i] = j
+                            studentAssignment.at[student] = j
                             break
                     if sAssignmentMatch == False:
                         prints.logerr("No matching project id found for assignment = {0:n}".format(studentAssignment[student]))
@@ -283,6 +282,18 @@ def studentsHandler(studentsFile, progMode):
         else:
             prints.err("No assignment column found. Terminating program.")
 
+    #Verify studentID has no NaN values
+    for student in range(numStudents):
+        if pd.isna(studentID[student]) == True:     #If element empty
+            prints.logerr("Empty element found in row {0} of the studentID column".format(student))
+            errFlg = True
+    
+    #Verify studentGPA has no NaN values
+    for student in range(numStudents):
+        if pd.isna(studentGPA[student]) == True:     #If element empty
+            prints.logerr("Empty element found in row {0} of the studentGPA column".format(student))
+            errFlg = True
+    
     #Verify studentID contains numbers
     if is_numeric_dtype(studentID) == False:
          prints.logerr("Unexpected data type found in studentID.")
