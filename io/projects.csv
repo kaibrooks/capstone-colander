@@ -1,0 +1,11 @@
+Name,projectID,minTeamSize,maxTeamSize
+A,1,4,5
+B,2,4,4
+C,10,4,7
+D,11,3,4
+E,100,4,4
+F,101,3,5
+G,102,3,6
+H,110,3,4
+I,111,4,5
+G,200,3,5
