@@ -10,7 +10,7 @@ import pandas as pd
 # imports below are other python files used in this project
 # which are required to call their functions from main
 import load_csv
-import assign
+#import assign
 import score
 import prints
 
@@ -22,14 +22,14 @@ prints.gen("Program started {0}".format(now))  # print it
 def main():
 
     # default program mode
-    programMode = 'Assignment'
+    programMode = 'Scoring'
 
     # accepted command line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("-s", "--students", help="Students CSV filename", required=False, default='io/students.csv')
-    parser.add_argument("-p", "--projects", help="Projects CSV filename", required=False, default='io/projects.csv')
-    parser.add_argument("-u", "--settings", help="User Settings CSV filename", required=False, default='io/settings.csv')
-    parser.add_argument("-o", "--output", help="Output (assignment) CSV filename", required=False, default='io/assignment.csv')
+    parser.add_argument("-s", "--students", help="Students CSV filename", required=False, default='students.csv')
+    parser.add_argument("-p", "--projects", help="Projects CSV filename", required=False, default='projects.csv')
+    parser.add_argument("-u", "--settings", help="User Settings CSV filename", required=False, default='settings.csv')
+    parser.add_argument("-o", "--output", help="Output (assignment) CSV filename", required=False, default='assignment.csv')
     parser.add_argument("-a", "--assign", help="Run the program in Assignment mode", required=False, action='store_true')
     parser.add_argument("-c", "--score", help="Run the program in Scoring mode", required=False, action='store_true')
 
@@ -98,10 +98,10 @@ if __name__ == "__main__":
     load_csv.projectsHandler(projectsFileData)
     load_csv.studentsHandler(studentsFile, progMode)
 
-    if progMode == 'Assignment':
-        optimalSolution = assign.run_ga()
-    elif progMode == 'Scoring':
-        finalScore = score.scoringMode(load_csv.studentAssignment)
-        prints.gen("Assignment Score: {0}".format(finalScore))
+    # if progMode == 'Assignment':
+    #     optimalSolution = assign.run_ga()
+    # elif progMode == 'Scoring':
+    #     finalScore = score.scoringMode(load_csv.studentAssignment)
+    #     prints.gen("Assignment Score: {0}".format(finalScore))
 
     prints.gen("** Program has completed running **")
