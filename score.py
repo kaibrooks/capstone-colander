@@ -14,24 +14,28 @@ import prints
 def pointsStudentChoice(groupAssignments):
     totalPSC = 0
     maxNumChoices = 5
-    #maxNumChoices = load_csv.numStudents
+    #maxNumChoices = load_csv.numStudentChoices
     maxScore = load_csv.weightStudentChoice1
 
-    # This outputs a higher score the closer the students assigned choice was to their first
+    # This outputs the score for each student's choice's based on their actual assignment
     # Students = rows (y), ProjectChoices = columns (x)
     for y in range(len(load_csv.studentID)):
         for x in range(len(load_csv.studentChoiceN.columns)):
+            # If NaN is detected gives score based on x position then breaks
             prints.debug(f"ID {load_csv.studentID.iat[y]}, Choice {load_csv.studentChoiceN.iat[y, x]}")
+
             if pd.isna(load_csv.studentChoiceN.iat[y, x]) == True:
                 totalPSC = totalPSC + math.ceil(maxScore - (maxScore / maxNumChoices) * x)
                 prints.debug(f"Score {totalPSC}")
+
                 break
-                
+            
+            # If an assignment match is detected gives score based on position x then breaks
             elif pd.isna(load_csv.studentChoiceN.iat[y, x]) == False:
                 if load_csv.studentChoiceN.iat[y, x] == groupAssignments[y]:
                     totalPSC = totalPSC + math.ceil(maxScore - (maxScore / maxNumChoices) * x)
-                    
                     prints.debug(f"Score {totalPSC}")
+
                     break
     return totalPSC
 
@@ -41,11 +45,10 @@ def pointsESLStudents(groupAssignments):
     totalPES = len(groupAssignments) * pointWeight; # Maximum possible score
     groupESL = [0] * len(load_csv.projectIDs) # Initializing an empty array to 0's
 
+    # groupESL[i] is the number of ESL students on team i
     for i in range(len(load_csv.studentID)):
         # Checking if a students ESL flag is set
         if load_csv.studentESL[i] == True:
-            # The students actual assignment (groupAssignments[i]) is used to index into groupESL to
-            # track how many ESL students are on that team.
             groupESL[groupAssignments[i]] += 1
 
             if groupESL[groupAssignments[i]] > maxESL:
@@ -181,7 +184,7 @@ def pointsAvoid(groupAssignments):
 def scoringMode(groupAssignments): 
     groupAssignments = [0, 5, 2, 3, 1, 1, 1, 1, 9, 9, 2, 3, 4, 5, 6, 4, 4]
 
-    print('Assignment: ', groupAssignments)
+    prints.debug(f"Assignment: {groupAssignments}")
     score = 0
     
     score = pointsStudentChoice(groupAssignments)
