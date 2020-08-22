@@ -22,7 +22,7 @@ pt.printGeneral("Program started {0}".format(now))  # print it
 def main():
 
     # default program mode
-    programMode = 'Assignment'
+    programMode = 'Scoring'
 
     # accepted command line arguments
     parser = argparse.ArgumentParser()

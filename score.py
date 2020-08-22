@@ -125,26 +125,26 @@ def pointsTeamSize(groupAssignments):
 def pointsAvoid(groupAssignments):
     totalPSA = 0
     weightPSA = load_csv.weightAvoid
-    # initializes bad - counts how many avoid matches happen per group
+    # initializes bad - counts how many studentAvoid matches are found
     bad = 0
 
     prints.debug(f"========pointsAvoid========")
-    prints.debug(f"{load_csv.studentAvoidN['studentAvoid']}")
-
-    for i in range(len(load_csv.studentID)):
-        # only iterates through studentID with valid Avoid value
-        if load_csv.studentAvoidN['studentAvoid'][i] > 0:
-            for j in range(len(load_csv.studentAvoidN['studentAvoid'])):
-                prints.debug(f"==================")
-                prints.debug(f"{[i]}student:{load_csv.studentID[i]}")
-                prints.debug(f"{[j]}avoid1:{load_csv.studentAvoidN['studentAvoid'][j]}")
-                if load_csv.studentID[i] == load_csv.studentAvoidN['studentAvoid'][j]:
-                    # only counts violation if in same group
-                    if load_csv.projectIDs[groupAssignments[i]] == load_csv.projectIDs[groupAssignments[j]]:
-                        prints.debug(f"match detected in the same group!")
-                        bad += 1
-                        break    
-
+    prints.debug(f"{load_csv.studentAvoid}")
+    
+    for i in range(load_csv.numStudents):
+        # skips student with empty avoid value
+        if pd.isna(load_csv.studentAvoid[i]) == False:
+            # stores studentAvoid data to 'avoid'
+            avoid = load_csv.studentAvoid[i]
+            prints.debug(f"======student loop======")
+            prints.debug(f"student: {[i]} avoid: {avoid}")
+            prints.debug(f"student group: {load_csv.studentAssignment[i]}")
+            prints.debug(f"avoid group: {load_csv.studentAssignment[avoid]}")
+            # identifies studentAvoid match within in same group
+            if load_csv.studentAssignment[i] == load_csv.studentAssignment[avoid]:
+                prints.debug(f"studentAvoid match found")
+                bad += 1
+    
     prints.debug(f"bad: {bad}")
     totalPSA -= (weightPSA * bad)
 
@@ -156,18 +156,18 @@ def scoringMode(groupAssignments):
     prints.debug(f"Assignment: {groupAssignments}")
     score = 0
     
-    score = pointsStudentChoice(groupAssignments)
-    print('score after PSC = ', score)
-    score += pointsESLStudents(groupAssignments)
-    print('score after PES = ', score)
-    score += pointsStudentPriority(groupAssignments)
-    print('score after PSP = ', score)
+    #score = pointsStudentChoice(groupAssignments)
+    #print('score after PSC = ', score)
+    #score += pointsESLStudents(groupAssignments)
+    #print('score after PES = ', score)
+    #score += pointsStudentPriority(groupAssignments)
+    #print('score after PSP = ', score)
     
-    score += pointsMaxLowGPAStudents(groupAssignments)
-    print('score after PML = ', score)
-    score += pointsTeamSize(groupAssignments)
-    print('score after PTS = ', score)
-    score += pointsAvoid(groupAssignments)
+    #score += pointsMaxLowGPAStudents(groupAssignments)
+    #print('score after PML = ', score)
+    #score += pointsTeamSize(groupAssignments)
+    #print('score after PTS = ', score)
+    score += pointsAvoid(load_csv.studentAssignment)
     print('score after PSA = ', score)
 
     print('score grand total =', score)
