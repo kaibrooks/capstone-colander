@@ -39,7 +39,7 @@ def pointsStudentChoice(groupAssignments):
 def pointsESLStudents(groupAssignments):
     pointWeight = load_csv.weightMaxESLStudents
     maxESL = load_csv.maxESLStudents
-    totalPES = len(groupAssignments) * pointWeight; # Maximum possible score
+    totalPES = len(groupAssignments) * pointWeight # Maximum possible score
     groupESL = [0] * len(load_csv.projectIDs) # Initializing an empty array to 0's
 
     # groupESL[i] is the number of ESL students on team i
@@ -64,15 +64,15 @@ def pointsStudentPriority(groupAssignments):
 
     return totalPSP
 
-# This calculates bonus points for having fewer students than maxLowGPAStudents in a group
+# This calculates points for having fewer students than maxLowGPAStudents in a group
 def pointsMaxLowGPAStudents(groupAssignments):
     totalPML = 0
     weightPML = load_csv.weightMaxLowGPAStudents
-    minGPA = load_csv.lowGPAThreshold       # loads minimum GPA constraint
-    maxLow = load_csv.maxLowGPAStudents     # loads maximum students with low GPA constraint
+    minGPA = load_csv.lowGPAThreshold
+    maxLow = load_csv.maxLowGPAStudents    
     # initialize maxLowGroup - counts how many per group do not meet minGPA constraint
     maxLowGroup = [0] * len(load_csv.projectIDs)
-    # initialize groupSize - counts how many students there are in per group
+    # initialize groupSize - counts how many students there are in each group
     groupSize = [0] * len(load_csv.projectIDs)
 
     # loop for counting maxLowGPA students and group sizes
@@ -81,83 +81,68 @@ def pointsMaxLowGPAStudents(groupAssignments):
             maxLowGroup[groupAssignments[i]] += 1
         groupSize[groupAssignments[i]] += 1
 
-    prints.debug('groups with lowGPA students:',maxLowGroup)
-    prints.debug('groups with # of studetns:',groupSize)
+    prints.debug(f"========pointsMaxLowGPAStudents========")
+    prints.debug(f"groups with lowGPA students: {maxLowGroup}")
+    prints.debug(f"groups with # of studetns: {groupSize}")
 
-    # iterates through mawLowGroup for points - also ignores empty groups
+    # iterates through maxLowGroup for points - also ignores empty groups
     for i in range(len(maxLowGroup)):
         if maxLowGroup[i] <= maxLow and groupSize[i] > 0: 
-            prints.debug('group:',load_csv.projectIDs[i],'satisfies the condition!')
+            prints.debug(f"group: {load_csv.projectIDs[i]} satisfies the condition!")
             totalPML += weightPML
 
     return totalPML
 
-# This calculates bonus points for having met group size constraints
+# This calculates points for having met group size constraints
 def pointsTeamSize(groupAssignments):
     totalPTS = 0
-    weightPTS = load_csv.weightTeamSize
-    # initialize groupSize - counts how many students there are in per group
+    weightPTS = load_csv.weightTeamSize 
+    # initialize groupSize - counts how many students there are in each group
     groupSize = [0] * len(load_csv.projectIDs)
 
     # loop for counting group size
     for i in range(len(load_csv.studentID)):
         groupSize[groupAssignments[i]] += 1
 
-    prints.debug('group size:',groupSize)
-    prints.debug('min size:',load_csv.minTeamSize)
-    prints.debug('max size:',load_csv.maxTeamSize)
+    prints.debug(f"========pointsTeamSize========")
+    prints.debug(f"group size: {groupSize}")
+    prints.debug(f"min size: {load_csv.minTeamSize}")
+    prints.debug(f"max size: {load_csv.maxTeamSize}")
 
-    # iterates through groupSize to see if a group meets the size constraints
+    # iterates through groupSize to identify group meeting the size constraints
     for i in range(len(groupSize)):
-        #print(load_csv.minTeamSize[i],load_csv.maxTeamSize[i],groupSize[i])
         if load_csv.minTeamSize[i] <= groupSize[i] <= load_csv.maxTeamSize[i]:
-            prints.debug('project:',load_csv.projectIDs[i],'satisfies the condition!')
-            prints.debug('project:',load_csv.projectIDs[i],'Min:',load_csv.minTeamSize[i],'Max:',load_csv.maxTeamSize[i],'group size:',groupSize[i])
+            prints.debug(f"project: {load_csv.projectIDs[i]} satisfies the condition!")
+            prints.debug(f"project: {load_csv.projectIDs[i]} Min:{load_csv.minTeamSize[i]} Max: {load_csv.maxTeamSize[i]} group size: {groupSize[i]}")
             totalPTS += weightPTS
 
     return totalPTS
 
-# This calculates penalty for violating studentAvoid constraint
+# This calculates points for violating studentAvoid constraint
 def pointsAvoid(groupAssignments):
     totalPSA = 0
     weightPSA = load_csv.weightAvoid
-    # initializes bad - counts how many avoid matches happen per group
+    # initializes bad - counts how many studentAvoid matches are found
     bad = 0
 
-    for i in range(len(load_csv.studentID)):
-        prints.debug('=========== Assignment:',load_csv.projectIDs[groupAssignments[i]],[i],'===========')
-        for j in range(len(load_csv.studentAvoid1)):
-            prints.debug([i],'student:',load_csv.studentID[i])
-            prints.debug([j],'avoid1:',load_csv.studentAvoid1[j])
-            # iterates through student ID and Avoid columns for possible violation
-            if load_csv.studentID[i] == load_csv.studentAvoid1[j]:
-                # only counts violation if in same group
-                if load_csv.projectIDs[groupAssignments[i]] == load_csv.projectIDs[groupAssignments[j]]:
-                    prints.debug('match detected in the same group!')
-                    bad += 1
-
-    for i in range(len(load_csv.studentID)):
-        prints.debug('=========== Assignment:',load_csv.projectIDs[groupAssignments[i]],[i],'===========')
-        for j in range(len(load_csv.studentAvoid2)):
-            prints.debug([i],'student:',load_csv.studentID[i])
-            prints.debug([j],'avoid2:',load_csv.studentAvoid2[j])
-            if load_csv.studentID[i] == load_csv.studentAvoid2[j]:
-                if load_csv.projectIDs[groupAssignments[i]] == load_csv.projectIDs[groupAssignments[j]]:
-                    prints.debug('match detected in the same group!')
-                    bad += 1
- 
-    for i in range(len(load_csv.studentID)):
-        prints.debug('=========== Assignment:',load_csv.projectIDs[groupAssignments[i]],[i],'===========')
-        for j in range(len(load_csv.studentAvoid3)):
-            prints.debug([i],'student:',load_csv.studentID[i])
-            prints.debug([j],'avoid3:',load_csv.studentAvoid3[j])
-            if load_csv.studentID[i] == load_csv.studentAvoid3[j]:
-                if load_csv.projectIDs[groupAssignments[i]] == load_csv.projectIDs[groupAssignments[j]]:
-                    prints.debug('match detected in the same group!')
-                    bad += 1
-
-
-    #print('bad: ',bad)
+    prints.debug(f"========pointsAvoid========")
+    prints.debug(f"{load_csv.studentAvoid}")
+    
+    for i in range(load_csv.numStudents):
+        # skips student with empty avoid value
+        if pd.isna(load_csv.studentAvoid[i]) == False:
+            # stores studentAvoid data to 'avoid'
+            avoid = load_csv.studentAvoid[i]
+            prints.debug(f"======student loop======")
+            prints.debug(f"student: {[i]} avoid: {avoid}")
+            prints.debug(f"student group: {load_csv.studentAssignment[i]}")
+            prints.debug(f"avoid group: {load_csv.studentAssignment[avoid]}")
+            # identifies studentAvoid match within in same group
+            if load_csv.studentAssignment[i] == load_csv.studentAssignment[avoid]:
+                prints.debug(f"studentAvoid match found")
+                bad += 1
+    
+    prints.debug(f"bad: {bad}")
     totalPSA -= (weightPSA * bad)
 
     return totalPSA
