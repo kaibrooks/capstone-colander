@@ -65,6 +65,7 @@ def projectsHandler(projectsFileData):
     # verify that there are no duplicate project IDs in the projectID column
     if projectsFileData.projectID.duplicated().any():
         prints.logerr("projectid {0} is a duplicate projectID in the csv file.".format({projectsFileData[projectsFileData.projectID.duplicated()].projectID.iloc[0]}))
+        errFlg = True
 
     # if values for team sizes are blank, enter size from settings.csv and then verify all values are integers
     projectsFileData['minTeamSize'] = projectsFileData['minTeamSize'].fillna(defaultMinTeamSize)

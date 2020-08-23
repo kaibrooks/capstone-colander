@@ -1,4 +1,4 @@
-studentID,studentGPA,studentPriority,studentESL,studentAvoid1,studentAvoid2,studentAvoid3,studentAvoid4,assignment,studentChoice1,studentChoice2,studentChoice3,studentChoice4,studentChoice5
+studentID,studentGPA,studentPriority,studentESL,studentAvoid,studentAvoid2,studentAvoid3,studentAvoid4,assignment,studentChoice1,studentChoice2,studentChoice3,studentChoice4,studentChoice5
 00001,4.00,,,00002,00003,00004,00005,1,1,2,3,4,5
 00002,4.00,,,00001,00003,00004,00005,1,1,2,3,4,5
 00003,4.00,,,00001,00002,00004,00005,1,1,2,3,4,5

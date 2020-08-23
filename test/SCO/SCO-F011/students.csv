@@ -1,4 +1,4 @@
-studentID,studentGPA,studentPriority,studentESL,studentAvoid1,assignment,studentChoice1,studentChoice2,studentChoice3,studentChoice4,studentChoice5,studentChoice6,studentChoice7,studentChoice8,studentChoice9,studentChoice10
+studentID,studentGPA,studentPriority,studentESL,studentAvoid,assignment,studentChoice1,studentChoice2,studentChoice3,studentChoice4,studentChoice5,studentChoice6,studentChoice7,studentChoice8,studentChoice9,studentChoice10
 44789,4.00,,,,1,1,,,,,,,,,
 76123,4.00,,,,1,2,1,,,,,,,,
 21371,4.00,,,,1,3,2,1,,,,,,,
