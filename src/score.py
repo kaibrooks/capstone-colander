@@ -26,7 +26,6 @@ def pointsStudentChoice(groupAssignments):
                 prints.debug(f"Score {totalPSC}")
 
                 break
-            
             # If an assignment match is detected gives score based on position x then breaks
             elif pd.isna(load_csv.studentChoiceN.iat[y, x]) == False:
                 if load_csv.studentChoiceN.iat[y, x] == groupAssignments[y]:
@@ -39,7 +38,7 @@ def pointsStudentChoice(groupAssignments):
 def pointsESLStudents(groupAssignments):
     pointWeight = load_csv.weightMaxESLStudents
     maxESL = load_csv.maxESLStudents
-    totalPES = len(groupAssignments) * pointWeight; # Maximum possible score
+    totalPES = len(groupAssignments) * pointWeight # Maximum possible score
     groupESL = [0] * len(load_csv.projectIDs) # Initializing an empty array to 0's
 
     # groupESL[i] is the number of ESL students on team i
@@ -163,24 +162,23 @@ def pointsAvoid(groupAssignments):
     return totalPSA
 
 def scoringMode(groupAssignments):
-
-    prints.debug(f"\nAssignment:\n', {groupAssignments}")
+    prints.debug(f"\nAssignment:\n {groupAssignments}")
     score = 0
 
     score = pointsStudentChoice(groupAssignments)
-    print('score after PSC = ', score)
+    prints.debug(f"Score after PSC = {score}")
     score += pointsESLStudents(groupAssignments)
-    print('score after PES = ', score)
+    prints.debug(f"Score after PES = {score}")
     score += pointsStudentPriority(groupAssignments)
-    print('score after PSP = ', score)
+    prints.debug(f"Score after PSP = {score}")
 
     score += pointsMaxLowGPAStudents(groupAssignments)
-    print('score after PML = ', score)
+    prints.debug(f"Score after PML = {score}")
     score += pointsTeamSize(groupAssignments)
-    print('score after PTS = ', score)
+    prints.debug(f"Score after PTS = {score}")
     score += pointsAvoid(groupAssignments)
-    print('score after PSA = ', score)
+    prints.debug(f"Score after PSA = {score}")
 
-    print('score grand total =', score)
+    prints.debug(f"Score grand total = {score}")
 
     return score
