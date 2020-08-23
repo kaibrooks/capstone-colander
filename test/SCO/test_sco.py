@@ -11,7 +11,9 @@ print('*** RUNNING TEST_SCO.PY ***')
 # SCO-F001 - 'all-purpose' score
 print('\n::: SCO-F001 :::')
 cor_score = 700 # correct score
-##### still needs to be tested #######
+# Result: Failed
+# Note: Score of 1000 was calculated.
+# looks like ESL points was counted 4 times rather than once.
 ​
 # SCO-F002 - missing studentChoiceN
 print('\n::: SCO-F002 :::')
@@ -28,7 +30,7 @@ print('\n::: SCO-F004 :::')
 cor_score = 200
 # Result: Failed
 # Note: Score of 400 was calculated.
-# seems like ESL points was counted 4 times rather than twice for each group.
+# looks like ESL points was counted 4 times rather than twice for each group.
 ​
 # SCO-F005 - group size constraint
 print('\n::: SCO-F005 :::')
@@ -52,8 +54,8 @@ cor_score = 0
 ​
 # SCO-F009 - studentAvoid constraint
 print('\n::: SCO-F009 :::')
-cor_score = -800
-##### still needs to be tested #######
+cor_score = -500
+# Result: Passed
 ​
 # SCO-F010 - maxLowGPAStudents constraint
 print('\n::: SCO-F010 :::')

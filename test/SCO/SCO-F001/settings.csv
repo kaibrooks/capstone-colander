@@ -3,7 +3,7 @@ teamSize,1,10,
 lowGPAThreshold,1.00,,
 maxLowGPAStudents,,10,
 maxESLStudents,,10,
-maxRunTime,,7200,
+effort,,25,
 weightMaxLowGPAStudents,,,100
 weightMaxESLStudents,,,100
 weightTeamSize,,,100
