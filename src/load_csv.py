@@ -188,6 +188,7 @@ def settingsHandler(settingsFileData):
         effort = int(settingsFileData.set_index('name').at['effort', 'max'])
     except:
         effort = 20
+        prints.warn("valid 'effort' value not found in the settings csv. Running with default value of 20.")
     if effort < 0 or effort > 100:
         effort = 20
         prints.warn("'effort' in the settings csv is not an int between 1 and 100. Running with default value of 20.")
