@@ -3,6 +3,9 @@
 
 import sys
 
+global debugMode
+debugMode = 0
+
 def err(msg):
     """prints and error message and exits"""
     sys.exit("\nERROR: " + msg)
@@ -21,6 +24,9 @@ def logerr(msg):
 
 def debug(msg):
     """prints a debugging message"""
-    debugMode = 1
     if debugMode:
         print("" + msg)
+
+def check_debug():
+    """check if debug mode is on"""
+    return debugMode
