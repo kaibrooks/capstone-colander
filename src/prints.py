@@ -4,7 +4,7 @@
 import sys
 
 global debugMode
-debugMode = 0
+debugMode = 1
 
 def err(msg):
     """prints and error message and exits"""
