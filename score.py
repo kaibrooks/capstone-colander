@@ -7,14 +7,9 @@ import load_csv
 import pandas as pd
 import prints
 
-#load_csv.settingsHandler()
-#load_csv.projectsHandler('projects.csv')
-#load_csv.studentsHandler('students.csv')
-
 def pointsStudentChoice(groupAssignments):
     totalPSC = 0
-    maxNumChoices = 5
-    #maxNumChoices = load_csv.numStudentChoices
+    maxNumChoices = load_csv.numStudentChoices
     maxScore = load_csv.weightStudentChoice1
 
     # This outputs the score for each student's choice's based on their actual assignment
@@ -37,6 +32,7 @@ def pointsStudentChoice(groupAssignments):
                     prints.debug(f"Score {totalPSC}")
 
                     break
+
     return totalPSC
 
 def pointsESLStudents(groupAssignments):
@@ -129,7 +125,7 @@ def pointsAvoid(groupAssignments):
     bad = 0
 
     prints.debug(f"========pointsAvoid========")
-    prints.debug(f"{load_csv.studentAvoid}")
+    #prints.debug(f"{load_csv.studentAvoid}")
     
     for i in range(load_csv.numStudents):
         # skips student with empty avoid value
