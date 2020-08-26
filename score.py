@@ -16,21 +16,19 @@ def pointsStudentChoice(groupAssignments):
     # Students = rows (y), ProjectChoices = columns (x)
     for y in range(len(load_csv.studentID)):
         for x in range(len(load_csv.studentChoiceN.columns)):
-            # If NaN is detected gives score based on x position then breaks
+            # If NaN is detected gives score based on position x then breaks
             prints.debug(f"ID {load_csv.studentID.iat[y]}, Choice {load_csv.studentChoiceN.iat[y, x]}")
 
-            if pd.isna(load_csv.studentChoiceN.iat[y, x]) == True:
-                totalPSC = totalPSC + math.ceil(maxScore - (maxScore / maxNumChoices) * x)
+            if pd.isna(load_csv.studentChoiceN.iat[y, x]):
+                totalPSC += math.ceil(maxScore - (maxScore / maxNumChoices) * x)
                 prints.debug(f"Score {totalPSC}")
-
                 break
             
             # If an assignment match is detected gives score based on position x then breaks
-            elif pd.isna(load_csv.studentChoiceN.iat[y, x]) == False:
+            else:
                 if load_csv.studentChoiceN.iat[y, x] == groupAssignments[y]:
-                    totalPSC = totalPSC + math.ceil(maxScore - (maxScore / maxNumChoices) * x)
+                    totalPSC += math.ceil(maxScore - (maxScore / maxNumChoices) * x)
                     prints.debug(f"Score {totalPSC}")
-
                     break
 
     return totalPSC

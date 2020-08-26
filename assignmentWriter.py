@@ -1,28 +1,35 @@
-# load_csv
-import pandas as pd # loads csv
+# Creates .csv files with the assignment column added in and filled.
+import pandas as pd
+import prints
+import os
 
-def assignmentColumnCreator(studentsFile, groupAssignments):
+def assignmentColumnCreator(studentsFile, outputFile, optimalSolution):
     df = pd.read_csv(studentsFile) # load a file as a variable
-    print(df) # output it
-    #print("Total Students : ", df['studentID'].count())
-    #print("Average GPA    : ", df['studentGPA'].mean())
+    prints.debug(f"{df}") # Before changes output
 
-    # copy the first file so we don't overwrite it
-    # Setting index to False prevents storing of the row numbers in the csv
-    df.to_csv(studentsFile, index = False)
+    # Copy the first file so we don't overwrite it
+    df.to_csv(studentsFile, index = False) # Setting index to False prevents storing of the row numbers in the csv
 
     project_assignment = []
     for i in range(len(df)):
-        project_assignment.append(groupAssignments[i]) # add that column to the dataframe
+        project_assignment.append(optimalSolution[i]) # Add that column to the dataframe
 
-    df['Assignment'] = '' # if no 'Assignment' column, create it
-    new_data = pd.DataFrame({'Assignment': project_assignment}) # project assignments
-    df.update(new_data) # add them to the csv
+    df['assignment'] = '' # If there's no 'Assignment' column, create its header
+    new_data = pd.DataFrame({'assignment': project_assignment}) # Assign data to that header
+    df.update(new_data) # Adding them to the csv
 
-    ## write a new csv
-    df.to_csv('new_students.csv', index=False)
-    print(df) # output it
+    i = 1
+    z = len(outputFile)
+    while (os.path.isfile(outputFile)):
+        #outputFile = outputFile[:z] + str(i) + outputFile[z + 1:]
+        outputFile = outputFile[:z - 4] + str(i) + '.csv' # Creates a new file if the old one exists.
+        i += 1
+    
+    # Writes/Overwrites to a csv named outputFile.csv
+    df.to_csv(outputFile, index=False)
+    prints.debug(f"{df}") # After changes output
 
-groupAssignments = [1, 7, 7, 4]
-cat = 'students.csv'
-assignmentColumnCreator(cat, groupAssignments)
+optimalSolution = [1, 7, 7, 4]
+inputFile = 'students.csv'
+outputFile = 'koa.csv'
+assignmentColumnCreator(inputFile, outputFile, optimalSolution)
