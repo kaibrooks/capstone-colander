@@ -36,10 +36,23 @@ def pointsStudentChoice(groupAssignments):
 def pointsESLStudents(groupAssignments):
     pointWeight = load_csv.weightMaxESLStudents
     maxESL = load_csv.maxESLStudents
-    totalPES = len(groupAssignments) * pointWeight # Maximum possible score
+    totalPES = 0
     groupESL = [0] * len(load_csv.projectIDs) # Initializing an empty array to 0's
 
     # groupESL[i] is the number of ESL students on team i
+    for i in range(len(load_csv.studentID)):
+        # Counting the number of ESL students on each team
+        if load_csv.studentESL[i] == True:
+            groupESL[groupAssignments[i]] += 1
+            
+    # Awarding points
+    for i in range(len(groupESL)):
+        if groupESL[i] <= maxESL:
+                totalPES += pointWeight
+
+    return totalPES
+###Uncomment lines 56 through 65 and comment out lines 42 through 53 to enable greater granularity###
+    '''# groupESL[i] is the number of ESL students on team i
     for i in range(len(load_csv.studentID)):
         # Checking if a students ESL flag is set
         if load_csv.studentESL[i] == True:
@@ -48,7 +61,7 @@ def pointsESLStudents(groupAssignments):
             if groupESL[groupAssignments[i]] > maxESL:
                 totalPES -= pointWeight
 
-    return totalPES
+    return totalPES'''
 
 def pointsStudentPriority(groupAssignments):
     totalPSP = 0
@@ -145,23 +158,23 @@ def pointsAvoid(groupAssignments):
     return totalPSA
 
 def scoringMode(groupAssignments): 
-    groupAssignments = [0, 5, 2, 3, 1, 1, 1, 1, 9, 9, 2, 3, 4, 5, 6, 4, 4]
+    groupAssignments = [0, 5, 2, 3, 1, 1, 1, 1, 1, 2, 2, 3, 4, 5, 6, 4, 4]
 
     prints.debug(f"Assignment: {groupAssignments}")
     score = 0
     
     #score = pointsStudentChoice(groupAssignments)
-    #print('score after PSC = ', score)
-    #score += pointsESLStudents(groupAssignments)
-    #print('score after PES = ', score)
-    #score += pointsStudentPriority(groupAssignments)
-    #print('score after PSP = ', score)
+    print('score after PSC = ', score)
+    score += pointsESLStudents(groupAssignments)
+    print('score after PES = ', score)
+    score += pointsStudentPriority(groupAssignments)
+    print('score after PSP = ', score)
     
     #score += pointsMaxLowGPAStudents(groupAssignments)
-    #print('score after PML = ', score)
+    print('score after PML = ', score)
     #score += pointsTeamSize(groupAssignments)
-    #print('score after PTS = ', score)
-    score += pointsAvoid(load_csv.studentAssignment)
+    print('score after PTS = ', score)
+    #score += pointsAvoid(load_csv.studentAssignment)
     print('score after PSA = ', score)
 
     print('score grand total =', score)

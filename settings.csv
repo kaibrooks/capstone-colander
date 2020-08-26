@@ -5,7 +5,7 @@ maxLowGPAStudents,,2,
 maxESLStudents,,2,
 maxRunTime,,60,
 weightMaxLowGPAStudents,,,100
-weightMaxESLStudents,,,75
+weightMaxESLStudents,,,100
 weightTeamSize,,,90
 weightStudentPriority,,,100
 weightStudentChoice1,,,50
