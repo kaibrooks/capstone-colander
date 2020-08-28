@@ -4,9 +4,9 @@ name: CI
 # events but only for the master branch
 on:
   push:
-    branches: [ make-test, master ]
+    branches: [ master ]
   pull_request:
-    branches: [ make-test, master ]
+    branches: [ master ]
 
 jobs:
   test:

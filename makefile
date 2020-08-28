@@ -17,8 +17,8 @@ install:
 		
 install-python3-macos:
 		@echo "\n${BLUE}Installing Python 3...${NC}\n"
-		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)" # install homebrew 
-		brew install python3 # install python 3
+	    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install | ruby
+		brew install python3
 
 test:
 		@echo "\n${BLUE}Running tests...${NC}\n"
