@@ -8,8 +8,9 @@ import os
 def outputCreator(studentFileData, outputFile, optimalSolution):
     #change program to use studentFileData structure and now just the name.
     df = pd.read_csv(studentFileData) # load a file as a variable
+    #df = studentFileData
     prints.debug(f"{df}") # Before changes output
-
+    
     # Copy the first file so we don't overwrite it
     df.to_csv(studentFileData, index = False) # Setting index to False prevents storing of the row numbers in the csv
  
@@ -29,6 +30,6 @@ def outputCreator(studentFileData, outputFile, optimalSolution):
     prints.debug(f"{df}") # After changes output
 
 optimalSolution = [1, 7, 7, 4]
-inputFile = 'che.csv'
+inputFile = 'students.csv'
 outputFile = 'koa.csv'
 outputCreator(inputFile, outputFile, optimalSolution)

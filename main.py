@@ -10,6 +10,7 @@ import pandas as pd
 # imports below are other python files used in this project
 # which are required to call their functions from main
 import load_csv
+import write_csv
 #import assign
 import score
 import prints as pt
@@ -106,6 +107,7 @@ if __name__ == "__main__":
         pt.printGeneral("Program running in Assignment mode with a max run time of {0} minutes.".format(load_csv.maxRunTime))
         assign.ga()
     elif progMode == 'Scoring':
+        #write_csv.outputCreator(studentsFile, main.outputFile, optimalSolution) # TEST
         score.scoringMode(cat)
 
     pt.printGeneral("** Program has completed running **")
