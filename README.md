@@ -14,7 +14,7 @@ git clone https://github.com/kaibrooks/capstone-colander
 This project requires Python 3. Do you have it?  
 
 ### I have Python already
-Just install the Python libraries with:
+Just install the project's Python libraries with:
 ```
 make install
 ```
@@ -28,19 +28,19 @@ make install
 Note: You can install Python 3 without Homebrew by following the *install Python3 on a different OS* below.
 
 ### I need to install Python 3 on a different OS
-[Download Python here](https://www.python.org/downloads/release/python-385/ "Download Python here"), then run
+[Download and install Python here](https://www.python.org/downloads/release/python-385/ "Download Python here"). Then, install the project's Python libraries with:
 ```
 make install
 ```
 
 ### I don't know if I have Python
-Check with
+Check with:
 ```
 python --version
 ```
 
-### I want to use Docker
-Download a container from the Docker Hub:
+### Alternative: I want to use Docker
+Download the project's container from the Docker Hub with:
 ```
 docker pull (...coming soon)
 ```
