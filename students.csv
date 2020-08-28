@@ -1,5 +1,16 @@
-Name,studentID,studentGPA,Random,studentPriority,studentESL,assignment,studentAvoid,cheese,studentChoice1,studentChoice2,Choice 3
-Kai,2020,1.0,test,,,1,,1,,,
-Spike,17,3.2,test,,,2,,2,,,
-Goku,9000,3.8,test,True,,2,,2,,,
-Cell,8999,3.1,test,,,2,,2,,,
+studentID,studentGPA,studentPriority,studentESL,studentAvoid,assignment,studentChoice1,studentChoice2,studentChoice3,studentChoice4,studentChoice5
+90965,4.00,,true,,1,1,2,3,4,5
+86378,4.00,,true,,1,1,2,3,4,5
+48389,4.00,,true,,2,1,2,3,4,5
+21498,4.00,,true,,2,1,2,3,4,5
+28467,4.00,,true,,3,1,2,3,4,5
+87520,4.00,,true,,3,1,2,3,4,5
+11111,4.00,,,,3,1,2,3,4,5
+22222,4.00,,,,3,1,2,3,4,5
+33333,4.00,,,,3,1,2,3,4,5
+44444,4.00,,,,3,1,2,3,4,5
+55555,4.00,,,,3,1,2,3,4,5
+66666,4.00,,,,3,1,2,3,4,5
+77777,4.00,,,,3,1,2,3,4,5
+88888,4.00,,,,3,1,2,3,4,5
+99999,4.00,,,,3,1,2,3,4,5

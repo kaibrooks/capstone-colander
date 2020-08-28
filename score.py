@@ -38,16 +38,19 @@ def pointsESLStudents(groupAssignments):
     maxESL = load_csv.maxESLStudents
     totalPES = 0
     groupESL = [0] * len(load_csv.projectIDs) # Initializing an empty array to 0's
+    groupSize = [0] * len(load_csv.projectIDs) 
 
+    prints.debug(f"{groupESL} | {groupSize} gESL | gSize Before")
     # groupESL[i] is the number of ESL students on team i
     for i in range(len(load_csv.studentID)):
-        # Counting the number of ESL students on each team
         if load_csv.studentESL[i] == True:
-            groupESL[groupAssignments[i]] += 1
-            
+            groupESL[groupAssignments[i]] += 1 # ESL students per team
+        groupSize[groupAssignments[i]] += 1 # Students per team
+
+    prints.debug(f"{groupESL} | {groupSize} gESL | gSize After")
     # Awarding points
     for i in range(len(groupESL)):
-        if groupESL[i] <= maxESL:
+        if groupESL[i] <= maxESL and groupSize[i] > 0:
                 totalPES += pointWeight
 
     return totalPES
@@ -157,8 +160,8 @@ def pointsAvoid(groupAssignments):
 
     return totalPSA
 
-def scoringMode(groupAssignments): 
-    groupAssignments = [0, 5, 2, 3, 1, 1, 1, 1, 1, 2, 2, 3, 4, 5, 6, 4, 4]
+def scoringMode(groupAssignments):
+    groupAssignments = [0, 0, 3, 3, 1, 1, 1, 1, 2, 2, 3, 3, 3, 3, 3]
 
     prints.debug(f"Assignment: {groupAssignments}")
     score = 0
