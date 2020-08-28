@@ -8,8 +8,6 @@ BLUE='\033[0;34m'
 NC='\033[0m' # no color
 
 # This version-strategy uses git tags to set the version string
-TAG := $(shell git describe --tags --always --dirty)
-
 install:
 		@echo "\n${BLUE}Installing packages...${NC}\n"
 		# as listed in the docker image (docker exec cc pip list)
@@ -42,7 +40,7 @@ stop-docker:
 		docker stop cc; docker rm cc
 		
 version:
-		@echo $(TAG)
+		@echo $(shell git describe --tags --always --dirty)
 
 help:
 	@echo ''
