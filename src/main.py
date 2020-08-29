@@ -51,7 +51,7 @@ def main():
     if argument.assign:
         programMode = 'Assignment'
         if argument.score:
-            prints.printWarning("both Scoring (-c) and Assignment (-a) modes selected. Program will run in Assignment mode.")
+            prints.warn("both Scoring (-c) and Assignment (-a) modes selected. Program will run in Assignment mode.")
 
     # when running program in Assignment mode
     # if output user provided already exists when running in Assignment mode, warn user
