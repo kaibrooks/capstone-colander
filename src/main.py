@@ -14,7 +14,7 @@ import write_csv
 import assign
 import score
 import prints
-#import write_csv
+import write_csv
 
 # startup information
 now = datetime.today().strftime('%Y-%m-%d %H:%M:%S')  # get the date/time
@@ -28,10 +28,10 @@ def main():
 
     # accepted command line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("-s", "--students", help="Students CSV filename", required=False, default='io/students.csv')
-    parser.add_argument("-p", "--projects", help="Projects CSV filename", required=False, default='io/projects.csv')
-    parser.add_argument("-u", "--settings", help="User Settings CSV filename", required=False, default='io/settings.csv')
-    parser.add_argument("-o", "--output", help="Output (assignment) CSV filename", required=False, default='io/assign.csv')
+    parser.add_argument("-s", "--students", help="Students CSV filename", required=False, default='../io/students.csv')
+    parser.add_argument("-p", "--projects", help="Projects CSV filename", required=False, default='../io/projects.csv')
+    parser.add_argument("-u", "--settings", help="User Settings CSV filename", required=False, default='../io/settings.csv')
+    parser.add_argument("-o", "--output", help="Output (assignment) CSV filename", required=False, default='../io/assign.csv')
     parser.add_argument("-a", "--assign", help="Run the program in Assignment mode", required=False, action='store_true')
     parser.add_argument("-c", "--score", help="Run the program in Scoring mode", required=False, action='store_true')
 
