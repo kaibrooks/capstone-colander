@@ -64,7 +64,7 @@ def projectsHandler(projectsFileData):
 
     # verify that there are no duplicate project IDs in the projectID column
     if projectsFileData.projectID.duplicated().any():
-        prints.logerr("projectid {0} is a duplicate projectID in the csv file.".format({projectsFileData[projectsFileData.projectID.duplicated()].projectID.iloc[0]}))
+        prints.logerr("projectID {0} is a duplicate projectID in the csv file.".format({projectsFileData[projectsFileData.projectID.duplicated()].projectID.iloc[0]}))
         errFlg = True
 
     # if values for team sizes are blank, enter size from settings.csv and then verify all values are integers
@@ -259,53 +259,85 @@ def studentsHandler(studentsFile, progMode):
 
             # Verify assignment contains numbers
             if is_numeric_dtype(studentAssignment) == False:
-                prints.logerr("Unexpected data type found in assignment column.")
-                errFlg = True
-
-            # Verify assignment contains valid projects
-            for student in range(numStudents):
-                if pd.isna(studentAssignment[student]) == True:  # If element empty
-                    prints.err("Empty field found in row {0} Assignment column.".format(student))
-                else:
-                    sAssignmentMatch = False
-                    for j in range(len(projectIDs)):  # Find matching id in global projectIDs
-                        if (studentAssignment[student] == projectIDs[j]):
-                            sAssignmentMatch = True
-                            # replace project id with project index
-                            studentAssignment.at[student] = j
-                            break
-                    if sAssignmentMatch == False:
-                        prints.logerr(
-                            "No matching project id found for assignment = {0:n}".format(studentAssignment[student]))
-                        errFlg = True
+                print("is numeric dtype == False")
+                for student in range(numStudents):
+                    if studentAssignment[student].isnumeric() == False:
+                        prints.logerr("Unexpected data found in assignment column, row {0} = {1} ".format(student,
+                                                                                                          studentAssignment[
+                                                                                                              student]))
+            else:
+                # Verify assignment contains valid projects
+                for student in range(numStudents):
+                    if pd.isna(studentAssignment[student]) == True:  # If element empty
+                        prints.err("Empty field found in Assignment column, row {0}.".format(student))
+                    else:
+                        sAssignmentMatch = False
+                        for j in range(len(projectIDs)):  # Find matching id in global projectIDs
+                            if (studentAssignment[student] == projectIDs[j]):
+                                sAssignmentMatch = True
+                                # replace project id with project index
+                                studentAssignment.at[student] = j
+                                break
+                        if sAssignmentMatch == False:
+                            prints.logerr("No matching project id found for assignment = {0:n}".format(
+                                studentAssignment[student]))
+                            errFlg = True
         else:
             prints.err("No assignment column found. Terminating program.")
 
     for student in range(numStudents):
         # Verify studentID has no NaN values
         if pd.isna(studentID[student]) == True:  # If element empty
-            prints.logerr("Empty element found in row {0} of the studentID column".format(student))
+            prints.logerr("Empty element found in studentID column, row {0}".format(student))
             errFlg = True
 
         # Verify studentGPA has no NaN values
         if pd.isna(studentGPA[student]) == True:  # If element empty
-            prints.logerr("Empty element found in row {0} of the studentGPA column".format(student))
+            prints.logerr("Empty element found in studentGPA column, row {0}".format(student))
             errFlg = True
 
     # Verify studentID contains numbers
     if is_numeric_dtype(studentID) == False:
-        prints.logerr("Unexpected data type found in studentID.")
         errFlg = True
+        for student in range(numStudents):
+            if studentID[student].isnumeric() == False:
+                prints.logerr("Unexpected data found in studentID, row {0} = '{1}'".format(student, studentID[student]))
 
     # Verify studentGPA contains numbers
     if is_numeric_dtype(studentGPA) == False:
-        prints.logerr("Unexpected data type found in studentGPA.")
         errFlg = True
+        for student in range(numStudents):
+            try:
+                float(studentGPA[student])
+            except ValueError:
+                prints.logerr(
+                    "Unexpected data found in studentGPA, row {0} = '{1}'".format(student, studentGPA[student]))
 
     # Verify studentESL contains booleans
     if is_bool_dtype(studentESL) == False:
-        prints.logerr("Unexpected data type found in studentESL.")
         errFlg = True
+        for student in range(numStudents):
+            val = studentESL[student]
+            if val != False:
+                val = val.lower()
+                if val != 'true' and val != 'false':
+                    prints.logerr(
+                        "Unexpected data found in studentESL, row {0} = '{1}'".format(student, studentESL[student]))
+
+    # Check for optional studentPriority column
+    if 'studentPriority' in studentsFileData.columns:
+
+        # Verify studentPriority contains booleans
+        if is_bool_dtype(studentPriority) == False:
+            errFlg = True
+            for student in range(numStudents):
+                val = studentPriority[student]
+                if val != False:
+                    val = val.lower()
+                    if val != 'true' and val != 'false':
+                        prints.logerr("Unexpected data found in studentPriority, row {0} = '{1}'".format(student,
+                                                                                                         studentPriority[
+                                                                                                             student]))
 
     # Check studentID for duplicate
     if studentID.duplicated().any():
@@ -314,8 +346,14 @@ def studentsHandler(studentsFile, progMode):
 
     # Verify studentAvoid contains numbers
     if is_numeric_dtype(studentAvoid) == False:
-        prints.logerr("Unexpected data type found in studentAvoid.")
         errFlg = True
+        for student in range(numStudents):
+            if studentAvoid[student].isnumeric() == False:
+                prints.logerr(
+                    "Unexpected data found in studentAvoid, row {0} = '{1}'".format(student, studentAvoid[student]))
+
+    if errFlg == True:
+        prints.err("Unexpected data type(s) found in students input file. Terminating Program.")
 
     # Check studentGPA within range
     for value in studentGPA:
@@ -334,39 +372,40 @@ def studentsHandler(studentsFile, progMode):
                     studentAvoid.at[student] = j
                     break
             if sAvoidMatch == False:
-                prints.logerr("No matching student id found for student = {0:n} in studentAvoid column".format(
+                prints.logerr("No matching student id found in studentAvoid column, for student = {0:n}".format(
                     studentAvoid[student]))
                 errFlg = True
 
     # Verify studentChoiceN contains valid project ids
+    # when Pandas finds unexpected data type, elements in studentChoiceN cast as objects, not int
     clmns = list(studentChoiceN)
     for cid in clmns:
-        # Verify studenChoiceN contains numbers
+        # Set flag for typecasting when column is not numeric
+        numeric = True
         if is_numeric_dtype(studentChoiceN[cid]) == False:
-            prints.logerr("Unexpected data type found in studentChoice.")
-            errFlg = True
+            numeric = False
 
         for rid in studentChoiceN.index:
             if pd.isna(studentChoiceN[cid][rid]) == False:  # If element not empty
-                sChoiceMatch = False
+                # Numeric typecasting for when a letter is present in the column
+                if numeric == False:
+                    try:
+                        studentChoiceN.at[rid, cid] = int(studentChoiceN[cid][rid])
+                    except:
+                        prints.logerr(
+                            "Unexpected data found in {0}, row {1} = '{2}'".format(cid, rid, studentChoiceN[cid][rid]))
+                        errFlg = True
+
                 for i in range(len(projectIDs)):  # Find matching id in global projectIDs
+                    sChoiceMatch = False
                     if (studentChoiceN[cid][rid] == projectIDs[i]):
                         sChoiceMatch = True
                         # replace project id with project index
                         studentChoiceN.at[rid, cid] = i
                         break
-
                 if sChoiceMatch == False:
-                    prints.logerr(
-                        "No matching project id found for studentChoice = {0:n}".format(studentChoiceN[cid][rid]))
+                    prints.logerr("No matching project id found for {0} = '{1}'".format(cid, studentChoiceN[cid][rid]))
                     errFlg = True
-
-    # Check for optional studentPriority column
-    if 'studentPriority' in studentsFileData.columns:
-
-        # Verify studentPriority contains booleans
-        if is_bool_dtype(studentPriority) == False:
-            prints.logerr("Unexpected data type found in studentPriority.")
 
     # Exits when error conditions met
     if errFlg == True:
