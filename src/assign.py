@@ -19,13 +19,13 @@ def objf(soln): # objective function
     returns:
     y -- function value
     """
-
-    y = score.pointsTeamSize(soln)
-    y += score.pointsStudentPriority(soln)
-    y += score.pointsAvoid(soln)
-    y += score.pointsESLStudents(soln)
-    y += score.pointsMaxLowGPAStudents(soln)
-    y += score.pointsStudentChoice(soln)
+    new_soln = list(map(int, soln))
+    y = score.pointsTeamSize(new_soln)
+    y += score.pointsStudentPriority(new_soln)
+    y += score.pointsAvoid(new_soln)
+    y += score.pointsESLStudents(new_soln)
+    y += score.pointsMaxLowGPAStudents(new_soln)
+    y += score.pointsStudentChoice(new_soln)
 
     return -y # return negative for positive scoring
 
@@ -42,7 +42,7 @@ def run_ga(verbose=1):
     num_projects = len(load_csv.projectIDs) # total projects available
     num_generations = load_csv.numStudents*num_projects*effort_scaling # scale generations based on input size
 
-    var_bound = np.array([[1,num_projects]]*load_csv.numStudents) # solution shape
+    var_bound = np.array([[0,num_projects-1]]*load_csv.numStudents) # solution shape
     ga_params = {'max_num_iteration': num_generations,\
                     'population_size':100,\
                     'mutation_probability':0.02,\
