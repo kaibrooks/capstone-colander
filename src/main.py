@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
     # command line parser and error handling
     settingsFileData, projectsFileData, studentsFileData, studentsFile, progMode = main()
-
+    
     # read, parse, and handle errors of all three csv files
     load_csv.settingsHandler(settingsFileData)
     load_csv.projectsHandler(projectsFileData)
@@ -101,7 +101,7 @@ if __name__ == "__main__":
 
     if progMode == 'Assignment':
         optimalSolution = assign.run_ga()
-        write_csv.outputCreator(studentsFileData, outputFile, optimalSolution)
+        write_csv.outputCreator(studentsFileData, main.outputFile, optimalSolution)
     elif progMode == 'Scoring':
         finalScore = score.scoringMode(load_csv.studentAssignment)
         prints.gen("Assignment Score: {0}".format(finalScore))
