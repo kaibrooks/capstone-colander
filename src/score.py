@@ -106,9 +106,12 @@ def pointsTeamSize(groupAssignments):
     # initialize groupSize - counts how many students there are in each group
     groupSize = [0] * len(load_csv.projectIDs)
 
-    
+    #print(len(load_csv.studentID))
+    #print(len(groupAssignments))
+    #print(len(groupSize))
     # loop for counting group size
     for i in range(len(load_csv.studentID)):
+        #print(groupSize[groupAssignments[i]], groupAssignments[i], i)
         groupSize[groupAssignments[i]] += 1
 
     prints.debug(f"========pointsTeamSize========")

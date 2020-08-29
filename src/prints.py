@@ -33,6 +33,6 @@ def logerr(msg):
 
 def debug(msg):
     """prints a debugging message"""
-    debugMode = 1
+    debugMode = 0
     if debugMode:
         print("" + msg)

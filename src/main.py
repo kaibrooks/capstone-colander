@@ -98,7 +98,7 @@ if __name__ == "__main__":
     load_csv.settingsHandler(settingsFileData)
     load_csv.projectsHandler(projectsFileData)
     load_csv.studentsHandler(studentsFile, progMode)
-    print(studentsFileData)
+
     if progMode == 'Assignment':
         optimalSolution = assign.run_ga()
         write_csv.outputCreator(studentsFileData, outputFile, optimalSolution)

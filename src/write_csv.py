@@ -7,7 +7,7 @@ import os
 
 def outputCreator(studentFileData, outputFile, optimalSolution):
     df = studentFileData
-    prints.debug(f"{df}") # Before changes output
+    #prints.debug(f"{df}") # Before changes output
     # Copy the first file so we don't overwrite it
     df.to_csv(studentFileData, index = False) # Setting index to False prevents storing of the row numbers in the csv
  
@@ -17,4 +17,4 @@ def outputCreator(studentFileData, outputFile, optimalSolution):
     
     # Writes/Overwrites to a csv named outputFile.csv
     df.to_csv(outputFile, index=False)
-    prints.debug(f"{df}") # After changes output
+    #prints.debug(f"{df}") # After changes output
