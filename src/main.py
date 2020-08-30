@@ -15,6 +15,7 @@ import assign
 import score
 import prints
 import write_csv
+import time
 
 # startup information
 now = datetime.today().strftime('%Y-%m-%d %H:%M:%S')  # get the date/time
@@ -106,7 +107,11 @@ if __name__ == "__main__":
     load_csv.studentsHandler(studentsFile, progMode)
 
     if progMode == 'Assignment':
+        t0 = time.time()
         optimalSolution = assign.run_ga()
+        run_time = time.time() - t0
+        run_time = str(round(run_time, 2))
+        prints.gen("\nRun time: {0} seconds".format(run_time))
         write_csv.outputCreator(studentsFileData, outputFile, optimalSolution)
     elif progMode == 'Scoring':
         finalScore = score.scoringMode(load_csv.studentAssignment)
