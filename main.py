@@ -13,23 +13,23 @@ if argument.students:
 if argument.projects:
     projects = int(argument.projects)
 
-df = pd.DataFrame(columns=['studentName', 'studentID', 'studentGPA', 'studentESL', 'studentPriority'])
+df = pd.DataFrame(columns=['studentName', 'studentID', 'studentGPA', 'studentESL', 'studentPriority', 'studentAvoid'])
 fd = pd.DataFrame(columns=['projectName', 'projectID', 'minTeamSize', 'maxTeamSize', 'customField'])
 
-ESLs, firstPriority, GPAs, studentAvoid, customField, studentChoice = [], [], [], [], [], []
+ESLs, firstPriority, GPAs, studentAvoids, customField, studentChoice = [], [], [], [], [], []
 minTeamSize, maxTeamSize = [], []
 
 i = 0
 while i < students:
     name = names.get_full_name()
     df = df.append({'studentName': name}, ignore_index=True)
-    tempESL = random.choices([0, 1], weights=[75, 25])
+    tempESL = random.choices([False, True], weights=[75, 25])
     tempESL = tempESL[0]
     ESLs.append(tempESL)
-    tempPriority = random.choices([0, 1], weights=[90, 10])
+    tempPriority = random.choices([False, True], weights=[90, 10])
     tempPriority = tempPriority[0]
     firstPriority.append(tempPriority)
-    tempGPA = round(random.uniform(2,4), 2)
+    tempGPA = round(random.uniform(1,4), 2)
     GPAs.append(tempGPA)
     i += 1
 
@@ -68,27 +68,19 @@ fd.update(newData)
 avoidChoices = random.choices([1,2,3,4], weights=[30,50,15,5])
 avoidChoices = avoidChoices[0]
 
-i = 1
-while i <= avoidChoices:
-    df['studentAvoid{0}'.format(i)] = ''
-    i += 1
-
 def studentAvoider(numStudents, percentage, colName):
-    studentAvoid.clear()
+    studentAvoids.clear()
     numStudents = int(round(numStudents * percentage))
     i = 1
     while i <= numStudents:
         tempAvoid = random.choice(studentsIDs)
-        studentAvoid.append(int(tempAvoid))
+        studentAvoids.append(int(tempAvoid))
         i += 1
-    newData = pd.DataFrame({str(colName): studentAvoid})
+    newData = pd.DataFrame({str(colName): studentAvoids})
     df.update(newData)
 
-studentAvoider(float(len(studentsIDs)), .10, 'studentAvoid1')
-if 'studentAvoid2' in df.columns:
-    studentAvoider(float(len(studentsIDs)), .06, 'studentAvoid2')
-if 'studentAvoid3' in df.columns:
-    studentAvoider(float(len(studentsIDs)), .03, 'studentAvoid3')
+studentAvoider(float(len(studentsIDs)), .10, 'studentAvoid')
+
 
 numStudentChoices = random.choices([3,4,5,6,7], weights=[25,40,20,8,7])
 numStudentChoices = numStudentChoices[0]
@@ -115,11 +107,11 @@ projectChooser(float(len(studentsIDs)), .75, 'studentChoice3')
 if 'studentChoice4' in df.columns:
     projectChooser(float(len(studentsIDs)), .5, 'studentChoice4')
 if 'studentChoice5' in df.columns:
-    studentAvoider(float(len(studentsIDs)), .3, 'studentChoice5')
+    projectChooser(float(len(studentsIDs)), .3, 'studentChoice5')
 if 'studentChoice6' in df.columns:
-    studentAvoider(float(len(studentsIDs)), .1, 'studentChoice6')
+    projectChooser(float(len(studentsIDs)), .1, 'studentChoice6')
 if 'studentChoice7' in df.columns:
-    studentAvoider(float(len(studentsIDs)), .05, 'studentChoice7')
+    projectChooser(float(len(studentsIDs)), .05, 'studentChoice7')
 
 df['customField'] = ''
 
