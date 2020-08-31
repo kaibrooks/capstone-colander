@@ -7,9 +7,16 @@ ENV PYTHONDONTWRITEBYTECODE 1
 # Turns off buffering for easier container logging
 ENV PYTHONUNBUFFERED 1
 
+# Download latest listing of available packages:
+RUN apt-get -y update
+# Upgrade already installed packages:
+RUN apt-get -y upgrade
+RUN apt-get install make
+RUN python3 -m pip install --upgrade pip
+
 # Install pip requirements
 ADD requirements.txt .
-RUN python -m pip install -r requirements.txt
+RUN python3 -m pip install -r requirements.txt
 
 WORKDIR /app
 ADD . /app
@@ -18,5 +25,8 @@ ADD . /app
 RUN useradd appuser && chown -R appuser /app
 USER appuser
 
+COPY ./makefile ./makefile
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-CMD ["python", "src/assign.py"]
+#CMD ["python3", "src/dockermain.py"]
+#CMD ["python3 -m unittest", "test/SCO/test_sco.py"]
+CMD ["make", "test"]
