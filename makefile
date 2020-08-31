@@ -46,7 +46,7 @@ build-docker:
 
 run-docker:
 		@echo "\n${BLUE}Running Docker container...${NC}\n"
-		@docker run -it --name cc --rm -v `pwd`/io:/io capstone-colander:latest
+		@docker run -it --name cc --rm -v `pwd`/io:/io capstone-colander:latest bash
 
 stop-docker:
 		@echo "n${BLUE}Cleaning Docker container...${NC}\n"
@@ -71,7 +71,7 @@ help:
 	@echo '  test					- run tests	'
 	@echo '  lint					- run the flake8 linter '
 	@echo '  build-docker			- build the docker container'
-	@echo '  run-docker				- run the docker container'
+	@echo '  run-docker				- run the docker container in a bash shell'
 	@echo '  stop-docker			- stop the docker container'
 	@echo '  remove-docker			- removes the docker image'
 	@echo '  version				- display version from git tags '
