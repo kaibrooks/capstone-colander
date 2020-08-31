@@ -75,8 +75,8 @@ def run_ga(verbose=1):
     # variable_type=int -- data type
     # variable_boundaries=var_bound -- data range per gene
     # algorithm_parameters=ga_params -- ga settings from above
-    if verbose:
-        prints.gen(f'Running {num_generations} generations with input: {load_csv.infile}')
+    #if verbose:
+        #prints.gen(f'Running {num_generations} generations with input: {load_csv.infile}')
 
     # hit it
     return model.run() # run the model defined in geneticalgorithm.py

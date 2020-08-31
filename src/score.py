@@ -4,151 +4,174 @@
 
 import math  # ceil()
 import load_csv
+import pandas as pd
+import prints
 
 
-def pointsStudentChoice(inputArray):
+def pointsStudentChoice(groupAssignments):
     totalPSC = 0
-    number_choices = 5
-    points_max = load_csv.weightStudentChoice1
+    maxNumChoices = 5
+    # maxNumChoices = load_csv.numStudentChoices
+    maxScore = load_csv.weightStudentChoice1
 
+    # This outputs the score for each student's choice's based on their actual assignment
     # Students = rows (y), ProjectChoices = columns (x)
     for y in range(len(load_csv.studentID)):
         for x in range(len(load_csv.studentChoiceN.columns)):
-            if load_csv.studentChoiceN.iat[y, x] == inputArray[y]:
-                totalPSC = totalPSC + math.ceil(points_max - (points_max / number_choices) * x)
-                # ddd = math.ceil(points_max - (points_max / number_choices) * x)
-                # print(load_csv.studentChoiceN.iat[y, x], '<-- Choice', ddd, '<-- score', y, '<-- studentID', totalPSC, '<-- totalPSC IN LOOP')
+            # If NaN is detected gives score based on x position then breaks
+            prints.debug(f"ID {load_csv.studentID.iat[y]}, Choice {load_csv.studentChoiceN.iat[y, x]}")
 
+            if pd.isna(load_csv.studentChoiceN.iat[y, x]) == True:
+                totalPSC = totalPSC + math.ceil(maxScore - (maxScore / maxNumChoices) * x)
+                prints.debug(f"Score {totalPSC}")
+
+                break
+
+            # If an assignment match is detected gives score based on position x then breaks
+            elif pd.isna(load_csv.studentChoiceN.iat[y, x]) == False:
+                if load_csv.studentChoiceN.iat[y, x] == groupAssignments[y]:
+                    totalPSC = totalPSC + math.ceil(maxScore - (maxScore / maxNumChoices) * x)
+                    prints.debug(f"Score {totalPSC}")
+
+                    break
     return totalPSC
 
 
-def pointsESLStudents(inputArray):
-    totalPES = 0
-    point_weight = load_csv.weightMaxESLStudents
+def pointsESLStudents(groupAssignments):
+    pointWeight = load_csv.weightMaxESLStudents
     maxESL = load_csv.maxESLStudents
+    totalPES = len(groupAssignments) * pointWeight  # Maximum possible score
+    groupESL = [0] * len(load_csv.projectIDs)  # Initializing an empty array to 0's
 
-    # Initializing an empty array to 0's
-    ESL_Group = [0] * len(load_csv.studentID)
-
-    # print(ESL_Group, 'ESL_Group Before')
+    # groupESL[i] is the number of ESL students on team i
     for i in range(len(load_csv.studentID)):
-        # Checking if a students ESL flag is set to 1
-        if load_csv.studentESL[i] == 1:
-            # The students actual assignment (inputArray[i]) is used to index into ESL_Group to
-            # track how many ESL students are on that team.
-            ESL_Group[inputArray[i]] = ESL_Group[inputArray[i]] + 1
+        # Checking if a students ESL flag is set
+        if load_csv.studentESL[i] == True:
+            groupESL[groupAssignments[i]] += 1
 
-            if ESL_Group[inputArray[i]] > maxESL:
-                totalPES -= point_weight
-                # print(totalPES, 'Current total')
-    # print(ESL_Group, 'ESL_Group After')
+            if groupESL[groupAssignments[i]] > maxESL:
+                totalPES -= pointWeight
 
     return totalPES
 
 
-def pointsStudentPriority(inputArray):
+def pointsStudentPriority(groupAssignments):
     totalPSP = 0
 
     # Checks if priority flag is set then checks if they got their first choice
     for i in range(len(load_csv.studentID)):
-        if load_csv.studentPriority[i] == 1:
-            if inputArray[i] == load_csv.studentChoiceN.iat[i, 0]:
+        if load_csv.studentPriority[i] == True:
+            if groupAssignments[i] == load_csv.studentChoiceN.iat[i, 0]:
                 totalPSP += load_csv.weightStudentPriority
 
     return totalPSP
 
-# This calculates bonus points for having fewer students than maxLowGPAStudents in a group
-def pointsMaxLowGPAStudents(inputArray):
+
+# This calculates points for having fewer students than maxLowGPAStudents in a group
+def pointsMaxLowGPAStudents(groupAssignments):
     totalPML = 0
-    weight_pml = load_csv.weightMaxLowGPAStudents
+    weightPML = load_csv.weightMaxLowGPAStudents
     minGPA = load_csv.lowGPAThreshold
     maxLow = load_csv.maxLowGPAStudents
-    maxLow_group = [0] * len(load_csv.studentID)
-    group_size = [0] * len(load_csv.studentID)
+    # initialize maxLowGroup - counts how many per group do not meet minGPA constraint
+    maxLowGroup = [0] * len(load_csv.projectIDs)
+    # initialize groupSize - counts how many students there are in each group
+    groupSize = [0] * len(load_csv.projectIDs)
 
-    def maxgroup(maxLow_group):
-        for i in range(len(load_csv.studentID)):
-            if load_csv.studentGPA[i] < minGPA:
-                maxLow_group[inputArray[i]] = maxLow_group[inputArray[i]] + 1
-        return maxLow_group
+    # loop for counting maxLowGPA students and group sizes
+    for i in range(len(load_csv.studentID)):
+        if load_csv.studentGPA[i] < minGPA:
+            maxLowGroup[groupAssignments[i]] += 1
+        groupSize[groupAssignments[i]] += 1
 
-    def sizegroup(group_size):
-        for i in range(len(load_csv.studentID)):
-            group_size[inputArray[i]] = group_size[inputArray[i]] + 1
-        return group_size
+    prints.debug(f"========pointsMaxLowGPAStudents========")
+    prints.debug(f"groups with lowGPA students: {maxLowGroup}")
+    prints.debug(f"groups with # of studetns: {groupSize}")
 
-    maxgroup(maxLow_group)
-    sizegroup(group_size)
-
-    for i in range(len(maxLow_group)):
-        if maxLow_group[i] >= 0 and maxLow_group[i] <= maxLow and group_size[i] > 0:
-            totalPML += weight_pml
-            # print('total PML score =', totalPML)
-        else:
-            # print('No bonus!')
-            pass
+    # iterates through maxLowGroup for points - also ignores empty groups
+    for i in range(len(maxLowGroup)):
+        if maxLowGroup[i] <= maxLow and groupSize[i] > 0:
+            prints.debug(f"group: {load_csv.projectIDs[i]} satisfies the condition!")
+            totalPML += weightPML
 
     return totalPML
 
-# This calculates bonus points for having met group size constraints
-def pointsTeamSize(inputArray):
+
+# This calculates points for having met group size constraints
+def pointsTeamSize(groupAssignments):
     totalPTS = 0
-    weight_pts = load_csv.weightTeamSize
-    group_size = [0] * len(load_csv.projectIDs)
+    weightPTS = load_csv.weightTeamSize
+    # initialize groupSize - counts how many students there are in each group
+    groupSize = [0] * len(load_csv.projectIDs)
 
-    def group(group_size):
-        for i in range(len(load_csv.studentID)):
-            group_size[inputArray[i]] = group_size[inputArray[i]] + 1
-        return group_size
+    # loop for counting group size
+    for i in range(len(load_csv.studentID)):
+        groupSize[groupAssignments[i]] += 1
 
-    group(group_size)
+    prints.debug(f"========pointsTeamSize========")
+    prints.debug(f"group size: {groupSize}")
+    prints.debug(f"min size: {load_csv.minTeamSize}")
+    prints.debug(f"max size: {load_csv.maxTeamSize}")
 
-    for i in range(len(group_size)):
-        if group_size[i] > 0:
-            if load_csv.minTeamSize[i] <= group_size[i] and group_size[i] <= load_csv.maxTeamSize[i]:
-                totalPTS += weight_pts
-            else:
-                pass
+    # iterates through groupSize to identify group meeting the size constraints
+    for i in range(len(groupSize)):
+        if load_csv.minTeamSize[i] <= groupSize[i] <= load_csv.maxTeamSize[i]:
+            prints.debug(f"project: {load_csv.projectIDs[i]} satisfies the condition!")
+            prints.debug(
+                f"project: {load_csv.projectIDs[i]} Min:{load_csv.minTeamSize[i]} Max: {load_csv.maxTeamSize[i]} group size: {groupSize[i]}")
+            totalPTS += weightPTS
 
     return totalPTS
 
-# This calculates penalty for violating studentAvoid constraint
-def pointsAvoid(inputArray):
+
+# This calculates points for violating studentAvoid constraint
+def pointsAvoid(groupAssignments):
     totalPSA = 0
-    weight_psa = load_csv.weightAvoid
+    weightPSA = load_csv.weightAvoid
+    # initializes bad - counts how many studentAvoid matches are found
     bad = 0
 
-    for j in range(len(load_csv.projectIDs)):
-        for i in range(len(inputArray)):
-            if range(inputArray[i] == j):
-                if (i in load_csv.studentID) == (i in load_csv.studentAvoidN):  # (i in inputArray) == (i in load_csv.studentID):
-                    # print('match detected')
-                    bad += 1
+    prints.debug(f"========pointsAvoid========")
+    prints.debug(f"{load_csv.studentAvoid}")
 
-    totalPSA -= (weight_psa * bad)
-    # print('PSA score in loop',totalPSA)
-    # print('Current score: ', totalPSA)
+    for i in range(load_csv.numStudents):
+        # skips student with empty avoid value
+        if pd.isna(load_csv.studentAvoid[i]) == False:
+            # stores studentAvoid data to 'avoid'
+            avoid = load_csv.studentAvoid[i]
+            prints.debug(f"======student loop======")
+            prints.debug(f"student: {[i]} avoid: {avoid}")
+            prints.debug(f"student group: {load_csv.studentAssignment[i]}")
+            prints.debug(f"avoid group: {load_csv.studentAssignment[avoid]}")
+            # identifies studentAvoid match within in same group
+            if load_csv.studentAssignment[i] == load_csv.studentAssignment[avoid]:
+                prints.debug(f"studentAvoid match found")
+                bad += 1
+
+    prints.debug(f"bad: {bad}")
+    totalPSA -= (weightPSA * bad)
 
     return totalPSA
 
-def scoringMode(inputArray):
 
-    print('\nAssignment:\n', inputArray)
+def scoringMode(groupAssignments):
+
+    prints.debug(f"Assignment: {groupAssignments}")
     score = 0
 
-    score = pointsStudentChoice(inputArray)
-    print('score after PSC = ', score)
-    score += pointsESLStudents(inputArray)
-    print('score after PES = ', score)
-    score += pointsStudentPriority(inputArray)
-    print('score after PSP = ', score)
+    score = pointsStudentChoice(groupAssignments)
+    print('score after studentChoice = ', score)
+    score += pointsESLStudents(groupAssignments)
+    print('score after ESLStudents = ', score)
+    score += pointsStudentPriority(groupAssignments)
+    print('score after studentPriority = ', score)
 
-    score += pointsMaxLowGPAStudents(inputArray)
-    print('score after PML = ', score)
-    score += pointsTeamSize(inputArray)
-    print('score after PTS = ', score)
-    score += pointsAvoid(inputArray)
-    print('score after PSA = ', score)
+    score += pointsMaxLowGPAStudents(groupAssignments)
+    print('score after maxLowGPAStudents = ', score)
+    score += pointsTeamSize(groupAssignments)
+    print('score after teamSize = ', score)
+    score += pointsAvoid(load_csv.studentAssignment)
+    print('score after studentAvoid = ', score)
 
     print('score grand total =', score)
 

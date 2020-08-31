@@ -65,6 +65,7 @@ def projectsHandler(projectsFileData):
     # verify that there are no duplicate project IDs in the projectID column
     if projectsFileData.projectID.duplicated().any():
         prints.logerr("projectid {0} is a duplicate projectID in the csv file.".format({projectsFileData[projectsFileData.projectID.duplicated()].projectID.iloc[0]}))
+        errFlg = True
 
     # if values for team sizes are blank, enter size from settings.csv and then verify all values are integers
     projectsFileData['minTeamSize'] = projectsFileData['minTeamSize'].fillna(defaultMinTeamSize)
@@ -187,6 +188,7 @@ def settingsHandler(settingsFileData):
         effort = int(settingsFileData.set_index('name').at['effort', 'max'])
     except:
         effort = 20
+        prints.warn("valid 'effort' value not found in the settings csv. Running with default value of 20.")
     if effort < 0 or effort > 100:
         effort = 20
         prints.warn("'effort' in the settings csv is not an int between 1 and 100. Running with default value of 20.")
@@ -204,166 +206,168 @@ def settingsHandler(settingsFileData):
 
 
 def studentsHandler(studentsFile, progMode):
-
     global studentID
     global studentGPA
     global studentESL
     global studentPriority
     global studentChoiceN
-    global studentAvoidN
+    global studentAvoid
     global studentAssignment
     global numStudents
     global errFlg
+    global numStudentChoices
 
-    #Load csv file
+    # Load csv file
     studentsFileData = pd.read_csv(studentsFile)
 
-    #Verify required columns are present
-    studentsColumns = ['studentID', 'studentChoice1', 'studentGPA','studentESL']
+    # Verify required columns are present
+    studentsColumns = ['studentID', 'studentChoice1', 'studentGPA', 'studentESL', 'studentAvoid']
     for col in studentsColumns:
-       if col not in studentsFileData.columns:
-           prints.err("Required {0} column header not found in the students csv file. Terminating Program.".format(col))
+        if col not in studentsFileData.columns:
+            prints.err(
+                "Required {0} column header not found in the students csv file. Terminating Program.".format(col))
 
-
-    #Create studentChoiceN global dataframe
+    # Create studentChoiceN global dataframe
     fields = [col for col in studentsFileData.columns if 'studentChoice' in col]
     studentChoiceN = pd.read_csv(studentsFile, skipinitialspace=True, usecols=fields)
 
-    ### Find duplicate required columns
+    # Sort studentChoiceN columns sequentially
+    studentChoiceN = studentChoiceN.reindex(sorted(studentChoiceN.columns), axis=1)
 
-    #Append list of column names to include studentChoice columns
+    # Append list of column names to include studentChoice columns
     studentsColumns.extend(studentChoiceN)
-
-    if 'studentAvoid' in studentsFileData.columns:
-
-        #Create studentAvoidN global dataframe
-        fields = [col for col in studentsFileData.columns if 'studentAvoid' in col]
-        studentAvoidN = pd.read_csv(studentsFile, skipinitialspace=True, usecols=fields)
-
-        #Append list of column names to include studentAvoid columns
-        studentsColumns.extend(studentAvoidN)
-
+    # Find duplicate required columns
     findDuplicateCols(studentsFileData, studentsColumns, studentsFile)
 
-    #Create global series
+    # Create global series
     studentID = studentsFileData['studentID'].copy()
     studentGPA = studentsFileData['studentGPA'].copy()
     studentESL = studentsFileData['studentESL'].fillna(False)
     studentPriority = studentsFileData['studentPriority'].fillna(False)
-    numStudents = studentsFileData['studentID'].count()
+    studentAvoid = studentsFileData['studentAvoid'].copy()
 
-    ### Validate data
+    # Define global variable
+    numStudents = len(studentsFileData)
+    numStudentChoices = len(studentChoiceN.columns)
 
-    #Check for Assign column when in Assign mode
+    # Check for Assign column when in Assign mode
     if progMode == 'Scoring':
         if 'assignment' in studentsFileData.columns:
 
-            #Store assignment column
+            # Store assignment column
             studentAssignment = studentsFileData['assignment'].copy()
 
-            #Verify assignment contains numbers
+            # Verify assignment contains numbers
             if is_numeric_dtype(studentAssignment) == False:
                 prints.logerr("Unexpected data type found in assignment column.")
                 errFlg = True
 
-            #Verify assignment contains valid projects
-            for i in range(len(studentAssignment)):
-                if pd.isna(studentAssignment[i]) == True:     #If element empty
-                    prints.err("Empty field found in Assignment column.")
+            # Verify assignment contains valid projects
+            for student in range(numStudents):
+                if pd.isna(studentAssignment[student]) == True:  # If element empty
+                    prints.err("Empty field found in row {0} Assignment column.".format(student))
                 else:
                     sAssignmentMatch = False
-                    for j in range(len(projectIDs)):   #Find matching id in global projectIDs
-                        if (studentAssignment[i] == projectIDs[j]):
+                    for j in range(len(projectIDs)):  # Find matching id in global projectIDs
+                        if (studentAssignment[student] == projectIDs[j]):
                             sAssignmentMatch = True
+                            # replace project id with project index
+                            studentAssignment.at[student] = j
                             break
                     if sAssignmentMatch == False:
-                        prints.logerr("No matching project id found for assignment = {0:n}".format(studentAssignment[i]))
+                        prints.logerr(
+                            "No matching project id found for assignment = {0:n}".format(studentAssignment[student]))
                         errFlg = True
         else:
             prints.err("No assignment column found. Terminating program.")
 
-    #Verify studentID contains numbers
+    for student in range(numStudents):
+        # Verify studentID has no NaN values
+        if pd.isna(studentID[student]) == True:  # If element empty
+            prints.logerr("Empty element found in row {0} of the studentID column".format(student))
+            errFlg = True
+
+        # Verify studentGPA has no NaN values
+        if pd.isna(studentGPA[student]) == True:  # If element empty
+            prints.logerr("Empty element found in row {0} of the studentGPA column".format(student))
+            errFlg = True
+
+    # Verify studentID contains numbers
     if is_numeric_dtype(studentID) == False:
-         prints.logerr("Unexpected data type found in studentID.")
-         errFlg = True
+        prints.logerr("Unexpected data type found in studentID.")
+        errFlg = True
 
-    #Verify studentGPA contains numbers
+    # Verify studentGPA contains numbers
     if is_numeric_dtype(studentGPA) == False:
-         prints.logerr("Unexpected data type found in studentGPA.")
-         errFlg = True
+        prints.logerr("Unexpected data type found in studentGPA.")
+        errFlg = True
 
-    #Verify studenChoiceN contains numbers
-    clmn = list(studentChoiceN)
-    for i in clmn:
-        if is_numeric_dtype(studentChoiceN[i]) == False:
-            prints.logerr("Unexpected data type found in studentChoice.")
-            errFlg = True
-
-    #Verify studentESL contains booleans
+    # Verify studentESL contains booleans
     if is_bool_dtype(studentESL) == False:
-            prints.logerr("Unexpected data type found in studentPriority.")
-            errFlg = True
+        prints.logerr("Unexpected data type found in studentESL.")
+        errFlg = True
 
-    #Check studentID for duplicate
+    # Check studentID for duplicate
     if studentID.duplicated().any():
         prints.logerr('Duplicate studentID found')
         errFlg = True
 
-    #Check studentGPA within range
+    # Verify studentAvoid contains numbers
+    if is_numeric_dtype(studentAvoid) == False:
+        prints.logerr("Unexpected data type found in studentAvoid.")
+        errFlg = True
+
+    # Check studentGPA within range
     for value in studentGPA:
         if (value < 0.0) or (value > 4.0):
             prints.logerr('{0} outside of acceptable GPA range'.format(value))
             errFlg = True
 
-    #Verify studentChoiceN contains valid project ids
-    clmns = list(studentChoiceN)
-    for cid in clmns:
-        for rid in studentChoiceN.index:
-            if pd.isna(studentChoiceN[cid][rid]) == False:     #If element not empty
-                sChoiceMatch = False
-                for i in range(len(projectIDs)):   #Find matching id in global projectIDs
-                    if (studentChoiceN[cid][rid] == projectIDs[i]):
-                        sChoiceMatch = True
-                        break
-                if sChoiceMatch == False:
-                    prints.logerr("No matching project id found for studentChoice = {0:n}".format(studentChoiceN[cid][rid]))
-                    errFlg = True
-
-    #Check for optional studentPriority column
-    if 'studentPriority' in studentsFileData.columns:
-
-        #Verify studentPriority contains booleans
-        if is_bool_dtype(studentPriority) == False:
-            prints.logerr("Unexpected data type found in studentPriority.")
-    else:
-        prints.warn('studentPriority column not found')
-
-    #Verify studentAvoid data
-    if 'studentAvoid' in studentsFileData.columns:
-
-        #Verify studentAvoidN contains numbers
-        clmn = list(studentAvoidN)
-        for i in clmn:
-            if is_numeric_dtype(studentAvoidN[i]) == False:
-                prints.logerr("Unexpected data type found in studentAvoid.")
+    # Verify studentAvoid contains valid student IDs
+    for student in range(numStudents):
+        if pd.isna(studentAvoid[student]) == False:  # If element not empty
+            sAvoidMatch = False
+            for j in studentID.index:  # Find matching id in studentIDs
+                if (studentAvoid[student] == studentID[j]):
+                    sAvoidMatch = True
+                    # replace student id with student index
+                    studentAvoid.at[student] = j
+                    break
+            if sAvoidMatch == False:
+                prints.logerr("No matching student id found for student = {0:n} in studentAvoid column".format(
+                    studentAvoid[student]))
                 errFlg = True
 
-        #Verify studentAvoidN contains valid student ids
-        clmns = list(studentAvoidN)
-        for cid in clmns:
-            for rid in studentAvoidN.index:
-                if pd.isna(studentAvoidN[cid][rid]) == False:     #If element not empty
-                    sAvoidMatch = False
-                    for i in studentID.index:          #Find matching id in global studentID
-                        if (studentAvoidN[cid][rid] == studentID[i]):
-                            sAvoidMatch = True
-                            break
-                    if sAvoidMatch == False:
-                        prints.logerr("No matching student id found for studentAvoid = {0:n}".format(studentAvoidN[cid][rid]))
-                        errFlg = True
-    else:
-        prints.warn('studentAvoid NOT found')
+    # Verify studentChoiceN contains valid project ids
+    clmns = list(studentChoiceN)
+    for cid in clmns:
+        # Verify studenChoiceN contains numbers
+        if is_numeric_dtype(studentChoiceN[cid]) == False:
+            prints.logerr("Unexpected data type found in studentChoice.")
+            errFlg = True
 
-    #Exit when error conditions met
+        for rid in studentChoiceN.index:
+            if pd.isna(studentChoiceN[cid][rid]) == False:  # If element not empty
+                sChoiceMatch = False
+                for i in range(len(projectIDs)):  # Find matching id in global projectIDs
+                    if (studentChoiceN[cid][rid] == projectIDs[i]):
+                        sChoiceMatch = True
+                        # replace project id with project index
+                        studentChoiceN.at[rid, cid] = i
+                        break
+
+                if sChoiceMatch == False:
+                    prints.logerr(
+                        "No matching project id found for studentChoice = {0:n}".format(studentChoiceN[cid][rid]))
+                    errFlg = True
+
+    # Check for optional studentPriority column
+    if 'studentPriority' in studentsFileData.columns:
+
+        # Verify studentPriority contains booleans
+        if is_bool_dtype(studentPriority) == False:
+            prints.logerr("Unexpected data type found in studentPriority.")
+
+    # Exits when error conditions met
     if errFlg == True:
         prints.err("Invalid data found in input CSV files. Terminating program.")
