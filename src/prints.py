@@ -4,7 +4,7 @@
 import sys
 
 global debugMode
-debugMode = 1
+debugMode = 0
 
 
 def debug(msg):
