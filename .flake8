@@ -1,5 +1,5 @@
 [flake8]
-#ignore = F401
+#ignore = F401, N816
 max-line-length = 160
 exclude = test/*
 max-complexity = 10
