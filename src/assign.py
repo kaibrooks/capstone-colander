@@ -11,8 +11,8 @@ import load_csv
 import prints
 import score
 
-# defs
-def objf(soln): # objective function
+
+def objf(soln):  # objective function
     """objective function for genetic algorithm
     arguments:
     soln -- the solution to evaluate
@@ -27,7 +27,8 @@ def objf(soln): # objective function
     y += score.pointsMaxLowGPAStudents(soln)
     y += score.pointsStudentChoice(soln)
 
-    return -y # return negative for positive scoring
+    return -y  # return negative for positive scoring
+
 
 def run_ga(verbose=1):
     """run the genetic algorithm
@@ -38,21 +39,21 @@ def run_ga(verbose=1):
     """
 
     # vars
-    effort_scaling = load_csv.effort/8 # scale the effort value for this algorithm, '100' taking roughly 8 hours
-    num_projects = len(load_csv.projectIDs) # total projects available
-    num_generations = load_csv.numStudents*num_projects*effort_scaling # scale generations based on input size
+    effort_scaling = load_csv.effort / 8  # scale the effort value for this algorithm, '100' taking roughly 8 hours
+    num_projects = len(load_csv.projectIDs)  # total projects available
+    num_generations = load_csv.numStudents * num_projects * effort_scaling  # scale generations based on input size
 
-    var_bound = np.array([[1,num_projects]]*load_csv.numStudents) # solution shape
-    ga_params = {'max_num_iteration': num_generations,\
-                    'population_size':100,\
-                    'mutation_probability':0.02,\
-                    'elit_ratio': 0.01,\
-                    'crossover_probability': 0.5,\
-                    'parents_portion': 0.3,\
-                    'crossover_type':'uniform',\
-                    'max_iteration_without_improv':num_generations*0.35,\
-                    'verbose':verbose,\
-                    }
+    var_bound = np.array([[1, num_projects]] * load_csv.numStudents)  # solution shape
+    ga_params = {'max_num_iteration': num_generations,
+                 'population_size': 100,
+                 'mutation_probability': 0.02,
+                 'elit_ratio': 0.01,
+                 'crossover_probability': 0.5,
+                 'parents_portion': 0.3,
+                 'crossover_type': 'uniform',
+                 'max_iteration_without_improv': num_generations * 0.35,
+                 'verbose': verbose,
+                 }
 
     # max_num_iteration <int> -- stop after this many generations
     # population_size <int> -- chromosomes (members) per generation
@@ -64,19 +65,19 @@ def run_ga(verbose=1):
     # max_iteration_without_improv <int> -- stop early after this many successive generations without improvement
 
     # model information
-    model=geneticalgorithm(function=objf,\
-                dimension=load_csv.numStudents,\
-                variable_type='int',\
-                variable_boundaries=var_bound,\
-                algorithm_parameters=ga_params
-                )
+    model = geneticalgorithm(function=objf,
+                             dimension=load_csv.numStudents,
+                             variable_type='int',
+                             variable_boundaries=var_bound,
+                             algorithm_parameters=ga_params
+                             )
     # function=objf -- function to minimize
     # dimension=load_csv.numStudents -- chromosome length
     # variable_type=int -- data type
     # variable_boundaries=var_bound -- data range per gene
     # algorithm_parameters=ga_params -- ga settings from above
-    #if verbose:
-        #prints.gen(f'Running {num_generations} generations with input: {load_csv.infile}')
+    if verbose:
+        prints.gen(f'Running {num_generations} generations with input: {load_csv.infile}')
 
     # hit it
-    return model.run() # run the model defined in geneticalgorithm.py
+    return model.run()  # run the model defined in geneticalgorithm.py
