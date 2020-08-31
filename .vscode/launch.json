@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "command": "./build.sh",
+            "name": "Build Docker",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+    ]
+}
