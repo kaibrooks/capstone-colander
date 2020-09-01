@@ -13,13 +13,13 @@ install:
 		@curl "https://codeload.github.com/kaibrooks/capstone-colander/zip/dev" -o capstone.zip
 		@unzip capstone.zip
 		@rm capstone.zip
-		@sudo cp -R capstone-colander-dev/* .
+		@sudo cp -R capstone-colander-dev/. .
 		@sudo rm -rf capstone-colander-dev
 		@pip3 install -r requirements.txt
 
 upgrade:
 		@echo "\n${BLUE}Upgrading packages...${NC}\n"
-		@pip3 install --upgrade -r requirements.txt	
+		@pip3 install --upgrade -r requirements.txt
 
 install-python3-macos:
 		@echo "\n${BLUE}Installing Homebrew and Python 3...${NC}\n"
@@ -31,7 +31,7 @@ uninstall:
 		@pip3 uninstall -r requirements.txt
 		@sudo rm -rf io test src .github .vscode
 		@sudo rm .flake8 .gitignore Dockerfile LICENSE README.md build.sh requirements.txt
-		
+
 uninstall-brew-macos:
 		@echo "\n${BLUE}Uninstalling Homebrew...${NC}\n"
 		@/bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh)"
@@ -58,7 +58,7 @@ run-docker:
 stop-docker:
 		@echo "n${BLUE}Cleaning Docker container...${NC}\n"
 		@docker stop cc; docker rm cc
-		
+
 remove-docker:
 		@echo "n${BLUE}Removing Docker image...${NC}\n"
 		@docker rmi capstone-colander
