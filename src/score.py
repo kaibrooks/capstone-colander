@@ -161,19 +161,19 @@ def scoringMode(groupAssignments):
     score = 0
 
     score = pointsStudentChoice(groupAssignments)
-    print('score after studentChoice = ', score)
-    #score += pointsESLStudents(groupAssignments)
-    print('score after ESLStudents = ', score)
-    #score += pointsStudentPriority(groupAssignments)
-    print('score after studentPriority = ', score)
+    prints.debug(f"score after studentChoice = , {score}")
+    score += pointsESLStudents(groupAssignments)
+    prints.debug(f"score after ESLStudents = {score}")
+    score += pointsStudentPriority(groupAssignments)
+    prints.debug(f"score after studentPriority = {score}")
 
-    #score += pointsMaxLowGPAStudents(groupAssignments)
-    print('score after maxLowGPAStudents = ', score)
-    #score += pointsTeamSize(groupAssignments)
-    print('score after teamSize = ', score)
-    #score += pointsAvoid(groupAssignments)
-    print('score after studentAvoid = ', score)
+    score += pointsMaxLowGPAStudents(groupAssignments)
+    prints.debug(f"score after maxLowGPAStudents = {score}")
+    score += pointsTeamSize(groupAssignments)
+    prints.debug(f"score after teamSize = {score}")
+    score += pointsAvoid(groupAssignments)
+    prints.debug(f"score after studentAvoid = {score}")
 
-    print('score grand total =', score)
+    prints.debug(f"score grand total = {score}")
 
     return score

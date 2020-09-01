@@ -24,7 +24,6 @@ def objf(soln): # objective function
     soln.tolist()
     soln = list(map(int, soln)) 
 
-
     y = score.scoringMode(soln)
     #y = score.pointsTeamSize(soln)
     #y += score.pointsStudentPriority(soln)
