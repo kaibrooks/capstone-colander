@@ -24,12 +24,14 @@ def objf(soln): # objective function
     soln.tolist()
     soln = list(map(int, soln)) 
 
-    y = score.pointsTeamSize(soln)
-    y += score.pointsStudentPriority(soln)
-    y += score.pointsAvoid(soln)
-    y += score.pointsESLStudents(soln)
-    y += score.pointsMaxLowGPAStudents(soln)
-    y += score.pointsStudentChoice(soln)
+
+    y = score.scoringMode(soln)
+    #y = score.pointsTeamSize(soln)
+    #y += score.pointsStudentPriority(soln)
+    #y += score.pointsAvoid(soln)
+    #y += score.pointsESLStudents(soln)
+    #y += score.pointsMaxLowGPAStudents(soln)
+    #y += score.pointsStudentChoice(soln)
 
     return -y # return negative for positive scoring
 

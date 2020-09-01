@@ -46,7 +46,7 @@ def main():
     if argument.settings:
         settingsFile = argument.settings
     if argument.output:
-        outputFile = argument.output
+        outputFileName = argument.output
     if argument.score:
         programMode = 'Scoring'
     if argument.assign:
@@ -58,10 +58,10 @@ def main():
     # if output user provided already exists when running in Assignment mode, warn user
     # or if directory of user provided output does not exist, terminate program
     if programMode == 'Assignment':
-        if os.path.exists(outputFile):
-            prints.warn("output file {0} already exists in the directory and will be overwritten with new assignments.".format(outputFile))
-        elif not os.path.isdir(os.path.dirname(os.path.abspath(outputFile))):
-            prints.err("directory for output file {0} does NOT exist.".format(outputFile))
+        if os.path.exists(outputFileName):
+            prints.warn("output file {0} already exists in the directory and will be overwritten with new assignments.".format(outputFileName))
+        elif not os.path.isdir(os.path.dirname(os.path.abspath(outputFileName))):
+            prints.err("directory for output file {0} does NOT exist.".format(outputFileName))
 
     # function to verify user provided files exist and that they are csv files by attempting to read file into a data structure
     # returns data structure assuming all files are csv files
@@ -93,13 +93,13 @@ def main():
     if main.errorFlag is True:
         prints.err("Program Terminated in command line handler. See messages(s) above for additional information.")
 
-    return settingsData, projectsData, studentsData, studentsFile, outputFile, programMode
+    return settingsData, projectsData, studentsData, studentsFile, outputFileName, programMode
 
 
 if __name__ == "__main__":
 
     # command line parser and error handling
-    settingsFileData, projectsFileData, studentsFileData, studentsFile, outputFile, progMode = main()
+    settingsFileData, projectsFileData, studentsFileData, studentsFile, outputFileName, progMode = main()
 
     # read, parse, and handle errors of all three csv files
     load_csv.settingsHandler(settingsFileData)
@@ -112,7 +112,7 @@ if __name__ == "__main__":
         run_time = time.time() - t0
         run_time = str(round(run_time, 2))
         prints.gen("\nRun time: {0} seconds".format(run_time))
-        write_csv.outputCreator(studentsFileData, outputFile, optimalSolution)
+        write_csv.outputCSV(studentsFileData, outputFileName, optimalSolution)
     elif progMode == 'Scoring':
         finalScore = score.scoringMode(load_csv.studentAssignment)
         prints.gen("Assignment Score: {0}".format(finalScore))

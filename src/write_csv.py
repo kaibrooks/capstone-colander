@@ -4,19 +4,18 @@ import prints
 import load_csv
 
 # insert at line 102 in main.py
-
-def outputCreator(studentFileData, outputFile, optimalSolution):
-    df = studentFileData
-
+#change to outputcsv
+def outputCSV(studentFileData, outputFileName, optimalSolution):
+    # optimalSolution is a numpy array
     # Matching projectID's to their indexed number in optimalSolution
     for i in range(len(optimalSolution)):
         optimalSolution[i] = load_csv.projectIDs[int(optimalSolution[i])]
 
-    df['assignment'] = ''  # If there's no 'Assignment' column, create its header
-    new_data = pd.DataFrame({'assignment': optimalSolution})  # Assign data to that header
-    df.update(new_data)  # Adding them to the csv
-    df = df.astype({"assignment": int}) # Treats assignment outputs as ints
+    studentFileData['assignment'] = ''  # If there's no 'Assignment' column, create its header
+    assignments = pd.DataFrame({'assignment': optimalSolution})  # Creating the dataframe
+    studentFileData.update(assignments)  # Appending the dataframe assignments to studentFileData
+    studentFileData = studentFileData.astype({"assignment": int}) # Treats assignment outputs as ints
 
-    prints.debug(f"{df} After") # After changes output
-    # Writes/Overwrites to a csv named outputFile.csv
-    df.to_csv(outputFile, index=False)
+    prints.debug(f"\n========outputCSV========\n\n{studentFileData} After") # After changes output
+    # Writes/Overwrites to a csv named outputFileName
+    studentFileData.to_csv(outputFileName, index=False)
