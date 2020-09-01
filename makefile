@@ -10,6 +10,11 @@ NC='\033[0m' # no color
 
 install:
 		@echo "\n${BLUE}Installing packages...${NC}\n"
+		@curl "https://codeload.github.com/kaibrooks/capstone-colander/zip/dev" -o capstone.zip
+		@unzip capstone.zip
+		@rm capstone.zip
+		@sudo cp -R capstone-colander-dev/* .
+		@sudo rm -rf capstone-colander-dev
 		@pip3 install -r requirements.txt
 
 upgrade:
@@ -24,7 +29,9 @@ install-python3-macos:
 uninstall:
 		@echo "\n${BLUE}Uninstalling packages...${NC}\n"
 		@pip3 uninstall -r requirements.txt
-
+		@sudo rm -rf io test src .github .vscode
+		@sudo rm .flake8 .gitignore Dockerfile LICENSE README.md build.sh requirements.txt
+		
 uninstall-brew-macos:
 		@echo "\n${BLUE}Uninstalling Homebrew...${NC}\n"
 		@/bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh)"
