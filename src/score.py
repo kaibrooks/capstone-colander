@@ -9,6 +9,8 @@ import prints
 
 
 def pointsStudentChoice(groupAssignments):
+    global totalPSC
+
     totalPSC = 0
     maxNumChoices = load_csv.numStudentChoices
     maxScore = load_csv.weightStudentChoice1
@@ -37,6 +39,8 @@ def pointsStudentChoice(groupAssignments):
 
 
 def pointsESLStudents(groupAssignments):
+    global totalPES
+
     pointWeight = load_csv.weightMaxESLStudents
     maxESL = load_csv.maxESLStudents
     totalPES = 0
@@ -60,6 +64,8 @@ def pointsESLStudents(groupAssignments):
 
 
 def pointsStudentPriority(groupAssignments):
+    global totalPSP
+
     totalPSP = 0
 
     # Checks if priority flag is set then checks if they got their first choice
@@ -73,6 +79,8 @@ def pointsStudentPriority(groupAssignments):
 
 # This calculates points for having fewer students than maxLowGPAStudents in a group
 def pointsMaxLowGPAStudents(groupAssignments):
+    global totalPML
+
     totalPML = 0
     weightPML = load_csv.weightMaxLowGPAStudents
     minGPA = load_csv.lowGPAThreshold
@@ -102,6 +110,8 @@ def pointsMaxLowGPAStudents(groupAssignments):
 
 # This calculates points for having met group size constraints
 def pointsTeamSize(groupAssignments):
+    global totalPTS
+
     totalPTS = 0
     weightPTS = load_csv.weightTeamSize 
     # initialize groupSize - counts how many students there are in each group
@@ -128,6 +138,8 @@ def pointsTeamSize(groupAssignments):
 
 # This calculates points for violating studentAvoid constraint
 def pointsAvoid(groupAssignments):
+    global totalPSA
+    
     totalPSA = 0
     weightPSA = load_csv.weightAvoid
     # initializes bad - counts how many studentAvoid matches are found
