@@ -14,8 +14,6 @@ import write_csv
 import assign
 import score
 import prints
-import write_csv
-import time
 
 # startup information
 now = datetime.today().strftime('%Y-%m-%d %H:%M:%S')  # get the date/time
@@ -23,9 +21,11 @@ prints.gen("Program started {0}".format(now))  # print it
 
 
 def main():
+    global scoreBreakdown
 
     # default program mode
-    programMode = 'Assignment'
+    programMode = 'Scoring'
+    scoreBreakdown = False
 
     # accepted command line arguments
     parser = argparse.ArgumentParser()
@@ -35,6 +35,7 @@ def main():
     parser.add_argument("-o", "--output", help="Output (assignment) CSV filename", required=False, default='../io/assign.csv')
     parser.add_argument("-a", "--assign", help="Run the program in Assignment mode", required=False, action='store_true')
     parser.add_argument("-c", "--score", help="Run the program in Scoring mode", required=False, action='store_true')
+    parser.add_argument("-b", "--breakdown", help="Display score breakdown", required=False, action='store_true')
 
     argument = parser.parse_args()
 
@@ -53,6 +54,8 @@ def main():
         programMode = 'Assignment'
         if argument.score:
             prints.warn("both Scoring (-c) and Assignment (-a) modes selected. Program will run in Assignment mode.")
+    if argument.breakdown:
+        scoreBreakdown = True
 
     # when running program in Assignment mode
     # if output user provided already exists when running in Assignment mode, warn user
@@ -100,21 +103,25 @@ if __name__ == "__main__":
 
     # command line parser and error handling
     settingsFileData, projectsFileData, studentsFileData, studentsFile, outputFileName, progMode = main()
-
     # read, parse, and handle errors of all three csv files
     load_csv.settingsHandler(settingsFileData)
     load_csv.projectsHandler(projectsFileData)
     load_csv.studentsHandler(studentsFile, progMode)
 
     if progMode == 'Assignment':
-        t0 = time.time()
         optimalSolution = assign.run_ga()
-        run_time = time.time() - t0
-        run_time = str(round(run_time, 2))
-        prints.gen("\nRun time: {0} seconds".format(run_time))
         write_csv.outputCSV(studentsFileData, outputFileName, optimalSolution)
-    elif progMode == 'Scoring':
-        finalScore = score.scoringMode(load_csv.studentAssignment)
-        prints.gen("Assignment Score: {0}".format(finalScore))
 
-    prints.gen("** Program has completed running **")
+    if progMode == 'Scoring':
+        finalScore = score.scoringMode(load_csv.studentAssignment)
+        prints.gen("\nAssignment Score: {0}".format(finalScore))
+
+    if scoreBreakdown:
+        prints.gen("\nStudentChoice score: {0}".format(score.totalPSC))
+        prints.gen("ESL Students score: {0}".format(score.totalPES))
+        prints.gen("studentPriority score: {0}".format(score.totalPSP))
+        prints.gen("maxLowGPAStudents score: {0}".format(score.totalPML))
+        prints.gen("teamSize score: {0}".format(score.totalPTS))
+        prints.gen("studentAvoid score: {0}".format(score.totalPSA))
+
+    prints.gen("\n** Program has completed running **")
