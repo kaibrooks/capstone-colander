@@ -43,7 +43,7 @@ def run_ga(verbose=1):
     """
 
     # vars
-    effort_scaling = load_csv.effort/800 # scale the effort value for this algorithm, '100' taking roughly 8 hours
+    effort_scaling = load_csv.effort/2 # scale the effort value for this algorithm, '100' taking roughly 8 hours
     num_projects = len(load_csv.projectIDs) # total projects available
     num_generations = load_csv.numStudents*num_projects*effort_scaling # scale generations based on input size
 
