@@ -19,21 +19,23 @@ import prints
 now = datetime.today().strftime('%Y-%m-%d %H:%M:%S')  # get the date/time
 prints.gen("Program started {0}".format(now))  # print it
 
+# default program mode
+programMode = 'Assignment'
+# initialize score breakdown option to be disabled
+scoreBreakdown = False
 
-def main():
+
+def argumentParser():
     global scoreBreakdown
-
-    # default program mode
-    programMode = 'Scoring'
-    scoreBreakdown = False
+    global programMode
 
     # accepted command line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("-s", "--students", help="Students CSV filename", required=False, default='../io/students.csv')
-    parser.add_argument("-p", "--projects", help="Projects CSV filename", required=False, default='../io/projects.csv')
-    parser.add_argument("-u", "--settings", help="User Settings CSV filename", required=False, default='../io/settings.csv')
-    parser.add_argument("-o", "--output", help="Output (assignment) CSV filename", required=False, default='../io/assign.csv')
-    parser.add_argument("-a", "--assign", help="Run the program in Assignment mode", required=False, action='store_true')
+    parser.add_argument("-s", "--students", help="Students CSV filename", required=False, default='io/students.csv')
+    parser.add_argument("-p", "--projects", help="Projects CSV filename", required=False, default='io/projects.csv')
+    parser.add_argument("-u", "--settings", help="Settings CSV filename", required=False, default='io/settings.csv')
+    parser.add_argument("-o", "--output", help="Output CSV filename", required=False, default='io/assign.csv')
+    parser.add_argument("-a", "--assign", help="Run program in Assignment mode", required=False, action='store_true')
     parser.add_argument("-c", "--score", help="Run the program in Scoring mode", required=False, action='store_true')
     parser.add_argument("-b", "--breakdown", help="Display score breakdown", required=False, action='store_true')
 
@@ -41,11 +43,11 @@ def main():
 
     # assign csv file names and mode preference
     if argument.students:
-        studentsFile = argument.students
+        studentsFileName = argument.students
     if argument.projects:
-        projectsFile = argument.projects
+        projectsFileName = argument.projects
     if argument.settings:
-        settingsFile = argument.settings
+        settingsFileName = argument.settings
     if argument.output:
         outputFileName = argument.output
     if argument.score:
@@ -62,59 +64,78 @@ def main():
     # or if directory of user provided output does not exist, terminate program
     if programMode == 'Assignment':
         if os.path.exists(outputFileName):
-            prints.warn("output file {0} already exists in the directory and will be overwritten with new assignments.".format(outputFileName))
+            prints.warn("output file {0} already exists in the directory and will be overwritten with new assignments."
+                        .format(outputFileName))
         elif not os.path.isdir(os.path.dirname(os.path.abspath(outputFileName))):
             prints.err("directory for output file {0} does NOT exist.".format(outputFileName))
 
-    # function to verify user provided files exist and that they are csv files by attempting to read file into a data structure
-    # returns data structure assuming all files are csv files
-    # otherwise, sets an errorFlag to True to terminate program after each filed is checked
-    main.errorFlag = False
-    def csvFileCheck(csvFileName):
-        if not os.path.exists(csvFileName):
-            # if original filename not found, add .csv extension and check again
-            tempFileName = csvFileName + '.csv'
-            if not os.path.exists(tempFileName):
-                prints.logerr("{0} csv file can not be found.".format(csvFileName))
-                main.errorFlag = True
-                return 0, 0
-            csvFileName = tempFileName
-        try:
-            tempDataStruct = pd.read_csv(csvFileName)
-        except ValueError:
-            prints.logerr("{0} is not a valid csv file.".format(csvFileName))
-            main.errorFlag = True
+    return studentsFileName, projectsFileName, settingsFileName, outputFileName
+
+
+# flag to keep track if errors found so the program can terminate
+# after all files are checked, not immediately when one error is found
+errFlag = False
+
+
+# function to verify user provided files exist and that they are csv files
+# by attempting to read file into a data structure
+# returns data structure assuming all files are csv files
+# otherwise, sets errFlag to True to terminate program after each filed is checked
+def csvFileCheck(csvFileName):
+    global errFlag
+
+    if not os.path.exists(csvFileName):
+        # if original filename not found, add .csv extension and check again
+        tempFileName = csvFileName + '.csv'
+        if not os.path.exists(tempFileName):
+            prints.logerr("{0} csv file can not be found.".format(csvFileName))
+            errFlag = True
             return 0, 0
-        return tempDataStruct, csvFileName
-
-    # load projects csv file
-    settingsData, settingsFile = csvFileCheck(settingsFile)
-    projectsData, projectsFile = csvFileCheck(projectsFile)
-    studentsData, studentsFile = csvFileCheck(studentsFile)
-
-    # terminate program if any errors detected in the csvFileCheck function
-    if main.errorFlag is True:
-        prints.err("Program Terminated in command line handler. See messages(s) above for additional information.")
-
-    return settingsData, projectsData, studentsData, studentsFile, outputFileName, programMode
+        csvFileName = tempFileName
+    try:
+        tempDataStruct = pd.read_csv(csvFileName)
+    except ValueError:
+        prints.logerr("{0} is not a valid csv file.".format(csvFileName))
+        errFlag = True
+        return 0, 0
+    return tempDataStruct, csvFileName
 
 
 if __name__ == "__main__":
 
     # command line parser and error handling
-    settingsFileData, projectsFileData, studentsFileData, studentsFile, outputFileName, progMode = main()
+    studentFile, projectFile, settingFile, outputFile = argumentParser()
+
+    # load csv files. returns csv file dataframe and final csv filename
+    settingsFileData, settingsFile = csvFileCheck(settingFile)
+    projectsFileData, projectsFile = csvFileCheck(projectFile)
+    studentsFileData, studentsFile = csvFileCheck(studentFile)
+
+    # terminate program if any errors detected in the csvFileCheck function
+    if errFlag:
+        prints.err("Program Terminated in command line handler. See messages(s) above for additional information.")
+
     # read, parse, and handle errors of all three csv files
-    load_csv.settingsHandler(settingsFileData)
-    load_csv.projectsHandler(projectsFileData)
-    load_csv.studentsHandler(studentsFile, progMode)
+    # errFlag used if errors are found in the csv files
+    # violating csv files are appended to array to inform user which file(s) the errors came from
+    errFiles = []
+    if load_csv.settingsHandler(settingsFileData):
+        errFiles.append(settingsFile)
+    if load_csv.projectsHandler(projectsFileData):
+        errFiles.append(projectsFile)
+    if load_csv.studentsHandler(studentsFileData, programMode):
+        errFiles.append(studentsFile)
 
-    if progMode == 'Assignment':
+    if errFiles:
+        prints.err("Program Terminating due to errors in the following files: {0}."
+                   " See ERROR messages above for more info.".format(errFiles))
+
+    if programMode == 'Assignment':
         optimalSolution = assign.run_ga()
-        write_csv.outputCSV(studentsFileData, outputFileName, optimalSolution)
-
-    if progMode == 'Scoring':
+        write_csv.outputCSV(studentsFileData, outputFile, optimalSolution)
+    elif programMode == 'Scoring':
         finalScore = score.scoringMode(load_csv.studentAssignment)
-        prints.gen("\nAssignment Score: {0}".format(finalScore))
+        prints.gen("Assignment Score: {0}".format(finalScore))
 
     if scoreBreakdown:
         prints.gen("\nStudentChoice score: {0}".format(score.totalPSC))
@@ -124,4 +145,4 @@ if __name__ == "__main__":
         prints.gen("teamSize score: {0}".format(score.totalPTS))
         prints.gen("studentAvoid score: {0}".format(score.totalPSA))
 
-    prints.gen("\n** Program has completed running **")
+    prints.gen("** Program has completed running **")
