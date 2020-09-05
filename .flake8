@@ -1,5 +1,5 @@
 [flake8]
-ignore = N802,N803,N806,N816
-max-line-length = 140
+ignore = N802,N803,N806,N816,C901,E501,F841
+max-line-length = 160
 exclude = test/*, src/dockermain.py, src/geneticalgorithm.py
 max-complexity = 10
