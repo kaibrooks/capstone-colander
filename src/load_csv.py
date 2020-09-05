@@ -8,17 +8,14 @@ from pandas.api.types import is_numeric_dtype
 from pandas.api.types import is_bool_dtype
 
 
-# function verifies that there are no duplicate required column names
-# ignores any duplicate non-required fields
+# function verifies that there are no duplicate required column headers
+# ignores any non-required duplicate fields
 def findDuplicateCols(fileData, requiredCols, csvFile):
-    # duplicate columns have a '.1' attached to them in the pandas dataframe
-    # so, remove any '.1's from column names and place each column name into an array
+    # pandas appends '.1' to any duplicate column header. create array of column headers without '.1'
     columnNamesArray = fileData.columns.str.rsplit('.', n=1).str[0]
-    # create an array of booleans, indicating if there is or isn't a duplicate from the required columns
-    # by performing a bitwise AND operation on required columns array and if they are duplicated
+    # create array of booleans, where True = duplicate header and present in the required column
     mask = columnNamesArray.isin(requiredCols) & columnNamesArray.duplicated()
-    # if duplicate (True) found, display which required columns were duplicated
-    # and in which csv file they are located
+    # if duplicate found, display duplicate required columns and location
     for dup in mask:
         if dup:
             duplicateColumns = fileData.columns[mask]
@@ -79,7 +76,7 @@ def projectsHandler(projectsFileData):
         for i in range(len(projectDuplicates)):
             prints.logerr("Duplicate projectID found: {0}".format(projectsFileData[projectsFileData.projectID.duplicated()].iloc[i]))
 
-    # if values for team sizes are blank, enter size from settings.csv and then verify all values are integers
+    # if values for team sizes are blank, enter size from settings csv and then verify all values are integers
     projectsFileData['minTeamSize'] = projectsFileData['minTeamSize'].fillna(defaultMinTeamSize)
     minTeamSize = int_checker_projects('minTeamSize')
     projectsFileData['maxTeamSize'] = projectsFileData['maxTeamSize'].fillna(defaultMaxTeamSize)
@@ -90,16 +87,17 @@ def projectsHandler(projectsFileData):
         if min > max:
             prints.logerr("minTeamSize is greater than maxTeamSize for projectID {0}.".format(pid))
 
-    # warn user if gap found in projectID sequence that starts a projectID '1'
+    # warn user if gap found in projectID sequence assuming projectID starts at '1'
+    # arithmetic series = (n(firstNum + lastNum)) / 2, where n is # of terms in sequence,
+    # then subtract real sum of projectIDs
     projectIDGap = projectIDs[-1]*(projectIDs[0] + projectIDs[-1]) / 2 - sum(projectIDs)
-    if projectIDGap > 0:
+    if not projectIDGap == 0:
         prints.warn("gap found in projectID sequence in the projects csv file.")
 
     return projectsErrFlag
 
 
 def settingsHandler(settingsFileData):
-
     global settingsErrFlag
     global weightMaxLowGPAStudents
     global weightMaxESLStudents
@@ -120,21 +118,25 @@ def settingsHandler(settingsFileData):
     requiredColumns = ['name', 'min', 'max', 'points']
     for col in requiredColumns:
         if col not in settingsFileData.columns:
-            prints.err("Required {0} column header not found in the settings csv file. Terminating Program.".format(col))
+            prints.err("Required {0} column header not found in the settings csv. Terminating Program.".format(col))
 
     # verify there are no duplicates of required columns
     findDuplicateCols(settingsFileData, requiredColumns, 'Settings CSV file')
 
     # verify required settings csv rows are present and not duplicated
     requiredRows = ['teamSize', 'lowGPAThreshold', 'maxLowGPAStudents', 'maxESLStudents', 'weightMaxLowGPAStudents',
-                       'weightMaxESLStudents', 'weightTeamSize', 'weightStudentPriority', 'weightStudentChoice1', 'weightAvoid']
+                       'weightMaxESLStudents', 'weightTeamSize', 'weightStudentPriority', 'weightStudentChoice1',
+                    'weightAvoid', 'effort']
     for row in requiredRows:
         if row not in settingsFileData['name'].values:
             prints.err("Required {0} row not found in the settings csv file. Terminating Program.".format(row))
         if len(settingsFileData[settingsFileData['name'] == row]) > 1:
             prints.err("Required {0} row is duplicated in the settings csv file. Terminating Program.".format(row))
 
-    # function to verify values in the csv file are integers.
+    '''
+    Background info...
+    '''
+    # function to verify required values in the csv file are integers.
     def int_checker_settings(value, rowName, minValue):
         global settingsErrFlag
 
@@ -160,7 +162,7 @@ def settingsHandler(settingsFileData):
                 return 0
 
         # if pandas set column data type to float
-        # this would happen when there are only floats or empty fields found in the column
+        # this would happen when there are only floats or at least empty field found in the column
         if isinstance(value, float):
             return is_integer_settings(value, rowName, minValue)
 

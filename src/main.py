@@ -145,4 +145,4 @@ if __name__ == "__main__":
         prints.gen("teamSize score: {0}".format(score.totalPTS))
         prints.gen("studentAvoid score: {0}".format(score.totalPSA))
 
-    prints.gen("** Program has completed running **")
+    prints.gen("\n** Program has completed running **")
