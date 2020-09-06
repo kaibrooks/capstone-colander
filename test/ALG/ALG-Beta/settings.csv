@@ -6,7 +6,7 @@ maxESLStudents,,2,
 effort,,,
 weightMaxLowGPAStudents,,,100
 weightMaxESLStudents,,,100
-weightTeamSize,,,100
+weightTeamSize,,,410
 weightStudentPriority,,,100
-weightStudentChoice1,,,100
+weightStudentChoice1,,,200
 weightAvoid,,,100

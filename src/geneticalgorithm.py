@@ -388,14 +388,14 @@ class geneticalgorithm():
         re = np.array(self.report)
         now = datetime.today().strftime('%Y-%m-%d %H:%M:%S')  ## pass from main?
 
-        # plt.plot(re)
-        # plt.xlabel('generation')
-        # plt.ylabel('obj function')
-        # plt.title('GA: ' + now)
-        # plt.savefig('../io/latest.png', dpi=300)
-        # plt.show()
+        plt.plot(re)
+        plt.xlabel('generation')
+        plt.ylabel('obj function')
+        plt.title('GA: ' + now)
+        plt.savefig('../io/latest.png', dpi=300)
+        plt.show()
 
-        # plt.savefig(sys.stdout.buffer)
+        #plt.savefig(sys.stdout.buffer)
 
         if self.stop_mniwi == True and self.param['verbose']:
             sys.stdout.write(early_stop_message)

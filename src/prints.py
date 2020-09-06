@@ -38,6 +38,6 @@ def logerr(msg):
     print("\nERROR: " + msg)
 
 
-def sco(msg):
+def score(msg):
     """prints a score"""
-    print("\nScore: " + msg)
+    #print("" + msg)

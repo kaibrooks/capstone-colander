@@ -8,5 +8,5 @@ weightMaxLowGPAStudents,,,100
 weightMaxESLStudents,,,100
 weightTeamSize,,,100
 weightStudentPriority,,,100
-weightStudentChoice1,,,100
+weightStudentChoice1,,,210
 weightAvoid,,,100

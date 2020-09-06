@@ -43,10 +43,10 @@ def run_ga(verbose=1):
     """
 
     # vars
-    effort_scaling = load_csv.effort/2 # scale the effort value for this algorithm, '100' taking roughly 8 hours
+    effort_scaling = load_csv.effort # scale the effort value for this algorithm, '100' taking roughly 8 hours
     num_projects = len(load_csv.projectIDs) # total projects available
     num_generations = load_csv.numStudents*num_projects*effort_scaling # scale generations based on input size
-
+    print(num_generations, '###')
     var_bound = np.array([[0,num_projects - 1]]*load_csv.numStudents) # solution shape
     ga_params = {'max_num_iteration': num_generations,\
                     'population_size':100,\

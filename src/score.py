@@ -133,8 +133,7 @@ def pointsTeamSize(groupAssignments):
     for i in range(len(groupSize)):
         if load_csv.minTeamSize[i] <= groupSize[i] <= load_csv.maxTeamSize[i]:
             prints.debug(f"project: {load_csv.projectIDs[i]} satisfies the condition!")
-            prints.debug(
-                f"project: {load_csv.projectIDs[i]} Min:{load_csv.minTeamSize[i]} Max: {load_csv.maxTeamSize[i]} group size: {groupSize[i]}")
+            prints.debug(f"project: {load_csv.projectIDs[i]} Min:{load_csv.minTeamSize[i]} Max: {load_csv.maxTeamSize[i]} group size: {groupSize[i]}")
             totalPTS += weightPTS
 
     return totalPTS
@@ -173,23 +172,23 @@ def pointsAvoid(groupAssignments):
 
 
 def scoringMode(groupAssignments):
-    prints.debug(f"Assignment: {groupAssignments}")
+    prints.score(f"Assignment: \nStudent   Project\n{groupAssignments}")
     score = 0
 
     score = pointsStudentChoice(groupAssignments)
-    prints.debug(f"score after studentChoice = , {score}")
+    prints.score(f"score after studentChoice = {score}")
     score += pointsESLStudents(groupAssignments)
-    prints.debug(f"score after ESLStudents = {score}")
+    prints.score(f"score after ESLStudents = {score}")
     score += pointsStudentPriority(groupAssignments)
-    prints.debug(f"score after studentPriority = {score}")
+    prints.score(f"score after studentPriority = {score}")
 
-    score += pointsMaxLowGPAStudents(groupAssignments)
-    prints.debug(f"score after maxLowGPAStudents = {score}")
-    score += pointsTeamSize(groupAssignments)
-    prints.debug(f"score after teamSize = {score}")
-    score += pointsAvoid(groupAssignments)
-    prints.debug(f"score after studentAvoid = {score}")
+    score += pointsMaxLowGPAStudents(groupAssignments)  
+    prints.score(f"score after maxLowGPAStudents = {score}")
+    score += pointsTeamSize(groupAssignments)           
+    prints.score(f"score after teamSize = {score}")
+    score += pointsAvoid(groupAssignments)              
+    prints.score(f"score after studentAvoid = {score}")
 
-    prints.debug(f"score grand total = {score}")
+    prints.score(f"score grand total = {score}")
 
     return score
