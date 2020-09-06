@@ -51,7 +51,7 @@ def pointsESLStudents(groupAssignments):
     prints.debug(f"\n\n========pointsESLStudents========\n{groupESL} gESL Before \n{groupSize} gSize Before")
     # groupESL[i] is the number of ESL students on team i
     for i in range(len(load_csv.studentID)):
-        if load_csv.studentESL[i] == True:
+        if load_csv.studentESL[i]:
             groupESL[groupAssignments[i]] += 1  # ESL students per team
         groupSize[groupAssignments[i]] += 1  # Students per team
 
@@ -71,7 +71,7 @@ def pointsStudentPriority(groupAssignments):
 
     # Checks if priority flag is set then checks if they got their first choice
     for i in range(len(load_csv.studentID)):
-        if load_csv.studentPriority[i] == True:
+        if load_csv.studentPriority[i]:
             if groupAssignments[i] == load_csv.studentChoiceN.iat[i, 0]:
                 totalPSP += load_csv.weightStudentPriority
 
@@ -97,7 +97,7 @@ def pointsMaxLowGPAStudents(groupAssignments):
             maxLowGroup[groupAssignments[i]] += 1
         groupSize[groupAssignments[i]] += 1
 
-    prints.debug(f"\n\n========pointsMaxLowGPAStudents========")
+    prints.debug("========pointsMaxLowGPAStudents========")
     prints.debug(f"groups with lowGPA students: {maxLowGroup}")
     prints.debug(f"groups with # of studetns: {groupSize}")
 
@@ -124,7 +124,7 @@ def pointsTeamSize(groupAssignments):
         # print(groupSize[groupAssignments[i]], groupAssignments[i], i)
         groupSize[groupAssignments[i]] += 1
 
-    prints.debug(f"\n\n========pointsTeamSize========")
+    prints.debug("========pointsTeamSize========")
     prints.debug(f"group size: {groupSize}")
     prints.debug(f"min size: {load_csv.minTeamSize}")
     prints.debug(f"max size: {load_csv.maxTeamSize}")
@@ -133,7 +133,7 @@ def pointsTeamSize(groupAssignments):
     for i in range(len(groupSize)):
         if load_csv.minTeamSize[i] <= groupSize[i] <= load_csv.maxTeamSize[i]:
             prints.debug(f"project: {load_csv.projectIDs[i]} satisfies the condition!")
-            prints.debug(f"project: {load_csv.projectIDs[i]} Min:{load_csv.minTeamSize[i]} Max: {load_csv.maxTeamSize[i]} group size: {groupSize[i]}")
+            prints.debug(f"Min:{load_csv.minTeamSize[i]} Max: {load_csv.maxTeamSize[i]} group size: {groupSize[i]}")
             totalPTS += weightPTS
 
     return totalPTS
@@ -148,21 +148,21 @@ def pointsAvoid(groupAssignments):
     # initializes bad - counts how many studentAvoid matches are found
     bad = 0
 
-    prints.debug(f"\n\n========pointsAvoid========")
+    prints.debug("========pointsAvoid========")
     # prints.debug(f"{load_csv.studentAvoid}")
 
     for i in range(load_csv.numStudents):
         # skips student with empty avoid value
-        if pd.isna(load_csv.studentAvoid[i]) == False:
+        if pd.isna(load_csv.studentAvoid[i]) is False:
             # stores studentAvoid data to 'avoid'
             avoid = load_csv.studentAvoid[i]
-            prints.debug(f"======student loop======")
+            prints.debug("======student loop======")
             prints.debug(f"student: {[i]} avoid: {avoid}")
             prints.debug(f"student group: {load_csv.studentAssignment[i]}")
             prints.debug(f"avoid group: {load_csv.studentAssignment[avoid]}")
             # identifies studentAvoid match within in same group
             if load_csv.studentAssignment[i] == load_csv.studentAssignment[avoid]:
-                prints.debug(f"studentAvoid match found")
+                prints.debug("studentAvoid match found")
                 bad += 1
 
     prints.debug(f"bad: {bad}")
@@ -182,11 +182,11 @@ def scoringMode(groupAssignments):
     score += pointsStudentPriority(groupAssignments)
     prints.score(f"score after studentPriority = {score}")
 
-    score += pointsMaxLowGPAStudents(groupAssignments)  
+    score += pointsMaxLowGPAStudents(groupAssignments)
     prints.score(f"score after maxLowGPAStudents = {score}")
-    score += pointsTeamSize(groupAssignments)           
+    score += pointsTeamSize(groupAssignments)
     prints.score(f"score after teamSize = {score}")
-    score += pointsAvoid(groupAssignments)              
+    score += pointsAvoid(groupAssignments)
     prints.score(f"score after studentAvoid = {score}")
 
     prints.score(f"score grand total = {score}")
