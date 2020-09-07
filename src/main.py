@@ -59,6 +59,7 @@ def main():
     # returns data structure assuming all files are csv files
     # otherwise, sets an errorFlag to True to terminate program after each filed is checked
     main.errorFlag = False
+
     def csvFileCheck(csvFileName):
         if not os.path.exists(csvFileName):
             # if original filename not found, add .csv extension and check again

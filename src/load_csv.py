@@ -1,19 +1,20 @@
 # load_csv.py reads and parses all three csv files,
 # then verifies all data in the csv files is valid.
 
-import sys
 import pandas as pd
 import prints
 
-#For studentsHandler()
+# For studentsHandler()
 from pandas.api.types import is_numeric_dtype
 from pandas.api.types import is_bool_dtype
 
 # function verifies that there are no duplicate required column names
 # ignore any duplicate non-required fields
+
+
 def findDuplicateCols(fileData, requiredCols, fileName):
-    columnsArray = fileData.columns.str.rsplit('.', n=1).str[0] # separate each column name into an array of strings
-    mask = columnsArray.isin(requiredCols) & columnsArray.duplicated() # create an array of bools, indicating if there is or isn't a duplicate from our req. columns
+    columnsArray = fileData.columns.str.rsplit('.', n=1).str[0]  # separate each column name into an array of strings
+    mask = columnsArray.isin(requiredCols) & columnsArray.duplicated()  # create an array of bools, indicating if there is or isn't a duplicate from our req. columns
     for dup in mask:
         if dup:
             duplicateColumns = fileData.columns[mask]
@@ -74,12 +75,12 @@ def projectsHandler(projectsFileData):
     maxTeamSize = int_checker_projects('maxTeamSize')
 
     # verify minTeamSize is not greater than maxTeamSize
-    for min,max,pid in zip(minTeamSize,maxTeamSize,projectIDs):
+    for min, max, pid in zip(minTeamSize, maxTeamSize, projectIDs):
         if min > max:
             prints.logerr("minTeamSize is greater than maxTeamSize for projectID {0}.".format(pid))
 
     # warn user if gap found in projectID sequence that starts a projectID '1'
-    projectIDGap = projectIDs[-1]*(projectIDs[-1] + projectIDs[0]) / 2 - sum(projectIDs)
+    projectIDGap = projectIDs[-1] * (projectIDs[-1] + projectIDs[0]) / 2 - sum(projectIDs)
     if projectIDGap > 0:
         prints.warn("gap found in projectID sequence in the projects csv file.")
 
@@ -112,7 +113,7 @@ def settingsHandler(settingsFileData):
 
     # verify required settings csv rows are present
     settingsRows = ['teamSize', 'lowGPAThreshold', 'maxLowGPAStudents', 'maxESLStudents', 'weightMaxLowGPAStudents',
-                       'weightMaxESLStudents', 'weightTeamSize', 'weightStudentPriority', 'weightStudentChoice1', 'weightAvoid']
+                    'weightMaxESLStudents', 'weightTeamSize', 'weightStudentPriority', 'weightStudentChoice1', 'weightAvoid']
     for row in settingsRows:
         if row not in settingsFileData['name'].values:
             prints.err("Required {0} row not found in the settings csv file. Terminating Program.".format(row))
@@ -186,7 +187,7 @@ def settingsHandler(settingsFileData):
     # If it is, set it as effort for the program, otherwise, use default
     try:
         effort = int(settingsFileData.set_index('name').at['effort', 'max'])
-    except:
+    except not(int(settingsFileData.set_index('name').at['effort', 'max'])):
         effort = 20
         prints.warn("valid 'effort' value not found in the settings csv. Running with default value of 20.")
     if effort < 0 or effort > 100:
@@ -197,7 +198,7 @@ def settingsHandler(settingsFileData):
     # If it is, assign value to global variable for scoring function to use.
     try:
         lowGPAThreshold = float(settingsFileData.set_index('name').at['lowGPAThreshold', 'min'])
-    except:
+    except not(float(settingsFileData.set_index('name').at['lowGPAThreshold', 'min'])):
         prints.logerr("The lowGPAThreshold 'min' value is not a float.")
         errFlg = True
     if (lowGPAThreshold < 0) or (lowGPAThreshold > 4.00) or (pd.isna(lowGPAThreshold)):
@@ -258,13 +259,13 @@ def studentsHandler(studentsFile, progMode):
             studentAssignment = studentsFileData['assignment'].copy()
 
             # Verify assignment contains numbers
-            if is_numeric_dtype(studentAssignment) == False:
+            if is_numeric_dtype(studentAssignment) is False:
                 prints.logerr("Unexpected data type found in assignment column.")
                 errFlg = True
 
             # Verify assignment contains valid projects
             for student in range(numStudents):
-                if pd.isna(studentAssignment[student]) == True:  # If element empty
+                if pd.isna(studentAssignment[student]):  # If element empty
                     prints.err("Empty field found in row {0} Assignment column.".format(student))
                 else:
                     sAssignmentMatch = False
@@ -274,7 +275,7 @@ def studentsHandler(studentsFile, progMode):
                             # replace project id with project index
                             studentAssignment.at[student] = j
                             break
-                    if sAssignmentMatch == False:
+                    if sAssignmentMatch is False:
                         prints.logerr(
                             "No matching project id found for assignment = {0:n}".format(studentAssignment[student]))
                         errFlg = True
@@ -283,27 +284,27 @@ def studentsHandler(studentsFile, progMode):
 
     for student in range(numStudents):
         # Verify studentID has no NaN values
-        if pd.isna(studentID[student]) == True:  # If element empty
+        if pd.isna(studentID[student]):  # If element empty
             prints.logerr("Empty element found in row {0} of the studentID column".format(student))
             errFlg = True
 
         # Verify studentGPA has no NaN values
-        if pd.isna(studentGPA[student]) == True:  # If element empty
+        if pd.isna(studentGPA[student]):  # If element empty
             prints.logerr("Empty element found in row {0} of the studentGPA column".format(student))
             errFlg = True
 
     # Verify studentID contains numbers
-    if is_numeric_dtype(studentID) == False:
+    if is_numeric_dtype(studentID) is False:
         prints.logerr("Unexpected data type found in studentID.")
         errFlg = True
 
     # Verify studentGPA contains numbers
-    if is_numeric_dtype(studentGPA) == False:
+    if is_numeric_dtype(studentGPA) is False:
         prints.logerr("Unexpected data type found in studentGPA.")
         errFlg = True
 
     # Verify studentESL contains booleans
-    if is_bool_dtype(studentESL) == False:
+    if is_bool_dtype(studentESL) is False:
         prints.logerr("Unexpected data type found in studentESL.")
         errFlg = True
 
@@ -313,7 +314,7 @@ def studentsHandler(studentsFile, progMode):
         errFlg = True
 
     # Verify studentAvoid contains numbers
-    if is_numeric_dtype(studentAvoid) == False:
+    if is_numeric_dtype(studentAvoid) is False:
         prints.logerr("Unexpected data type found in studentAvoid.")
         errFlg = True
 
@@ -325,7 +326,7 @@ def studentsHandler(studentsFile, progMode):
 
     # Verify studentAvoid contains valid student IDs
     for student in range(numStudents):
-        if pd.isna(studentAvoid[student]) == False:  # If element not empty
+        if pd.isna(studentAvoid[student]) is False:  # If element not empty
             sAvoidMatch = False
             for j in studentID.index:  # Find matching id in studentIDs
                 if (studentAvoid[student] == studentID[j]):
@@ -333,7 +334,7 @@ def studentsHandler(studentsFile, progMode):
                     # replace student id with student index
                     studentAvoid.at[student] = j
                     break
-            if sAvoidMatch == False:
+            if sAvoidMatch is False:
                 prints.logerr("No matching student id found for student = {0:n} in studentAvoid column".format(
                     studentAvoid[student]))
                 errFlg = True
@@ -342,12 +343,12 @@ def studentsHandler(studentsFile, progMode):
     clmns = list(studentChoiceN)
     for cid in clmns:
         # Verify studenChoiceN contains numbers
-        if is_numeric_dtype(studentChoiceN[cid]) == False:
+        if is_numeric_dtype(studentChoiceN[cid]) is False:
             prints.logerr("Unexpected data type found in studentChoice.")
             errFlg = True
 
         for rid in studentChoiceN.index:
-            if pd.isna(studentChoiceN[cid][rid]) == False:  # If element not empty
+            if pd.isna(studentChoiceN[cid][rid]) is False:  # If element not empty
                 sChoiceMatch = False
                 for i in range(len(projectIDs)):  # Find matching id in global projectIDs
                     if (studentChoiceN[cid][rid] == projectIDs[i]):
@@ -356,7 +357,7 @@ def studentsHandler(studentsFile, progMode):
                         studentChoiceN.at[rid, cid] = i
                         break
 
-                if sChoiceMatch == False:
+                if sChoiceMatch is False:
                     prints.logerr(
                         "No matching project id found for studentChoice = {0:n}".format(studentChoiceN[cid][rid]))
                     errFlg = True
@@ -365,9 +366,9 @@ def studentsHandler(studentsFile, progMode):
     if 'studentPriority' in studentsFileData.columns:
 
         # Verify studentPriority contains booleans
-        if is_bool_dtype(studentPriority) == False:
+        if is_bool_dtype(studentPriority) is False:
             prints.logerr("Unexpected data type found in studentPriority.")
 
     # Exits when error conditions met
-    if errFlg == True:
+    if errFlg:
         prints.err("Invalid data found in input CSV files. Terminating program.")
