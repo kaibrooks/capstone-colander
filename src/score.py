@@ -21,14 +21,14 @@ def pointsStudentChoice(groupAssignments):
             # If NaN is detected gives score based on x position then breaks
             prints.debug(f"ID {load_csv.studentID.iat[y]}, Choice {load_csv.studentChoiceN.iat[y, x]}")
 
-            if pd.isna(load_csv.studentChoiceN.iat[y, x]) == True:
+            if pd.isna(load_csv.studentChoiceN.iat[y, x]):
                 totalPSC = totalPSC + math.ceil(maxScore - (maxScore / maxNumChoices) * x)
                 prints.debug(f"Score {totalPSC}")
 
                 break
 
             # If an assignment match is detected gives score based on position x then breaks
-            elif pd.isna(load_csv.studentChoiceN.iat[y, x]) == False:
+            elif pd.isna(load_csv.studentChoiceN.iat[y, x]) is False:
                 if load_csv.studentChoiceN.iat[y, x] == groupAssignments[y]:
                     totalPSC = totalPSC + math.ceil(maxScore - (maxScore / maxNumChoices) * x)
                     prints.debug(f"Score {totalPSC}")
@@ -46,7 +46,7 @@ def pointsESLStudents(groupAssignments):
     # groupESL[i] is the number of ESL students on team i
     for i in range(len(load_csv.studentID)):
         # Checking if a students ESL flag is set
-        if load_csv.studentESL[i] == True:
+        if load_csv.studentESL[i]:
             groupESL[groupAssignments[i]] += 1
 
             if groupESL[groupAssignments[i]] > maxESL:
@@ -60,7 +60,7 @@ def pointsStudentPriority(groupAssignments):
 
     # Checks if priority flag is set then checks if they got their first choice
     for i in range(len(load_csv.studentID)):
-        if load_csv.studentPriority[i] == True:
+        if load_csv.studentPriority[i]:
             if groupAssignments[i] == load_csv.studentChoiceN.iat[i, 0]:
                 totalPSP += load_csv.weightStudentPriority
 
@@ -84,7 +84,7 @@ def pointsMaxLowGPAStudents(groupAssignments):
             maxLowGroup[groupAssignments[i]] += 1
         groupSize[groupAssignments[i]] += 1
 
-    prints.debug(f"========pointsMaxLowGPAStudents========")
+    prints.debug("========pointsMaxLowGPAStudents========")
     prints.debug(f"groups with lowGPA students: {maxLowGroup}")
     prints.debug(f"groups with # of studetns: {groupSize}")
 
@@ -108,7 +108,7 @@ def pointsTeamSize(groupAssignments):
     for i in range(len(load_csv.studentID)):
         groupSize[groupAssignments[i]] += 1
 
-    prints.debug(f"========pointsTeamSize========")
+    prints.debug("========pointsTeamSize========")
     prints.debug(f"group size: {groupSize}")
     prints.debug(f"min size: {load_csv.minTeamSize}")
     prints.debug(f"max size: {load_csv.maxTeamSize}")
@@ -131,21 +131,21 @@ def pointsAvoid(groupAssignments):
     # initializes bad - counts how many studentAvoid matches are found
     bad = 0
 
-    prints.debug(f"========pointsAvoid========")
+    prints.debug("========pointsAvoid========")
     prints.debug(f"{load_csv.studentAvoid}")
 
     for i in range(load_csv.numStudents):
         # skips student with empty avoid value
-        if pd.isna(load_csv.studentAvoid[i]) == False:
+        if pd.isna(load_csv.studentAvoid[i]) is False:
             # stores studentAvoid data to 'avoid'
             avoid = load_csv.studentAvoid[i]
-            prints.debug(f"======student loop======")
+            prints.debug("======student loop======")
             prints.debug(f"student: {[i]} avoid: {avoid}")
             prints.debug(f"student group: {load_csv.studentAssignment[i]}")
             prints.debug(f"avoid group: {load_csv.studentAssignment[avoid]}")
             # identifies studentAvoid match within in same group
             if load_csv.studentAssignment[i] == load_csv.studentAssignment[avoid]:
-                prints.debug(f"studentAvoid match found")
+                prints.debug("studentAvoid match found")
                 bad += 1
 
     prints.debug(f"bad: {bad}")
