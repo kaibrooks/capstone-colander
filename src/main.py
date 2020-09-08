@@ -127,7 +127,7 @@ if __name__ == "__main__":
         errFiles.append(studentsFile)
 
     if errFiles:
-        prints.err("Program Terminating due to errors in the following files: {0}."
+        prints.err("Program terminating due to errors in the following files: {0}."
                    " See ERROR messages above for more info.".format(errFiles))
 
     if programMode == 'Assignment':
