@@ -114,7 +114,9 @@ def pointsTeamSize(groupAssignments):
     global totalPTS
 
     totalPTS = 0
-    weightPTS = load_csv.weightTeamSize
+    weightMinPTS = load_csv.weightMinTeamSize
+    weightMaxPTS = load_csv.weightMaxTeamSize
+
     # initialize groupSize - counts how many students there are in each group
     groupSize = [0] * len(load_csv.projectIDs)
 
@@ -130,10 +132,14 @@ def pointsTeamSize(groupAssignments):
 
     # iterates through groupSize to identify group meeting the size constraints
     for i in range(len(groupSize)):
-        if load_csv.minTeamSize[i] <= groupSize[i] <= load_csv.maxTeamSize[i]:
+        if load_csv.minTeamSize[i] <= groupSize[i]:
             prints.debug(f"project: {load_csv.projectIDs[i]} satisfies the condition!")
-            prints.debug(f"Min:{load_csv.minTeamSize[i]} Max: {load_csv.maxTeamSize[i]} group size: {groupSize[i]}")
-            totalPTS += weightPTS
+            prints.debug(f"Min:{load_csv.minTeamSize[i]} group size: {groupSize[i]}")
+            totalPTS += weightMinPTS
+        if groupSize[i] <= load_csv.maxTeamSize[i]:
+            prints.debug(f"project: {load_csv.projectIDs[i]} satisfies the condition!")
+            prints.debug(f"Max: {load_csv.maxTeamSize[i]} group size: {groupSize[i]}")
+            totalPTS += weightMaxPTS
 
     return totalPTS
 

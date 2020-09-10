@@ -6,22 +6,191 @@ import prints
 # for studentsHandler()
 from pandas.api.types import is_numeric_dtype
 from pandas.api.types import is_bool_dtype
+from pandas.api.types import is_integer_dtype
+
+# function to look for duplicated required columns
+def findDuplicateCols(fileData, requiredCol, csvFile):
+    # pandas dataframe appends '.1.' to duplicate columns so check if 'requiredCol'.1 exists
+    newCol = str(requiredCol) + '.1'
+    if newCol in fileData.columns:
+        prints.err("{0} column is duplicated in the {1}". format(requiredCol, csvFile))
 
 
-# function verifies that there are no duplicate required column headers
-# ignores any non-required duplicate fields
-def findDuplicateCols(fileData, requiredCols, csvFile):
-    # pandas appends '.1' to any duplicate column header. create array of column headers without '.1'
-    columnNamesArray = fileData.columns.str.rsplit('.', n=1).str[0]
-    # create array of booleans, where True = duplicate header and present in the required column
-    mask = columnNamesArray.isin(requiredCols) & columnNamesArray.duplicated()
-    # if duplicate found, display duplicate required columns and location
-    for dup in mask:
-        if dup:
-            duplicateColumns = fileData.columns[mask]
-            prints.err("Found duplicate required column(s) in the {0}: {1}. Terminating Program.".format(csvFile, duplicateColumns))
-            break
+# initialize maxValue to be used in verifying a value's range
+maxValue = pow(2, 64) - 1
 
+# initialize values used in settingsHandler()
+weightMaxLowGPAStudents = 0
+weightMaxESLStudents = 0
+weightMaxTeamSize = 0
+weightMinTeamSize = 0
+weightStudentPriority = 0
+weightStudentChoice1 = 0
+weightAvoid = 0
+effort = 20
+minEffort = 0
+maxEffort = 100
+defaultEffort = 20
+maxLowGPAStudents = 1
+maxESLStudents = 1
+lowGPAThreshold = 1
+minGPAThreshold = 0.00
+maxGPAThreshold = 4.00
+defaultMaxTeamSize = 1
+defaultMinTeamSize = 1
+settingsErrFlag = False
+
+def settingsHandler(settingsFileData):
+    global settingsErrFlag
+    global weightMaxLowGPAStudents
+    global weightMaxESLStudents
+    global weightMaxTeamSize
+    global weightMinTeamSize
+    global weightStudentPriority
+    global weightStudentChoice1
+    global weightAvoid
+    global effort
+    global maxLowGPAStudents
+    global maxESLStudents
+    global lowGPAThreshold
+    global defaultMaxTeamSize
+    global defaultMinTeamSize
+
+    # verify required settings csv headers are present and not duplicated
+    requiredColumns = ['name', 'min', 'max', 'points']
+    for col in requiredColumns:
+        if col not in settingsFileData.columns:
+            prints.err("Required {0} column header not found in the settings csv. Terminating Program.".format(col))
+        else:
+            findDuplicateCols(settingsFileData, col, 'Settings CSV file')
+
+    # verify required settings csv rows are present and not duplicated
+    requiredRows = ['teamSize', 'lowGPAThreshold', 'maxLowGPAStudents', 'maxESLStudents', 'weightMaxLowGPAStudents',
+                    'weightMaxESLStudents', 'weightMinTeamSize', 'weightMaxTeamSize', 'weightStudentPriority',
+                    'weightStudentChoice1', 'weightAvoid', 'effort']
+    for row in requiredRows:
+        if row not in settingsFileData['name'].values:
+            prints.err("Required {0} row not found in the settings csv file. Terminating Program.".format(row))
+        if len(settingsFileData[settingsFileData['name'] == row]) > 1:
+            prints.err("Required {0} row is duplicated in the settings csv file. Terminating Program.".format(row))
+
+    '''
+    Pandas CSV Dataframe info: If at least one field in a column contains a float, with the rest being integers, the 
+    dataframe considers all values in the column to be floats. If at least one field in a column contains a string, 
+    with the rest being either ints or floats, all values in the column are considered objects. Empty fields are 
+    considered to be floats. The reason this is important is because the way the settings csv is formatted, there are 
+    multiple fields in each column that are empty and per the requirements document, are ignored by the program. 
+    This means that the user can fill those fields with random data of strings, ints, or floats and the program ignores 
+    it, but it effects the data type of the fields we need to verify are ints!
+    '''
+    # function to verify required values in the csv file are integers
+    def int_checker_settings(value, rowName, minValue):
+        global settingsErrFlag
+        # quick check first if the data type of the value is an int. If it is, verify it's within the required range
+        # return the value
+        if isinstance(value, int):
+            if (value < minValue) or (value > maxValue):
+                prints.logerr(
+                    "Value {0} in the {1} column must be an integer greater than zero and less than 2^64."
+                    .format(value, rowName))
+                settingsErrFlag = True
+            return value
+
+        # function to verify integer if data type of value is not originally considered an int (could be obj or float)
+        def is_integer_settings(value, rowName, minValue):
+            global settingsErrFlag
+
+            # is_integer() returns True if float decimal is .0, False if decimal anything other than .0
+            # is_integer() only works on on floats.
+            if value.is_integer():
+                # convert float to int after we verify value is an int and make sure it's in the required range
+                # and return the value
+                tempInt = int(value)
+                if (tempInt < minValue) or (tempInt > maxValue):
+                    prints.logerr(
+                        "Value {0} in the {1} column must be an integer between one and 2^64."
+                        .format(value, rowName))
+                    settingsErrFlag = True
+                return tempInt
+            else:
+                prints.logerr("{0} in the {1} row is not an integer.".format(value, rowName))
+                settingsErrFlag = True
+                return 0
+
+        # if pandas set column data type to float, check to see if it's actually an int
+        if isinstance(value, float):
+            return is_integer_settings(value, rowName, minValue)
+
+        # if pandas set column data type to a python object, try to convert it to a float as we don't want to convert
+        # to an int immediately in the event it's an illegal float and we end up truncating the decimal portion
+        # assuming it's not actually an object, call the int_checker_settings functions to verify if it's an int
+        if isinstance(value, object):
+            try:
+                tempFloat = float(value)
+            except ValueError:
+                prints.logerr("{0} in the {1} row is not an integer.".format(value, rowName))
+                settingsErrFlag = True
+                return 0
+            return is_integer_settings(tempFloat, rowName, minValue)
+
+    # verify required fields in 'points' column contain integers
+    # if they are, assign value to global variable for scoring function to use
+    weightMaxLowGPAStudents = int_checker_settings(
+        (settingsFileData.set_index('name').at['weightMaxLowGPAStudents', 'points']), 'weightMaxLowGPAStudents', 0)
+    weightMaxESLStudents = int_checker_settings(
+        (settingsFileData.set_index('name').at['weightMaxESLStudents', 'points']), 'weightMaxESLStudents', 0)
+    weightMinTeamSize = int_checker_settings(
+        (settingsFileData.set_index('name').at['weightMinTeamSize', 'points']), 'weightMinTeamSize', 0)
+    weightMaxTeamSize = int_checker_settings(
+        (settingsFileData.set_index('name').at['weightMaxTeamSize', 'points']), 'weightMaxTeamSize', 0)
+    weightStudentPriority = int_checker_settings(
+        (settingsFileData.set_index('name').at['weightStudentPriority', 'points']), 'weightStudentPriority', 0)
+    weightStudentChoice1 = int_checker_settings(
+        (settingsFileData.set_index('name').at['weightStudentChoice1', 'points']), 'weightStudentChoice1', 0)
+    weightAvoid = int_checker_settings(
+        (settingsFileData.set_index('name').at['weightAvoid', 'points']), 'weightAvoid', 0)
+
+    # verify required values in 'max' and 'min' column are integers
+    # if they are, assign value to global variable for scoring function to use
+    defaultMaxTeamSize = int_checker_settings(
+        (settingsFileData.set_index('name').at['teamSize', 'max']), 'teamSize', 1)
+    defaultMinTeamSize = int_checker_settings(
+        (settingsFileData.set_index('name').at['teamSize', 'min']), 'teamSize', 1)
+    maxLowGPAStudents = int_checker_settings(
+        (settingsFileData.set_index('name').at['maxLowGPAStudents', 'max']), 'maxLowGPAStudents', 1)
+    maxESLStudents = int_checker_settings(
+        (settingsFileData.set_index('name').at['maxESLStudents', 'max']), 'maxESLStudents', 1)
+
+    # if effort value is provided in the csv file, verify the value is an integer within the required range
+    # if it is not, use default value of 20
+    try:
+        effort = int(settingsFileData.set_index('name').at['effort', 'max'])
+    except ValueError:
+        prints.warn("valid 'effort' value not found in the settings csv. Running with default value.")
+    if effort < minEffort or effort > maxEffort:
+        effort = defaultEffort
+        prints.warn("'effort' in the settings csv is not an int between 1 and 100. Running with default value of 20.")
+
+    # verify that provided lowGPAThreshold is not empty and that it's a float within range
+    # If it is, assign value to global variable for scoring function to use
+    try:
+        lowGPAThreshold = float(settingsFileData.set_index('name').at['lowGPAThreshold', 'min'])
+    except ValueError:
+        prints.logerr("The lowGPAThreshold 'min' value is not a float.")
+        settingsErrFlag = True
+        lowGPAThreshold = 0  # temp value to pass statement below to allow program to continue checking for errors
+    if (lowGPAThreshold < minGPAThreshold) or (lowGPAThreshold > maxGPAThreshold) or (pd.isna(lowGPAThreshold)):
+        prints.logerr("lowGPAThreshold 'min' setting requires a 0.00 - 4.00 value.")
+        settingsErrFlag = True
+
+    return settingsErrFlag
+
+
+# initialize values used in settingsHandler()
+projectsErrFlag = False
+minTeamSize = []
+maxTeamSize = []
+projectIDs = []
 
 def projectsHandler(projectsFileData):
     global projectsErrFlag
@@ -30,19 +199,20 @@ def projectsHandler(projectsFileData):
     global maxTeamSize
     global projectIDs
 
-    projectsErrFlag = False
-
-    # verify required project csv headers are present
+    # verify required project csv headers are present and not duplicated
     requiredColumns = ['projectID', 'minTeamSize', 'maxTeamSize']
     for col in requiredColumns:
         if col not in projectsFileData.columns:
             prints.err("Required {0} column not found in the projects csv file. Terminating Program.".format(col))
-
-    # call function to verify there are no duplicates of required columns
-    findDuplicateCols(projectsFileData, requiredColumns, 'Projects CSV file')
+        else:
+            findDuplicateCols(projectsFileData, col, 'Projects CSV file')
 
     # function to verify that all required values in projects csv file are integers within the required range
-    def int_checker_projects(columnName):
+    # see notes on lines 63-69 that describe how pandas set the data types of values in a dataframe
+    # see notes for int_checker_settings() above as int_checker_projects() below is very similar.
+    # difference is this function iterates through an entire column rather than checking one value at a time, and
+    # it returns an array (indexed by project), rather than a value.
+    def int_checker_projects(columnName): #TODO: "merge" this function and the one in settings
         global projectsErrFlag
 
         tempArray = []
@@ -51,14 +221,15 @@ def projectsHandler(projectsFileData):
                 try:
                     value = float(value)
                 except ValueError:
-                    prints.logerr("{0} in the {1} column is not an integer.".format(value, columnName))
-                    projectsErrFlag = True
+                    pass
             if isinstance(value, float):
                 if value.is_integer():
                     value = int(value)
             if isinstance(value, int):
-                if (value < 1) or (value > pow(2, 64)):
-                    prints.logerr("Value {0} in the {1} column must be an integer greater than zero and less than 2^64.".format(value, columnName))
+                if (value < 1) or (value > maxValue):
+                    prints.logerr(
+                        "Value {0} in the {1} column must be an integer between one and 2^64."
+                        .format(value, columnName))
                     projectsErrFlag = True
                 tempArray.append(value)
             else:
@@ -74,7 +245,8 @@ def projectsHandler(projectsFileData):
         projectsErrFlag = True
         projectDuplicates = projectsFileData[projectsFileData.projectID.duplicated()]
         for i in range(len(projectDuplicates)):
-            prints.logerr("Duplicate projectID found: {0}".format(projectsFileData[projectsFileData.projectID.duplicated()].iloc[i]))
+            prints.logerr("Duplicate projectID found: {0}".format(
+                projectsFileData[projectsFileData.projectID.duplicated()].iloc[i]))
 
     # if values for team sizes are blank, enter size from settings csv and then verify all values are integers
     projectsFileData['minTeamSize'] = projectsFileData['minTeamSize'].fillna(defaultMinTeamSize)
@@ -83,150 +255,25 @@ def projectsHandler(projectsFileData):
     maxTeamSize = int_checker_projects('maxTeamSize')
 
     # verify minTeamSize is not greater than maxTeamSize
-    for min,max,pid in zip(minTeamSize,maxTeamSize,projectIDs):
-        if min > max:
+    # zip() used to iterate in parallel over multiple iterables
+    for minSize, maxSize, pid in zip(minTeamSize, maxTeamSize, projectIDs):
+        if minSize > maxSize:
+            projectsErrFlag = True
             prints.logerr("minTeamSize is greater than maxTeamSize for projectID {0}.".format(pid))
 
-    # warn user if gap found in projectID sequence assuming projectID starts at '1'
+    # warn user if gap found in projectID sequence
     # arithmetic series = (n(firstNum + lastNum)) / 2, where n is # of terms in sequence,
     # then subtract real sum of projectIDs
-    projectIDGap = projectIDs[-1]*(projectIDs[0] + projectIDs[-1]) / 2 - sum(projectIDs)
+    # assume projectIDs start at projectID '1'
+    firstProjectID = int(1)
+    try:
+        projectIDGap = projectIDs[-1] * (firstProjectID + projectIDs[-1]) / 2 - sum(projectIDs)
+    except ValueError:
+        projectIDGap = 0 # temp value to pass next if statement. Cause of error would have already been identified.
     if not projectIDGap == 0:
         prints.warn("gap found in projectID sequence in the projects csv file.")
 
     return projectsErrFlag
-
-
-def settingsHandler(settingsFileData):
-    global settingsErrFlag
-    global weightMaxLowGPAStudents
-    global weightMaxESLStudents
-    global weightTeamSize
-    global weightStudentPriority
-    global weightStudentChoice1
-    global weightAvoid
-    global effort
-    global maxLowGPAStudents
-    global maxESLStudents
-    global lowGPAThreshold
-    global defaultMaxTeamSize
-    global defaultMinTeamSize
-
-    settingsErrFlag = False
-
-    # verify required settings csv headers are present
-    requiredColumns = ['name', 'min', 'max', 'points']
-    for col in requiredColumns:
-        if col not in settingsFileData.columns:
-            prints.err("Required {0} column header not found in the settings csv. Terminating Program.".format(col))
-
-    # verify there are no duplicates of required columns
-    findDuplicateCols(settingsFileData, requiredColumns, 'Settings CSV file')
-
-    # verify required settings csv rows are present and not duplicated
-    requiredRows = ['teamSize', 'lowGPAThreshold', 'maxLowGPAStudents', 'maxESLStudents', 'weightMaxLowGPAStudents',
-                       'weightMaxESLStudents', 'weightTeamSize', 'weightStudentPriority', 'weightStudentChoice1',
-                    'weightAvoid', 'effort']
-    for row in requiredRows:
-        if row not in settingsFileData['name'].values:
-            prints.err("Required {0} row not found in the settings csv file. Terminating Program.".format(row))
-        if len(settingsFileData[settingsFileData['name'] == row]) > 1:
-            prints.err("Required {0} row is duplicated in the settings csv file. Terminating Program.".format(row))
-
-    '''
-    Background info...
-    '''
-    # function to verify required values in the csv file are integers.
-    def int_checker_settings(value, rowName, minValue):
-        global settingsErrFlag
-
-        if isinstance(value, int):
-            if (value < minValue) or (value > pow(2, 64)):
-                prints.logerr("Value {0} in the {1} column must be an integer greater than zero and less than 2^64.".format(value, rowName))
-                settingsErrFlag = True
-            return value
-
-        # function to verify integer if data type of value is not originally set as int (dtype could be obj or float)
-        def is_integer_settings(value, rowName, minValue):
-            global settingsErrFlag
-
-            if value.is_integer():
-                tempInt = int(value)
-                if (tempInt < minValue) or (tempInt > pow(2, 64)):
-                    prints.logerr("Value {0} in the {1} column must be an integer greater than zero and less than 2^64.".format(value, rowName))
-                    settingsErrFlag = True
-                return tempInt
-            else:
-                prints.logerr("{0} in the {1} row is not an integer.".format(value, rowName))
-                settingsErrFlag = True
-                return 0
-
-        # if pandas set column data type to float
-        # this would happen when there are only floats or at least empty field found in the column
-        if isinstance(value, float):
-            return is_integer_settings(value, rowName, minValue)
-
-        # if pandas set column data type to a python object
-        # this would happen when there are strings found in the column
-        if isinstance(value, object):
-            try:
-                tempInt = float(value)
-            except ValueError:
-                prints.logerr("{0} in the {1} row is not an integer.".format(value, rowName))
-                settingsErrFlag = True
-                return 0
-            return is_integer_settings(tempInt, rowName, minValue)
-
-    # verify required values in 'points' column are integers
-    # if they are, assign value to global variable for scoring function to use
-    weightMaxLowGPAStudents = int_checker_settings(
-        (settingsFileData.set_index('name').at['weightMaxLowGPAStudents', 'points']), 'weightMaxLowGPAStudents', 0)
-    weightMaxESLStudents = int_checker_settings(
-        (settingsFileData.set_index('name').at['weightMaxESLStudents', 'points']), 'weightMaxESLStudents', 0)
-    weightTeamSize = int_checker_settings(
-        (settingsFileData.set_index('name').at['weightTeamSize', 'points']), 'weightTeamSize', 0)
-    weightStudentPriority = int_checker_settings(
-        (settingsFileData.set_index('name').at['weightStudentPriority', 'points']), 'weightStudentPriority', 0)
-    weightStudentChoice1 = int_checker_settings(
-        (settingsFileData.set_index('name').at['weightStudentChoice1', 'points']), 'weightStudentChoice1', 0)
-    weightAvoid = int_checker_settings(
-        (settingsFileData.set_index('name').at['weightAvoid', 'points']), 'weightAvoid', 0)
-
-    # verify required values in 'max' and 'min' column are integers
-    # if they are, assign value to global variable for scoring function to use.
-    defaultMaxTeamSize = int_checker_settings(
-        (settingsFileData.set_index('name').at['teamSize', 'max']), 'teamSize', 1)
-    defaultMinTeamSize = int_checker_settings(
-        (settingsFileData.set_index('name').at['teamSize', 'min']), 'teamSize', 1)
-    maxLowGPAStudents = int_checker_settings(
-        (settingsFileData.set_index('name').at['maxLowGPAStudents', 'max']), 'maxLowGPAStudents', 1)
-    maxESLStudents = int_checker_settings(
-        (settingsFileData.set_index('name').at['maxESLStudents', 'max']), 'maxESLStudents', 1)
-
-    # verify that provided 'effort' value is an integer.
-    # If it is, set it as effort for the program, otherwise, use default
-    try:
-        effort = int(settingsFileData.set_index('name').at['effort', 'max'])
-    except:
-        effort = 20
-        prints.warn("valid 'effort' value not found in the settings csv. Running with default value of 20.")
-    if effort < 0 or effort > 100:
-        effort = 20
-        prints.warn("'effort' in the settings csv is not an int between 1 and 100. Running with default value of 20.")
-
-    # verify that provided lowGPAThreshold is not empty and that it's a float within range
-    # If it is, assign value to global variable for scoring function to use.
-    try:
-        lowGPAThreshold = float(settingsFileData.set_index('name').at['lowGPAThreshold', 'min'])
-    except:
-        prints.logerr("The lowGPAThreshold 'min' value is not a float.")
-        settingsErrFlag = True
-        lowGPAThreshold = 0 # temp value to pass next if statement so allow program to continue checking for errors
-    if (lowGPAThreshold < 0) or (lowGPAThreshold > 4.00) or (pd.isna(lowGPAThreshold)):
-        prints.logerr("lowGPAThreshold 'min' setting requires a 0.00 - 4.00 value.")
-        settingsErrFlag = True
-
-    return settingsErrFlag
 
 
 def studentsHandler(studentsFileData, progMode):
@@ -244,6 +291,218 @@ def studentsHandler(studentsFileData, progMode):
     global numStudentChoices
 
     errFlag = False
+
+    def checkExists(dataSeries):
+        errNan = False
+        for student in range(numStudents):
+            # Verify series has no NaN values
+            if pd.isna(dataSeries[student]) == True:  # If element empty
+                prints.logerr("*Empty element found in {0} column, row {1}".format(dataSeries.name, student))
+                errNan = True
+        return errNan
+
+    def checkInt(dataSeries):
+        errInt = False
+        if is_numeric_dtype(dataSeries) == False:  # Look at series label
+            errInt = True
+            for student in range(numStudents):
+                if dataSeries[student].isnumeric() == False and pd.isna(
+                        dataSeries[student]) == False:  # Look at element
+                    prints.logerr("Unexpected data found in {0}, row {1} = '{2}'".format(dataSeries.name, student,
+                                                                                         dataSeries[student]))
+        elif is_integer_dtype(dataSeries) == False:
+            for student in range(numStudents):
+                if not dataSeries[student].is_integer() and pd.isna(dataSeries[student]) == False:
+                    prints.logerr("Unexpected data found in {0}, row {1} = '{2}'".format(dataSeries.name, student,
+                                                                                         dataSeries[student]))
+        return errInt
+
+    def checkFloat(dataSeries):
+        errFloat = False
+        if is_numeric_dtype(dataSeries) == False:
+            errFloat = True
+            for student in range(numStudents):
+                try:
+                    float(dataSeries[student])
+                except ValueError:
+                    prints.logerr("Unexpected data found in {0}, row {1} = '{2}'".format(dataSeries.name, student,
+                                                                                         dataSeries[student]))
+        return errFloat
+
+    def checkBool(dataSeries):
+        errBool = False
+        if is_bool_dtype(dataSeries) == False:
+            errBool = True
+            for student in range(numStudents):
+                val = dataSeries[student]
+                if val != False:
+                    val = val.lower()
+                if val != False and val != 'true' and val != 'false':
+                    prints.logerr("Unexpected data found in {0}, row {1} = '{2}'".format(dataSeries.name, student,
+                                                                                         dataSeries[student]))
+
+    def checkRange(dataSeries, rmin, rmax):
+        errRange = False
+        for value in dataSeries:
+            if (value < rmin) or (value > rmax):
+                prints.logerr(
+                    '{0} outside of acceptable range for {1}. Accepted values are between {2} - {3}'.format(value,
+                                                                                                            dataSeries.name,
+                                                                                                            rmin, rmax))
+                errRange = True
+        return errRange
+
+    def checkDup(dataSeries):
+        errDup = False
+        if dataSeries.duplicated().any():
+            errDup = True
+            sDuplicates = dataSeries[dataSeries.duplicated()]
+            for i in range(len(sDuplicates)):
+                prints.logerr(
+                    "*Duplicate {0} found '{1}'".format(dataSeries.name, dataSeries[dataSeries.duplicated()].iloc[i]))
+        return errDup
+
+    def matchProject1D(dataSeries):  # TODO condense into one f(x)
+        errProj = False
+        # Verify assignment contains valid projects
+        for student in range(numStudents):
+            if pd.isna(dataSeries[student]) == True:  # If element empty
+                prints.err("Empty field found in {0} column, row {1}.".format(dataSeries.name, student))
+            else:
+                sProjectMatch = False
+                for j in range(len(projectIDs)):  # Find matching id in global projectIDs
+                    if (dataSeries[student] == projectIDs[j]):
+                        sProjectMatch = True
+                        # replace project id with project index
+                        dataSeries.at[student] = j
+                        break
+                if sProjectMatch == False:
+                    prints.logerr(
+                        "No matching project id found in {0} for = {1:n}".format(dataSeries.name, dataSeries[student]))
+                    errProj = True
+        return errProj
+
+    def matchStudentID(dataSeries):  # TODO condense into one f(x)
+        errMatch = False
+        for student in range(numStudents):
+            if pd.isna(dataSeries[student]) == False:  # If element not empty
+                sMatch = False
+                for j in studentID.index:  # Find matching id in studentIDs
+                    if (dataSeries[student] == studentID[j]):
+                        sMatch = True
+                        # replace student id with student index
+                        dataSeries.at[student] = j
+                        break
+                if sMatch == False:
+                    prints.logerr(
+                        "No matching student id found in {0} column, for student = {1:n}".format(dataSeries.name,
+                                                                                                 studentAvoid[student]))
+                    errMatch = True
+
+        return errMatch
+
+    def matchProject2D(dataFrame):
+        errProj = False
+
+        # when Pandas finds unexpected data type, elements in studentChoiceN cast as objects, not int
+        for col in dataFrame.columns:
+            # Set flag for typecasting when column is not numeric
+            numeric = True
+            if is_numeric_dtype(dataFrame[col]) == False:
+                numeric = False
+            for row in dataFrame.index:
+                if pd.isna(dataFrame[col][row]) == False:  # If element not empty
+                    # Numeric typecasting for when a letter is present in the column
+                    if numeric == False:
+                        try:
+                            dataFrame.at[row, col] = int(dataFrame[col][row])
+                        except:
+                            prints.logerr(
+                                "Unexpected data found in {0}, row {1} = '{2}'".format(col, row, dataFrame[col][row]))
+                            errProj = True
+
+                    for i in range(len(projectIDs)):  # Find matching id in global projectIDs
+                        sChoiceMatch = False
+                        if (dataFrame[col][row] == projectIDs[i]):
+                            sChoiceMatch = True
+                            # replace project id with project index
+                            dataFrame.at[row, col] = i
+                            break
+                    if sChoiceMatch == False:
+                        prints.logerr("No matching project id found for {0} = '{1}'".format(col, dataFrame[col][row]))
+                        errProj = True
+
+        return errProj
+
+    def checkStudentID(studentID):
+        errID = False
+
+        if checkExists(studentID):
+            errID = True
+        if errID == False and checkInt(studentID):
+            errID = True
+        if errID == False and checkDup(studentID):
+            errID = True
+        if errID == False and checkRange(studentID, 0, (2 ** 64)):
+            errID = True
+
+        return errID
+
+    def checkStudentGPA(studentGPA):
+        errGPA = False
+
+        if checkExists(studentGPA):
+            errGPA = True
+        if errGPA == False and checkFloat(studentGPA):
+            errGPA = True
+        if errGPA == False and checkRange(studentGPA, 0.0, 4.0):
+            errGPA = True
+
+        return errGPA
+
+    def checkStudentESL(studentESL):
+        errESL = False
+
+        if checkBool(studentESL):
+            errESL = True
+
+        return errESL
+
+    def checkStudentPriority(studentPriority):
+        errPri = False
+
+        if checkBool(studentPriority):
+            errPri = True
+
+        return errPri
+
+    def checkAssignment(studentAssignment):
+        errAssign = False
+
+        if checkInt(studentAssignment):
+            errAssign = True
+        if errAssign == False and matchProject1D(studentAssignment):
+            errAssign = True
+
+        return errAssign
+
+    def checkAvoid(studentAvoid):
+        errAvoid = False
+
+        if checkInt(studentAvoid):
+            errAvoid = True
+        if errAvoid == False and matchStudentID(studentAvoid):
+            errAvoid = True
+
+        return errAvoid
+
+    def checkChoices(studentChoiceN):
+        errChoice = False
+
+        if matchProject2D(studentChoiceN):
+            errChoice = True
+
+        return errChoice
 
     # Verify required columns are present
     requiredColumns = ['studentID', 'studentChoice1', 'studentGPA', 'studentESL', 'studentAvoid']
@@ -268,7 +527,7 @@ def studentsHandler(studentsFileData, progMode):
     requiredColumns.remove("studentChoice1")  # removes duplicate column from list
     requiredColumns.extend(choiceFields)
     # Find duplicate required columns
-    findDuplicateCols(studentsFileData, requiredColumns, 'Students CSV File')
+    #findDuplicateCols(studentsFileData, requiredColumns, 'Students CSV File')
 
     # Create global series
     studentID = studentsFileData['studentID'].copy()
@@ -281,164 +540,40 @@ def studentsHandler(studentsFileData, progMode):
     numStudents = len(studentsFileData)
     numStudentChoices = len(studentChoiceN.columns)
 
-    # Check for Assign column when in Assign mode
+    # Verify student ID data
+    if checkStudentID(studentID):
+        errFlag = True
+    else:
+        # if student ID data is correct verify student avoid data
+        if checkAvoid(studentAvoid):
+            errFlag = True
+
+    # Verify studentGPA data
+    if checkStudentGPA(studentGPA):
+        errFlag = True
+
+    # Verify studentESL data
+    if checkStudentESL(studentESL):
+        errFlag = True
+
+    # Verify student Priority data
+    if checkStudentPriority(studentPriority):
+        errFlag = True
+
+    # Verify student Choices
+    if checkChoices(studentChoiceN):
+        errFlag = True
+
+    # Verify assignment column when in assignment mode
     if progMode == 'Scoring':
+
         if 'assignment' in studentsFileData.columns:
 
             # Store assignment column
             studentAssignment = studentsFileData['assignment'].copy()
-
-            # Verify assignment contains numbers
-            if is_numeric_dtype(studentAssignment) == False:
-                for student in range(numStudents):
-                    if studentAssignment[student].isnumeric() == False:
-                        prints.logerr("Unexpected data found in assignment column, row {0} = {1} ".format(student,
-                                                                                                          studentAssignment[
-                                                                                                              student]))
-            else:
-                # Verify assignment contains valid projects
-                for student in range(numStudents):
-                    if pd.isna(studentAssignment[student]) == True:  # If element empty
-                        prints.err("Empty field found in Assignment column, row {0}.".format(student))
-                    else:
-                        sAssignmentMatch = False
-                        for j in range(len(projectIDs)):  # Find matching id in global projectIDs
-                            if (studentAssignment[student] == projectIDs[j]):
-                                sAssignmentMatch = True
-                                # replace project id with project index
-                                studentAssignment.at[student] = j
-                                break
-                        if sAssignmentMatch == False:
-                            prints.logerr("No matching project id found for assignment = {0:n}".format(
-                                studentAssignment[student]))
-                            errFlag = True
+            if checkAssignment(studentAssignment):
+                errFlag = True
         else:
             prints.err("No assignment column found. Terminating program.")
 
-    for student in range(numStudents):
-        # Verify studentID has no NaN values
-        if pd.isna(studentID[student]) == True:  # If element empty
-            prints.logerr("Empty element found in studentID column, row {0}".format(student))
-            errFlag = True
-
-        # Verify studentGPA has no NaN values
-        if pd.isna(studentGPA[student]) == True:  # If element empty
-            prints.logerr("Empty element found in studentGPA column, row {0}".format(student))
-            errFlag = True
-
-    # Verify studentID contains numbers
-    if is_numeric_dtype(studentID) == False:
-        errFlag = True
-        for student in range(numStudents):
-            if studentID[student].isnumeric() == False:
-                prints.logerr("Unexpected data found in studentID, row {0} = '{1}'".format(student, studentID[student]))
-
-    # Verify studentGPA contains numbers
-    if is_numeric_dtype(studentGPA) == False:
-        errFlag = True
-        for student in range(numStudents):
-            try:
-                float(studentGPA[student])
-            except ValueError:
-                prints.logerr(
-                    "Unexpected data found in studentGPA, row {0} = '{1}'".format(student, studentGPA[student]))
-
-    # Verify studentESL contains booleans
-    if is_bool_dtype(studentESL) == False:
-        errFlag = True
-        for student in range(numStudents):
-            val = studentESL[student]
-            if val != False:
-                val = val.lower()
-                if val != 'true' and val != 'false':
-                    prints.logerr(
-                        "Unexpected data found in studentESL, row {0} = '{1}'".format(student, studentESL[student]))
-
-    # Check for optional studentPriority column
-    if 'studentPriority' in studentsFileData.columns:
-
-        # Verify studentPriority contains booleans
-        if is_bool_dtype(studentPriority) == False:
-            errFlag = True
-            for student in range(numStudents):
-                val = studentPriority[student]
-                if val != False:
-                    val = val.lower()
-                    if val != 'true' and val != 'false':
-                        prints.logerr("Unexpected data found in studentPriority, row {0} = '{1}'".format(student,
-                                                                                                         studentPriority[
-                                                                                                             student]))
-
-    # Check studentID for duplicate
-    if studentID.duplicated().any():
-        errFlag = True
-        sDuplicates = studentID[studentID.duplicated()]
-        for i in range(len(sDuplicates)):
-            prints.logerr("Duplicate studentID found '{0}'".format(studentID[studentID.duplicated()].iloc[i]))
-
-    # Verify studentAvoid contains numbers
-    if is_numeric_dtype(studentAvoid) == False:
-        errFlag = True
-        for student in range(numStudents):
-            if studentAvoid[student].isnumeric() == False:
-                prints.logerr(
-                    "Unexpected data found in studentAvoid, row {0} = '{1}'".format(student, studentAvoid[student]))
-
-    if errFlag == True:
-        prints.err("Unexpected data type(s) found in students input file. Terminating Program.")
-
-    # Check studentGPA within range
-    for value in studentGPA:
-        if (value < 0.0) or (value > 4.0):
-            prints.logerr('{0} outside of acceptable GPA range. Accepted values are between 0.0 - 4.0'.format(value))
-            errFlag = True
-
-    # Verify studentAvoid contains valid student IDs
-    for student in range(numStudents):
-        if pd.isna(studentAvoid[student]) == False:  # If element not empty
-            sAvoidMatch = False
-            for j in studentID.index:  # Find matching id in studentIDs
-                if (studentAvoid[student] == studentID[j]):
-                    sAvoidMatch = True
-                    # replace student id with student index
-                    studentAvoid.at[student] = j
-                    break
-            if sAvoidMatch == False:
-                prints.logerr("No matching student id found in studentAvoid column, for student = {0:n}".format(
-                    studentAvoid[student]))
-                errFlag = True
-
-    # Verify studentChoiceN contains valid project ids
-    # when Pandas finds unexpected data type, elements in studentChoiceN cast as objects, not int
-
-    for col in choiceFields:
-        # Set flag for typecasting when column is not numeric
-        numeric = True
-        if is_numeric_dtype(studentChoiceN[col]) == False:
-            numeric = False
-
-        for row in studentChoiceN.index:
-            if pd.isna(studentChoiceN[col][row]) == False:  # If element not empty
-                # Numeric typecasting for when a letter is present in the column
-                if numeric == False:
-                    try:
-                        studentChoiceN.at[row, col] = int(studentChoiceN[col][row])
-                    except:
-                        prints.logerr(
-                            "Unexpected data found in {0}, row {1} = '{2}'".format(col, row, studentChoiceN[col][row]))
-                        errFlag = True
-
-                for i in range(len(projectIDs)):  # Find matching id in global projectIDs
-                    sChoiceMatch = False
-                    if (studentChoiceN[col][row] == projectIDs[i]):
-                        sChoiceMatch = True
-                        # replace project id with project index
-                        studentChoiceN.at[row, col] = i
-                        break
-                if sChoiceMatch == False:
-                    prints.logerr("No matching project id found for {0} = '{1}'".format(col, studentChoiceN[col][row]))
-                    errFlag = True
-
-    # Exits when error conditions met
-    if errFlag == True:
-        prints.err("Invalid data found in input CSV files. Terminating program.")
+    return errFlag
