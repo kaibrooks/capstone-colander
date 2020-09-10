@@ -136,7 +136,7 @@ def pointsTeamSize(groupAssignments):
             prints.debug(f"project: {load_csv.projectIDs[i]} satisfies the condition!")
             prints.debug(f"Min:{load_csv.minTeamSize[i]} group size: {groupSize[i]}")
             totalPTS += weightMinPTS
-        if groupSize[i] <= load_csv.maxTeamSize[i]:
+        if groupSize[i] <= load_csv.maxTeamSize[i] and groupSize[i] > 0:
             prints.debug(f"project: {load_csv.projectIDs[i]} satisfies the condition!")
             prints.debug(f"Max: {load_csv.maxTeamSize[i]} group size: {groupSize[i]}")
             totalPTS += weightMaxPTS
