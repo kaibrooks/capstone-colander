@@ -21,8 +21,7 @@ def pointsStudentChoice(groupAssignments):
     for y in range(len(load_csv.studentID)):
         for x in range(len(load_csv.studentChoiceN.columns)):
             # If NaN is detected gives score based on position x then breaks
-            prints.debug(
-                f"ID {load_csv.studentID.iat[y]}, Assignment {groupAssignments[y]}, Choice {load_csv.studentChoiceN.iat[y, x]}")
+            prints.debug(f"ID {load_csv.studentID.iat[y]}, Assignment {groupAssignments[y]}, Choice {load_csv.studentChoiceN.iat[y, x]}")
 
             if pd.isna(load_csv.studentChoiceN.iat[y, x]):
                 totalPSC += math.ceil(maxScore - (maxScore / maxNumChoices) * x)
@@ -58,7 +57,7 @@ def pointsESLStudents(groupAssignments):
     prints.debug(f"{groupESL} gESL After \n{groupSize} gSize After")
     # Awarding points
     for i in range(len(groupESL)):
-        if groupESL[i] <= maxESL and groupSize[i] > 0:
+        if groupESL[i] <= maxESL and groupSize[i] > load_csv.minTeamSize[i]:
             totalPES += pointWeight
 
     return totalPES
@@ -103,7 +102,7 @@ def pointsMaxLowGPAStudents(groupAssignments):
 
     # iterates through maxLowGroup for points - also ignores empty groups
     for i in range(len(maxLowGroup)):
-        if maxLowGroup[i] <= maxLow and groupSize[i] > 0:
+        if maxLowGroup[i] <= maxLow and groupSize[i] > load_csv.minTeamSize[i]:
             prints.debug(f"group: {load_csv.projectIDs[i]} satisfies the condition!")
             totalPML += weightPML
 

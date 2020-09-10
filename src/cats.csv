@@ -1,13 +1,7 @@
-studentName,studentID,studentGPA,studentESL,studentPriority,studentAvoid,studentChoice1,studentChoice2,studentChoice3,assignment
-Virginia Tucker,111,4.0,,,,1,2,3,1
-Samantha Summer,222,4.0,,,,1,2,3,1
-Kristen Mayall,333,4.0,,,,1,2,3,1
-James Reagin,444,4.0,,,,1,2,3,1
-William Evans,555,4.0,,,,2,3,1,2
-Linda Johnson,666,4.0,,,,2,3,1,2
-John Denton,777,4.0,,,,2,3,1,2
-Joanne White,888,4.0,,,,2,3,1,2
-Raylene Mcqueen,999,4.0,,,,3,1,2,3
-Adan Simpson,123,4.0,,,,3,1,2,3
-Jodi Branch,456,4.0,,,,3,1,2,3
-Maria Sanchez,789,4.0,,,,3,1,2,3
+studentName,studentID,studentGPA,studentESL,studentPriority,studentAvoid,studentChoice1,studentChoice2,studentChoice3,studentChoice4,studentChoice5,assignment
+Virginia Tucker,111,4.0,,True,,1,2,3,4,5,1
+Samantha Summer,222,4.0,,True,,1,2,6,7,8,1
+Kristen Mayall,333,4.0,,,,1,2,10,11,12,17
+James Reagin,444,4.0,,,,1,13,14,15,16,1
+William Evans,555,4.0,,,,1,17,18,19,20,17
+Linda Johnson,666,4.0,,,,1,21,22,23,24,17

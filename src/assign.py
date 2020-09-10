@@ -44,7 +44,7 @@ def run_ga(verbose=1):
     var_bound = np.array([[0,num_projects - 1]]*load_csv.numStudents) # solution shape
     ga_params = {'max_num_iteration': num_generations,\
                     'population_size':100,\
-                    'mutation_probability':0.02,\
+                    'mutation_probability':0.1,\
                     'elit_ratio': 0.01,\
                     'crossover_probability': 0.5,\
                     'parents_portion': 0.3,\
