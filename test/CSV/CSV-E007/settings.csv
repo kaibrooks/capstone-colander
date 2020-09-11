@@ -1,0 +1,13 @@
+name,min,max,points
+teamSize,3,5,
+lowGPAThreshold,2.15,,
+maxLowGPAStudents,,2,
+maxESLStudents,,2,
+maxRunTime,,60,
+weightMaxLowGPAStudents,,,100
+weightMaxESLStudents,,,75
+weightMinTeamSize,,,90
+weightMaxTeamSize,,,0
+weightStudentPriority,,,100
+weightStudentChoice1,,,50
+weightAvoid,,,80
