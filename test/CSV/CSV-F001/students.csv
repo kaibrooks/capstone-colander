@@ -1,4 +1,4 @@
-studentName,studentID,studentGPA,studentESL,studentPriority,studentAvoid,studentChoice1,studentChoice2,studentChoice3,studentChoice4,studentChoice5,,customField
+studentName,studentID,studentGPA,studentESL,studentPriority,studentAvoid,studentChoice1,studentChoice2,studentChoice3,studentChoice4,studentChoice5,assignment,customField
 Mildred Gaines,20648284,1.9,FALSE,FALSE,72331549,4278011,4278011,4278011,60752094,9029682,,David once ate a group of geese.
 Franklin Williams,36327005,3.55,FALSE,FALSE,,9029682,14932449,14932449,60752094,9029682,,
 Jerome Ali,50571110,3.48,TRUE,FALSE,,60752094,9029682,60752094,60752094,60752094,,Kai hates clowns.
