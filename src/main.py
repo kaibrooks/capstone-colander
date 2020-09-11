@@ -132,17 +132,17 @@ if __name__ == "__main__":
 
     if programMode == 'Assignment':
         optimalSolution = assign.run_ga()
+        optimalSolution.tolist()
+        optimalSolution = list(map(int, optimalSolution))
+        if scoreBreakdown:
+            prints.breakMode = True
+            score.scoringMode(optimalSolution)
         write_csv.outputCSV(studentsFileData, outputFile, optimalSolution)
+
     elif programMode == 'Scoring':
+        if scoreBreakdown:
+            prints.breakMode = True
         finalScore = score.scoringMode(load_csv.studentAssignment)
         prints.gen("Assignment Score: {0}".format(finalScore))
-
-    if scoreBreakdown:
-        prints.gen("\nStudentChoice score: {0}".format(score.totalPSC))
-        prints.gen("ESL Students score: {0}".format(score.totalPES))
-        prints.gen("studentPriority score: {0}".format(score.totalPSP))
-        prints.gen("maxLowGPAStudents score: {0}".format(score.totalPML))
-        prints.gen("teamSize score: {0}".format(score.totalPTS))
-        prints.gen("studentAvoid score: {0}".format(score.totalPSA))
 
     prints.gen("\n** Program has completed running **")

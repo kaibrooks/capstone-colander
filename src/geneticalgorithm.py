@@ -392,7 +392,7 @@ class geneticalgorithm():
         plt.xlabel('generation')
         plt.ylabel('obj function')
         plt.title('GA: ' + now)
-        plt.savefig('../io/latest.png', dpi=300)
+        plt.savefig('io/latest.png', dpi=300)
         plt.show()
 
         #plt.savefig(sys.stdout.buffer)
