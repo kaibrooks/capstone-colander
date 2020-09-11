@@ -138,7 +138,6 @@ if __name__ == "__main__":
             prints.breakMode = True
             score.scoringMode(optimalSolution)
         write_csv.outputCSV(studentsFileData, outputFile, optimalSolution)
-
     elif programMode == 'Scoring':
         if scoreBreakdown:
             prints.breakMode = True

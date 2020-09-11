@@ -1,6 +1,4 @@
 # runs the assignment algorithm
-# kai brooks
-# github.com/kaibrooks/capstone-colander
 
 # standard libraries
 import numpy as np
@@ -8,7 +6,6 @@ from geneticalgorithm import geneticalgorithm
 
 # imports from the application
 import load_csv
-import prints
 import score
 
 # defs

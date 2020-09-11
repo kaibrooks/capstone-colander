@@ -1,6 +1,4 @@
-# Bliss Brass & Jaeyoon Lee
 # Functions for scoring the Genetic Algorithm (GA) are stored here
-# ##-##-2020
 
 import math  # ceil()
 import load_csv
@@ -21,7 +19,8 @@ def pointsStudentChoice(groupAssignments):
     for y in range(len(load_csv.studentID)):
         for x in range(len(load_csv.studentChoiceN.columns)):
             # If NaN is detected gives score based on position x then breaks
-            prints.debug(f"ID {load_csv.studentID.iat[y]}, Assignment {groupAssignments[y]}, Choice {load_csv.studentChoiceN.iat[y, x]}")
+            prints.debug(
+                f"ID {load_csv.studentID.iat[y]}, Assignment {groupAssignments[y]}, Choice {load_csv.studentChoiceN.iat[y, x]}")
 
             if pd.isna(load_csv.studentChoiceN.iat[y, x]):
                 totalPSC += math.ceil(maxScore - (maxScore / maxNumChoices) * x)
@@ -202,5 +201,5 @@ def scoringMode(groupAssignments):
     prints.score(f"studentAvoid score: {totalPSA}")
 
     prints.score(f"score grand total = {score}")
-    
+
     return score

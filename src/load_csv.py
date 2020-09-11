@@ -19,6 +19,78 @@ def findDuplicateCols(fileData, requiredCol, csvFile):
 # initialize maxValue to be used in verifying a value's range
 maxValue = pow(2, 64) - 1
 
+
+def int_checker(columnName, rowName, fileData, minValue):
+    intErrFlag = False
+
+    def check_range(value, location, minValue):
+        if (value < minValue) or (value > maxValue):
+            prints.logerr(
+                "Value {0} in {1} is an integer out of the required range."
+                    .format(value, location))
+            return True
+        return False
+
+    def isinstance_int(value, location, minValue):
+        if isinstance(value, int):
+            return True, value, check_range(value, location, minValue)
+        return False, value, False
+
+    def isinstance_float(value, location, minValue):
+        if isinstance(value, float):
+            if value.is_integer():
+                tempInt = int(value)
+                return True, tempInt, check_range(value, location, minValue)
+            return True, value, True
+        return False, value, False
+
+    def isinstance_obj(value, location, minValue):
+        try:
+            tempFloat = float(value)
+        except ValueError:
+            prints.logerr("{0} in {1} is not an integer.".format(value, location))
+            return True, 0, True
+        isObj, value, intErrFlag = isinstance_float(tempFloat, location, minValue)
+        return isObj, value, intErrFlag
+
+    if rowName:
+        isInteger, value, intErrFlag = isinstance_int(fileData, rowName, minValue)
+        if isInteger:
+            return value, intErrFlag
+        isFloat, value, intErrFlag = isinstance_float(fileData, rowName, minValue)
+        if isFloat:
+            return value, intErrFlag
+        isObj, value, intErrFlag = isinstance_obj(fileData, rowName, minValue)
+        return value, intErrFlag
+
+    if columnName:
+        tempArray = []
+        for value in fileData[columnName]:
+            isInteger, value, tempErrFlag = isinstance_int(value, columnName, minValue)
+            if tempErrFlag:
+                intErrFlag = tempErrFlag
+            if isInteger:
+                tempArray.append(value)
+                continue
+            isFloat, value, tempErrFlag = isinstance_float(value, columnName, minValue)
+            if tempErrFlag:
+                intErrFlag = tempErrFlag
+            if isFloat:
+                tempArray.append(value)
+                continue
+            isObj, value, tempErrFlag = isinstance_obj(value, columnName, minValue)
+            if tempErrFlag:
+                intErrFlag = tempErrFlag
+            tempArray.append(value)
+        return tempArray, intErrFlag
+
+
+def check_error_flag(errFlag, currFlag):
+    if errFlag:
+        return errFlag
+    return currFlag
+
+
 # initialize values used in settingsHandler()
 weightMaxLowGPAStudents = 0
 weightMaxESLStudents = 0
@@ -38,10 +110,8 @@ minGPAThreshold = 0.00
 maxGPAThreshold = 4.00
 defaultMaxTeamSize = 1
 defaultMinTeamSize = 1
-settingsErrFlag = False
 
 def settingsHandler(settingsFileData):
-    global settingsErrFlag
     global weightMaxLowGPAStudents
     global weightMaxESLStudents
     global weightMaxTeamSize
@@ -55,6 +125,8 @@ def settingsHandler(settingsFileData):
     global lowGPAThreshold
     global defaultMaxTeamSize
     global defaultMinTeamSize
+
+    settingsErrFlag = False
 
     # verify required settings csv headers are present and not duplicated
     requiredColumns = ['name', 'min', 'max', 'points']
@@ -135,31 +207,48 @@ def settingsHandler(settingsFileData):
 
     # verify required fields in 'points' column contain integers
     # if they are, assign value to global variable for scoring function to use
-    weightMaxLowGPAStudents = int_checker_settings(
-        (settingsFileData.set_index('name').at['weightMaxLowGPAStudents', 'points']), 'weightMaxLowGPAStudents', 0)
-    weightMaxESLStudents = int_checker_settings(
-        (settingsFileData.set_index('name').at['weightMaxESLStudents', 'points']), 'weightMaxESLStudents', 0)
-    weightMinTeamSize = int_checker_settings(
-        (settingsFileData.set_index('name').at['weightMinTeamSize', 'points']), 'weightMinTeamSize', 0)
-    weightMaxTeamSize = int_checker_settings(
-        (settingsFileData.set_index('name').at['weightMaxTeamSize', 'points']), 'weightMaxTeamSize', 0)
-    weightStudentPriority = int_checker_settings(
-        (settingsFileData.set_index('name').at['weightStudentPriority', 'points']), 'weightStudentPriority', 0)
-    weightStudentChoice1 = int_checker_settings(
-        (settingsFileData.set_index('name').at['weightStudentChoice1', 'points']), 'weightStudentChoice1', 0)
-    weightAvoid = int_checker_settings(
-        (settingsFileData.set_index('name').at['weightAvoid', 'points']), 'weightAvoid', 0)
+    weightMaxLowGPAStudents, intErr = int_checker(None, 'weightMaxLowGPAStudents',
+                                                  (settingsFileData.set_index('name').
+                                                      at['weightMaxLowGPAStudents', 'points']), 0)
+    settingsErrFlag = check_error_flag(intErr, settingsErrFlag)
+    weightMaxESLStudents, intErr = int_checker(None, 'weightMaxESLStudents',
+                                               (settingsFileData.set_index('name')
+                                                   .at['weightMaxESLStudents', 'points']), 0)
+    settingsErrFlag = check_error_flag(intErr, settingsErrFlag)
+    weightMinTeamSize, intErr = int_checker(None, 'weightMinTeamSize',
+                                            (settingsFileData.set_index('name')
+                                                .at['weightMinTeamSize', 'points']), 0)
+    settingsErrFlag = check_error_flag(intErr, settingsErrFlag)
+    weightMaxTeamSize, intErr = int_checker(None, 'weightMaxTeamSize',
+                                            (settingsFileData.set_index('name')
+                                                .at['weightMaxTeamSize', 'points']), 0)
+    settingsErrFlag = check_error_flag(intErr, settingsErrFlag)
+    weightStudentPriority, intErr = int_checker(None, 'weightStudentPriority',
+                                                (settingsFileData.set_index('name')
+                                                    .at['weightStudentPriority', 'points']), 0)
+    settingsErrFlag = check_error_flag(intErr, settingsErrFlag)
+    weightStudentChoice1, intErr = int_checker(None, 'weightStudentChoice1',
+                                               (settingsFileData.set_index('name')
+                                                   .at['weightStudentChoice1', 'points']), 0)
+    settingsErrFlag = check_error_flag(intErr, settingsErrFlag)
+    weightAvoid, intErr = int_checker(None, 'weightAvoid',
+                                      (settingsFileData.set_index('name').at['weightAvoid', 'points']), 0)
+    settingsErrFlag = check_error_flag(intErr, settingsErrFlag)
 
     # verify required values in 'max' and 'min' column are integers
     # if they are, assign value to global variable for scoring function to use
-    defaultMaxTeamSize = int_checker_settings(
-        (settingsFileData.set_index('name').at['teamSize', 'max']), 'teamSize', 1)
-    defaultMinTeamSize = int_checker_settings(
-        (settingsFileData.set_index('name').at['teamSize', 'min']), 'teamSize', 1)
-    maxLowGPAStudents = int_checker_settings(
-        (settingsFileData.set_index('name').at['maxLowGPAStudents', 'max']), 'maxLowGPAStudents', 1)
-    maxESLStudents = int_checker_settings(
-        (settingsFileData.set_index('name').at['maxESLStudents', 'max']), 'maxESLStudents', 1)
+    defaultMaxTeamSize, intErr = int_checker(None, 'teamSize',
+                                             (settingsFileData.set_index('name').at['teamSize', 'max']), 1)
+    settingsErrFlag = check_error_flag(intErr, settingsErrFlag)
+    defaultMinTeamSize, intErr = int_checker(None, 'teamSize',
+                                             (settingsFileData.set_index('name').at['teamSize', 'min']), 1)
+    settingsErrFlag = check_error_flag(intErr, settingsErrFlag)
+    maxLowGPAStudents, intErr = int_checker(None, 'maxLowGPAStudents',
+                                            (settingsFileData.set_index('name').at['maxLowGPAStudents', 'max']), 1)
+    settingsErrFlag = check_error_flag(intErr, settingsErrFlag)
+    maxESLStudents, intErr = int_checker(None, 'maxESLStudents',
+                                         (settingsFileData.set_index('name').at['maxESLStudents', 'max']), 1)
+    settingsErrFlag = check_error_flag(intErr, settingsErrFlag)
 
     # if effort value is provided in the csv file, verify the value is an integer within the required range
     # if it is not, use default value of 20
@@ -187,18 +276,17 @@ def settingsHandler(settingsFileData):
 
 
 # initialize values used in settingsHandler()
-projectsErrFlag = False
 minTeamSize = []
 maxTeamSize = []
 projectIDs = []
 
 def projectsHandler(projectsFileData):
-    global projectsErrFlag
     # arrays indexed by project
     global minTeamSize
     global maxTeamSize
     global projectIDs
 
+    projectsErrFlag = False
     # verify required project csv headers are present and not duplicated
     requiredColumns = ['projectID', 'minTeamSize', 'maxTeamSize']
     for col in requiredColumns:
@@ -238,7 +326,9 @@ def projectsHandler(projectsFileData):
         return tempArray
 
     # verify that all values in program csv file are integers
-    projectIDs = int_checker_projects('projectID')
+    #projectIDs = int_checker_projects('projectID')
+    projectIDs, intErr = int_checker('projectID', None, projectsFileData, 1)
+    projectsErrFlag = check_error_flag(intErr, projectsErrFlag)
 
     # verify that there are no duplicate project IDs in the projectID column
     if projectsFileData.projectID.duplicated().any():
@@ -250,9 +340,11 @@ def projectsHandler(projectsFileData):
 
     # if values for team sizes are blank, enter size from settings csv and then verify all values are integers
     projectsFileData['minTeamSize'] = projectsFileData['minTeamSize'].fillna(defaultMinTeamSize)
-    minTeamSize = int_checker_projects('minTeamSize')
+    minTeamSize, intErr = int_checker('minTeamSize', None, projectsFileData, 1)
+    projectsErrFlag = check_error_flag(intErr, projectsErrFlag)
     projectsFileData['maxTeamSize'] = projectsFileData['maxTeamSize'].fillna(defaultMaxTeamSize)
-    maxTeamSize = int_checker_projects('maxTeamSize')
+    maxTeamSize, intErrFlag = int_checker('maxTeamSize', None, projectsFileData, 1)
+    projectsErrFlag = check_error_flag(intErr, projectsErrFlag)
 
     # verify minTeamSize is not greater than maxTeamSize
     # zip() used to iterate in parallel over multiple iterables

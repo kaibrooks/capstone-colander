@@ -1,6 +1,4 @@
 # genetic algorithm
-# original by Ryan Solgi (see EOF)
-# mod by Kai Brooks for http://github.com/kaibrooks/capstone-colander
 
 import numpy as np
 import sys
@@ -17,22 +15,15 @@ early_stop_message = "\n- Stopping early (no improvement) -"
 
 class geneticalgorithm():
     '''  Genetic Algorithm (Elitist version) for Python
-
     An implementation of elitist genetic algorithm for solving problems with
     continuous, integers, or mixed variables.
-
-
-
     Implementation and output:
-
         methods:
                 run(): implements the genetic algorithm
-
         outputs:
                 output_dict:  a dictionary including the best set of variables
             found and the value of the given function associated to it.
             {'variable': , 'function': }
-
                 report: a list including the record of the progress of the
                 algorithm over iterations
     '''
@@ -55,20 +46,16 @@ class geneticalgorithm():
         NOTE: This implementation minimizes the given objective function.
         (For maximization multiply function by a negative sign: the absolute
         value of the output would be the actual objective function)
-
         @param dimension <integer> - the number of decision variables
-
         @param variable_type <string> - 'bool' if all variables are Boolean;
         'int' if all variables are integer; and 'real' if all variables are
         real value or continuous (for mixed type see @param variable_type_mixed)
-
         @param variable_boundaries <numpy array/None> - Default None; leave it
         None if variable_type is 'bool'; otherwise provide an array of tuples
         of length two as boundaries for each variable;
         the length of the array must be equal dimension. For example,
         np.array([0,100],[0,200]) determines lower boundary 0 and upper boundary 100 for first
         and upper boundary 200 for second variable where dimension is 2.
-
         @param variable_type_mixed <numpy array/None> - Default None; leave it
         None if all variables have the same type; otherwise this can be used to
         specify the type of each variable separately. For example if the first
@@ -77,11 +64,9 @@ class geneticalgorithm():
         type is Boolean use 'int' and provide a boundary as [0,1]
         in variable_boundaries. Also if variable_type_mixed is applied,
         variable_boundaries has to be defined.
-
         @param function_timeout <float> - if the given function does not provide
         output before function_timeout (unit is seconds) the algorithm raise error.
         For example, when there is an infinite loop in the given function.
-
         @param algorithm_parameters:
             @ max_num_iteration <int> - stoping criteria of the genetic algorithm (GA)
             @ population_size <int>
@@ -93,10 +78,8 @@ class geneticalgorithm():
             'two_point' are other options
             @ max_iteration_without_improv <int> - maximum number of
             successive iterations without improvement. If None it is ineffective
-
         for more details and examples of implementation please visit:
             https://github.com/rmsolgi/geneticalgorithm
-
         '''
         self.__name__ = geneticalgorithm
 
