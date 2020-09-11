@@ -57,7 +57,7 @@ def pointsESLStudents(groupAssignments):
     prints.debug(f"{groupESL} gESL After \n{groupSize} gSize After")
     # Awarding points
     for i in range(len(groupESL)):
-        if groupESL[i] <= maxESL and groupSize[i] > load_csv.minTeamSize[i]:
+        if groupESL[i] <= maxESL and groupSize[i] >= load_csv.minTeamSize[i]:
             totalPES += pointWeight
 
     return totalPES
@@ -102,7 +102,7 @@ def pointsMaxLowGPAStudents(groupAssignments):
 
     # iterates through maxLowGroup for points - also ignores empty groups
     for i in range(len(maxLowGroup)):
-        if maxLowGroup[i] <= maxLow and groupSize[i] > load_csv.minTeamSize[i]:
+        if maxLowGroup[i] <= maxLow and groupSize[i] >= load_csv.minTeamSize[i]:
             prints.debug(f"group: {load_csv.projectIDs[i]} satisfies the condition!")
             totalPML += weightPML
 
