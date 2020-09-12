@@ -7,9 +7,7 @@ import prints
 
 
 def pointsStudentChoice(groupAssignments):
-    global totalPSC
-
-    totalPSC = 0
+    global totalPSC = 0
     maxNumChoices = load_csv.numStudentChoices
     maxScore = load_csv.weightStudentChoice1
 
@@ -38,11 +36,10 @@ def pointsStudentChoice(groupAssignments):
 
 
 def pointsESLStudents(groupAssignments):
-    global totalPES
+    global totalPES = 0
 
     pointWeight = load_csv.weightMaxESLStudents
     maxESL = load_csv.maxESLStudents
-    totalPES = 0
     groupESL = [0] * len(load_csv.projectIDs)  # Initializing an empty array to 0's
     groupSize = [0] * len(load_csv.projectIDs)
 
@@ -63,9 +60,7 @@ def pointsESLStudents(groupAssignments):
 
 
 def pointsStudentPriority(groupAssignments):
-    global totalPSP
-
-    totalPSP = 0
+    global totalPSP = 0
 
     # Checks if priority flag is set then checks if they got their first choice
     for i in range(len(load_csv.studentID)):
@@ -78,9 +73,8 @@ def pointsStudentPriority(groupAssignments):
 
 # This calculates points for having fewer students than maxLowGPAStudents in a group
 def pointsMaxLowGPAStudents(groupAssignments):
-    global totalPML
+    global totalPML = 0
 
-    totalPML = 0
     weightPML = load_csv.weightMaxLowGPAStudents
     minGPA = load_csv.lowGPAThreshold
     maxLow = load_csv.maxLowGPAStudents
@@ -110,9 +104,7 @@ def pointsMaxLowGPAStudents(groupAssignments):
 
 # This calculates points for having met group size constraints
 def pointsTeamSize(groupAssignments):
-    global totalPTS
-
-    totalPTS = 0
+    global totalPTS = 0
     weightMinPTS = load_csv.weightMinTeamSize
     weightMaxPTS = load_csv.weightMaxTeamSize
 
@@ -145,9 +137,7 @@ def pointsTeamSize(groupAssignments):
 
 # This calculates points for violating studentAvoid constraint
 def pointsAvoid(groupAssignments):
-    global totalPSA
-
-    totalPSA = 0
+    global totalPSA = 0
     weightPSA = load_csv.weightAvoid
     # initializes bad - counts how many studentAvoid matches are found
     bad = 0
@@ -176,7 +166,6 @@ def pointsAvoid(groupAssignments):
 
 
 def scoringMode(groupAssignments):
-    #prints.score(f"Assignment: \nStudent   Project\n{groupAssignments}")
     score = 0
 
     score = pointsStudentChoice(groupAssignments)
