@@ -185,6 +185,4 @@ cython_debug/
 
 *.code-workspace
 
-.vscode/
-
 *.numbers
