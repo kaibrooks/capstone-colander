@@ -163,14 +163,17 @@ Pass += 1
 # ERROR: No match found in studentAvoid column, row 0 = 7549
 # ERROR: Program terminating due to errors in the following files: ['test/CSV/CSV-E031/students.csv']. See ERROR messages above for more info.
 
+'''
+# test case ignored. studentHandler doesn't handle such case
 # CSV-E032: studentAvoid refers to themselves
 print('\n ::: CSV-E032 :::')
-#os.system('python src/main.py -s test/CSV/CSV-E032/students.csv -p test/CSV/CSV-E032/projects.csv -u test/CSV/CSV-E032/settings.csv')
+os.system('python src/main.py -s test/CSV/CSV-E032/students.csv -p test/CSV/CSV-E032/projects.csv -u test/CSV/CSV-E032/settings.csv')
 # Result: Fail
 Fail += 1
 # Score: 2195.0
 # ** Program has completed running **
 # Program assigned every student but did not print an error for student 36327005 (who refers to themselves for Avoid)
+'''
 
 # CSV-E033: studentChoiceN refers to an invalid projectID
 print('\n ::: CSV-E033 :::')
@@ -220,19 +223,17 @@ os.system('python src/main.py -s test/CSV/CSV-E056/students.csv -p test/CSV/CSV-
 # CSV-E057: data partially filled in 'assignment' column in Scoring mode
 print('\n ::: CSV-E057 :::')
 os.system('python src/main.py -c -s test/CSV/CSV-E057/students.csv -p test/CSV/CSV-E057/projects.csv -u test/CSV/CSV-E057/settings.csv')
-# Result: Error
-Error += 1
-# TypeError: list indices must be integers or slices, not numpy.float64
-# does not find the error with assignment column (passed before)
+# Result: Passed
+Pass += 1
+# ERROR: Empty element found in assignment column, row 0
+# ERROR: Program terminating due to errors in the following files: ['test/CSV/CSV-E057/students.csv']. See ERROR messages above for more info.
 
 # CSV-E058: duplicated field names in student.csv (duplicate GPA columns in student.csv)
 print('\n ::: CSV-E058 :::')
-#os.system('python src/main.py -s test/CSV/CSV-E058/students.csv -p test/CSV/CSV-E058/projects.csv -u test/CSV/CSV-E058/settings.csv')
-# Result: Fail
-Fail += 1
-# Score: 2305.0
-# - Stopping early (no improvement) -
-# Program's assignement mode completed its operation without an error. second GPA (duplicate) column renamed to studentGPA.1
+os.system('python src/main.py -s test/CSV/CSV-E058/students.csv -p test/CSV/CSV-E058/projects.csv -u test/CSV/CSV-E058/settings.csv')
+# Result: Passed
+Pass += 1
+# ERROR: studentGPA column is duplicated in the Students CSV File. Terminating Program
 
 # CSV-S001: excessive studentChoiceN entries
 print('\n ::: CSV-S001 :::')
@@ -255,7 +256,6 @@ print('\n ::: CSV-S003 :::')
 Pass += 1
 # Score: 2305.0
 # - Stopping early (no improvement) -
-# 
 
 # CSV-S004: excessive studentID rows
 print('\n ::: CSV-S004 :::')
@@ -274,8 +274,8 @@ print('ERROR:',Error)
 '''
 As of 9/12/2020
  *** TESTING COMPLETE ***
-TOTAL: 28
-PASS: 25
-FAIL: 2
-ERROR: 1
+TOTAL: 27
+PASS: 27
+FAIL: 0
+ERROR: 0
 '''

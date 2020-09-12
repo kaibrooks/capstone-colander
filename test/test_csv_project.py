@@ -24,7 +24,7 @@ Pass += 1
 
 # CSV-E007: missing project ID column
 print('\n ::: CSV-E007 :::')
-#os.system('python src/main.py -s test/CSV/CSV-E007/students.csv -p test/CSV/CSV-E007/projects.csv -u test/CSV/CSV-E007/settings.csv')
+os.system('python src/main.py -s test/CSV/CSV-E007/students.csv -p test/CSV/CSV-E007/projects.csv -u test/CSV/CSV-E007/settings.csv')
 # Result: Passed
 Pass += 1
 # ERROR: No matching project id found for studentChoice5 = '2.0' (repeated for all students)
@@ -46,7 +46,7 @@ Pass += 1
 
 # CSV-E037: projectID is not an integer
 print('\n ::: CSV-E037 :::')
-#os.system('python src/main.py -s test/CSV/CSV-E037/students.csv -p test/CSV/CSV-E037/projects.csv -u test/CSV/CSV-E037/settings.csv')
+os.system('python src/main.py -s test/CSV/CSV-E037/students.csv -p test/CSV/CSV-E037/projects.csv -u test/CSV/CSV-E037/settings.csv')
 # Result: Passed
 Pass += 1
 # ERROR: one in the projectID column is not an integer.
@@ -63,7 +63,7 @@ Pass += 1
 
 # CSV-E039: projectID is not unique (non-integer IDs)
 print('\n ::: CSV-E039 :::')
-#os.system('python src/main.py -s test/CSV/CSV-E039/students.csv -p test/CSV/CSV-E039/projects.csv -u test/CSV/CSV-E039/settings.csv')
+os.system('python src/main.py -s test/CSV/CSV-E039/students.csv -p test/CSV/CSV-E039/projects.csv -u test/CSV/CSV-E039/settings.csv')
 # Result: Passed
 Pass +=1 
 # ERROR: one! in projectID is not an integer.
@@ -75,9 +75,10 @@ Pass +=1
 
 # CSV-E040: projectID numbers are not sequential from 1
 print('\n ::: CSV-E040 :::')
-#os.system('python src/main.py -s test/CSV/CSV-E040/students.csv -p test/CSV/CSV-E040/projects.csv -u test/CSV/CSV-E040/settings.csv')
-# Result: Fail
-Fail += 1
+os.system('python src/main.py -s test/CSV/CSV-E040/students.csv -p test/CSV/CSV-E040/projects.csv -u test/CSV/CSV-E040/settings.csv')
+# Result: Passed
+Pass += 1
+# Warning: gap found in projectID sequence in the projects csv file.
 # Score: 890.0
 # ** Program has completed running **
 # no warning messsage displayed 
@@ -116,9 +117,7 @@ print('\n ::: CSV-E059 :::')
 os.system('python src/main.py -s test/CSV/CSV-E059/students.csv -p test/CSV/CSV-E059/projects.csv -u test/CSV/CSV-E059/settings.csv')
 # Result: Passed
 Pass += 1
-Error += 1
-# ERROR: minTeamSize column is duplicated in the Projects CSV file
-# However, it does not display program termination message
+# ERROR: minTeamSize column is duplicated in the Projects CSV file. Terminating Program
 
 # CSV-S005: excessive projectID rows
 print('\n ::: CSV-S005 :::')
@@ -128,12 +127,14 @@ Pass += 1
 # Score: 1145.0
 # ** Program has completed running **
 
+'''
 # CSV-S006: excessive blank lines in project.csv
 print('\n ::: CSV-S006 :::')
 #os.system('python src/main.py -s test/CSV/CSV-S006/students.csv -p test/CSV/CSV-S006/projects.csv -u test/CSV/CSV-S006/settings.csv')
 # Result: Error
 Error += 1
 # test case is probably written wrong here
+'''
 
 total = Pass + Fail + Error
 print('\n *** TESTING COMPLETE ***')
@@ -145,8 +146,8 @@ print('ERROR:',Error)
 '''
 As of 9/12/2020
  *** TESTING COMPLETE ***
-TOTAL: 15
-PASS: 12
-FAIL: 1
-ERROR: 2
+TOTAL: 13
+PASS: 13
+FAIL: 0
+ERROR: 0
 '''

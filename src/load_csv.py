@@ -497,7 +497,8 @@ def studentsHandler(studentsFileData, progMode):
     for col in requiredColumns:
         if col not in studentsFileData.columns:
             prints.err("Required {0} column header not found in the students csv file. Terminating Program.".format(col))
-        findDuplicateCols(studentsFileData, requiredColumns, 'Students CSV File')
+        else:
+            findDuplicateCols(studentsFileData, col, 'Students CSV File')
 
     # Search for sequential studentChoice columns to store in global dataframe
     choiceFields = ['studentChoice1']
