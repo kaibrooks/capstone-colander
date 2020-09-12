@@ -465,7 +465,9 @@ def studentsHandler(studentsFileData, progMode):
     def checkAssignment(studentAssignment):
         errAssign = False
 
-        if checkInt(studentAssignment):
+        if checkExists(studentAssignment):
+            errAssign = True
+        if erAssign is False checkInt(studentAssignment):
             errAssign = True
         if errAssign is False and match1D(studentAssignment, projectIDs):
             errAssign = True
