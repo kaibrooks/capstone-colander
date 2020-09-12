@@ -176,7 +176,7 @@ def pointsAvoid(groupAssignments):
 
 
 def scoringMode(groupAssignments):
-    prints.score(f"Assignment: \nStudent   Project\n{groupAssignments}")
+    #prints.score(f"Assignment: \nStudent   Project\n{groupAssignments}")
     score = 0
 
     score = pointsStudentChoice(groupAssignments)
@@ -200,6 +200,6 @@ def scoringMode(groupAssignments):
     prints.score(f"teamSize score: {totalPTS}")
     prints.score(f"studentAvoid score: {totalPSA}")
 
-    prints.score(f"score grand total = {score}")
+    prints.score(f"\nscore grand total = {score}")
 
     return score
