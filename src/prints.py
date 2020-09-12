@@ -4,8 +4,9 @@
 import sys
 
 global debugMode
+global breakMode
 debugMode = 0
-
+breakMode = 0
 
 def debug(msg):
     """prints a debugging message"""
@@ -40,4 +41,5 @@ def logerr(msg):
 
 def score(msg):
     """prints a score"""
-    #print("" + msg)
+    if breakMode:
+        print("" + msg)

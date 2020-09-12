@@ -16,40 +16,45 @@ print('*** RUNNING TEST_CSV_STUDENT.PY ***')
 
 # CSV-F001: write data into already existing 'assignment' column and save as an output
 print('\n ::: CSV-F001 :::')
-os.system('python src/main.py -a -s test/CSV/CSV-F001/students.csv -p test/CSV/CSV-F001/projects.csv -u test/CSV/CSV-F001/settings.csv')
-# Result: Error
-Error += 1
-# AttributeError: module 'load_csv' has no attribute 'studentAssignment'
+#os.system('python src/main.py -a -s test/CSV/CSV-F001/students.csv -p test/CSV/CSV-F001/projects.csv -u test/CSV/CSV-F001/settings.csv')
+# Result: Passed
+Pass += 1
+# Score: 2295.0
+# - Stopping early (no improvement) -
+# Program assigned every student without an issue and filled in the 'assignment' column
 
 # CSV-F002: write data into non-existent 'assignment' column, create the column, then save data and as an output file.
 print('\n ::: CSV-F002 :::')
-os.system('python src/main.py -s test/CSV/CSV-F002/students.csv -p test/CSV/CSV-F002/projects.csv -u test/CSV/CSV-F002/settings.csv')
-# Result: Error
-Error += 1
-# AttributeError: module 'load_csv' has no attribute 'studentAssignment'
+#os.system('python src/main.py -s test/CSV/CSV-F002/students.csv -p test/CSV/CSV-F002/projects.csv -u test/CSV/CSV-F002/settings.csv')
+# Result: Passed
+Pass += 1
+# Score: 2305.0
+# - Stopping early (no improvement) -
+# Program assgined every student without an issue and created 'assignment' column
 
 # CSV-F003: save data as an output file with a non-reserved field names in the file
 print('\n ::: CSV-F003 :::')
-os.system('python src/main.py -s test/CSV/CSV-F003/students.csv -p test/CSV/CSV-F003/projects.csv -u test/CSV/CSV-F003/settings.csv')
-# Result: Error
-Error += 1
-# AttributeError: module 'load_csv' has no attribute 'studentAssignment'
+#os.system('python src/main.py -s test/CSV/CSV-F003/students.csv -p test/CSV/CSV-F003/projects.csv -u test/CSV/CSV-F003/settings.csv')
+# Result: Passed
+Pass += 1
+# Score: 2305.0
+# - Stopping early (no improvement) -
+# Program assigned every student without an issue and created 'assignment' column following a non-reserved field name
 
 # CSV-F004: columns rearranged
 print('\n ::: CSV-F004 :::')
-os.system('python src/main.py -s test/CSV/CSV-F004/students.csv -p test/CSV/CSV-F004/projects.csv -u test/CSV/CSV-F004/settings.csv')
-# Result: Error
-Error += 1
-# AttributeError: module 'load_csv' has no attribute 'studentAssignment'
+#os.system('python src/main.py -s test/CSV/CSV-F004/students.csv -p test/CSV/CSV-F004/projects.csv -u test/CSV/CSV-F004/settings.csv')
+# Result: Passed
+Pass += 1
+# Score: 2305.0
+# - Stopping early (no improvement) -
+# Program assigned every student without an issue regardless of columns order
 
 # CSV-E001: missing studentID field name
 print('\n ::: CSV-E001 :::')
 os.system('python src/main.py -s test/CSV/CSV-E001/students.csv -p test/CSV/CSV-E001/projects.csv -u test/CSV/CSV-E001/settings.csv')
-message = ['ERROR: Required studentID column header not found in the students csv file. Terminating Program.']
-if message:
-    print('detected')
-    Pass += 1
 # Result: Passed
+Pass += 1
 # ERROR: Required studentID column header not found in the students csv file. Terminating Program.
 
 # CSV-E002: missing GPA field name
@@ -86,6 +91,13 @@ os.system('python src/main.py -s test/CSV/CSV-E006/students.csv -p test/CSV/CSV-
 # Result: Passed
 Pass += 1
 # ERROR: Required studentAvoid column header not found in the students csv file. Terminating Program.
+
+# CSV-E006-2: missing assignment column (running in scoring mode)
+print('\n ::: CSV-E006-2 :::')
+os.system('python src/main.py -c -s test/CSV/CSV-E006-2/students.csv -p test/CSV/CSV-E006-2/projects.csv -u test/CSV/CSV-E006-2/settings.csv')
+# Result: Passed
+Pass += 1
+# ERROR: No assignment column found. Terminating program.
 
 # CSV-E024: studentID is not an integer value
 print('\n ::: CSV-E024 :::')
@@ -153,10 +165,12 @@ Pass += 1
 
 # CSV-E032: studentAvoid refers to themselves
 print('\n ::: CSV-E032 :::')
-os.system('python src/main.py -s test/CSV/CSV-E032/students.csv -p test/CSV/CSV-E032/projects.csv -u test/CSV/CSV-E032/settings.csv')
-# Result: Error
-Error += 1
-# AttributeError: module 'load_csv' has no attribute 'studentAssignment'
+#os.system('python src/main.py -s test/CSV/CSV-E032/students.csv -p test/CSV/CSV-E032/projects.csv -u test/CSV/CSV-E032/settings.csv')
+# Result: Fail
+Fail += 1
+# Score: 2205.0
+# ** Program has completed running **
+# Program assigned every student but did not print an error for student 36327005 (who refers to themselves for Avoid)
 
 # CSV-E033: studentChoiceN refers to an invalid projectID
 print('\n ::: CSV-E033 :::')
@@ -177,20 +191,24 @@ os.system('python src/main.py -s test/CSV/CSV-E034/students.csv -p test/CSV/CSV-
 
 # CSV-E035: studentESL is not boolean
 print('\n ::: CSV-E035 :::')
-os.system('python src/main.py -s test/CSV/CSV-E035/students.csv -p test/CSV/CSV-E035/projects.csv -u test/CSV/CSV-E035/settings.csv')
-# Result: Passed
-Pass += 1
+#os.system('python src/main.py -s test/CSV/CSV-E035/students.csv -p test/CSV/CSV-E035/projects.csv -u test/CSV/CSV-E035/settings.csv')
+# Result: Failed
+Fail += 1
 # ERROR: Unexpected data found in studentESL, row 12 = '1'
-# ERROR: Program terminating due to errors in the following files: ['test/CSV/CSV-E035/students.csv']. See ERROR messages above for more info.
+# Score: 1985.0
+# - Stopping early (no improvement) -
+# Program reported Error but proceeded to run assignment mode
 
 # CSV-E036: studentPriority is not boolean
 print('\n ::: CSV-E036 :::')
-os.system('python src/main.py -s test/CSV/CSV-E036/students.csv -p test/CSV/CSV-E036/projects.csv -u test/CSV/CSV-E036/settings.csv')
-# Result: Passed
-Pass += 1
+#os.system('python src/main.py -s test/CSV/CSV-E036/students.csv -p test/CSV/CSV-E036/projects.csv -u test/CSV/CSV-E036/settings.csv')
+# Result: Failed
+Fail += 1
 # ERROR: Unexpected data found in studentPriority, row 10 = '1'
 # ERROR: Unexpected data found in studentPriority, row 16 = 'Falsse'
-# ERROR: Program terminating due to errors in the following files: ['test/CSV/CSV-E036/students.csv']. See ERROR messages above for more info.
+# Score: 3895.0
+# - Stopping early (no improvement) -
+# Program reported Error but proceeded to run assignment mode
 
 '''
 # test case deleted
@@ -205,40 +223,48 @@ os.system('python src/main.py -s test/CSV/CSV-E056/students.csv -p test/CSV/CSV-
 # CSV-E057: data partially filled in 'assignment' column in Scoring mode
 print('\n ::: CSV-E057 :::')
 os.system('python src/main.py -c -s test/CSV/CSV-E057/students.csv -p test/CSV/CSV-E057/projects.csv -u test/CSV/CSV-E057/settings.csv')
-# Result: Error
-Error += 1
-# TypeError: list indices must be integers or slices, not numpy.float64
+# Result: Passed
+Pass += 1
+# ERROR: Empty field found in assignment column, row 0.
 
-# CSV-E058: duplicated field names in student.csv
+# CSV-E058: duplicated field names in student.csv (duplicate GPA columns in student.csv)
 print('\n ::: CSV-E058 :::')
-os.system('python src/main.py -s test/CSV/CSV-E058/students.csv -p test/CSV/CSV-E058/projects.csv -u test/CSV/CSV-E058/settings.csv')
-# Result: Error
-Error += 1
-# AttributeError: module 'load_csv' has no attribute 'studentAssignment'
+#os.system('python src/main.py -s test/CSV/CSV-E058/students.csv -p test/CSV/CSV-E058/projects.csv -u test/CSV/CSV-E058/settings.csv')
+# Result: Fail
+Fail += 1
+# Score: 2305.0
+# - Stopping early (no improvement) -
+# Program's assignement mode completed its operation without an error. second GPA (duplicate) column renamed to studentGPA.1
 
 # CSV-S001: excessive studentChoiceN entries
 print('\n ::: CSV-S001 :::')
-os.system('python src/main.py -s test/CSV/CSV-S001/students.csv -p test/CSV/CSV-S001/projects.csv -u test/CSV/CSV-S001/settings.csv')
-# Result: Error
-Error += 1
-# AttributeError: module 'load_csv' has no attribute 'studentAssignment'
+#os.system('python src/main.py -s test/CSV/CSV-S001/students.csv -p test/CSV/CSV-S001/projects.csv -u test/CSV/CSV-S001/settings.csv')
+# Result: Passed
+Pass += 1
+# Score: 2317.0
+# - Stopping early (no improvement) -
+# Program completed without an issue (only first 5 studentChoice saved in assign.csv)
 
+'''
 # CSV-S002: excessive studentAvoidN entries (Ignore this)
 # test case ignored since studentAvoidN is discarded
+'''
 
 # CSV-S003: excessive blank lines in student.csv
 print('\n ::: CSV-S003 :::')
-os.system('python src/main.py -s test/CSV/CSV-S003/students.csv -p test/CSV/CSV-S003/projects.csv -u test/CSV/CSV-S003/settings.csv')
-# Result: Error
-Error += 1
-# AttributeError: module 'load_csv' has no attribute 'studentAssignment'
+#os.system('python src/main.py -s test/CSV/CSV-S003/students.csv -p test/CSV/CSV-S003/projects.csv -u test/CSV/CSV-S003/settings.csv')
+# Result: Passed
+Pass += 1
+# Score: 2305.0
+# - Stopping early (no improvement) -
+# 
 
 # CSV-S004: excessive studentID rows
 print('\n ::: CSV-S004 :::')
-os.system('python src/main.py -s test/CSV/CSV-S004/students.csv -p test/CSV/CSV-S004/projects.csv -u test/CSV/CSV-S004/settings.csv')
-# Result: Error
-Error += 1
-# AttributeError: module 'load_csv' has no attribute 'studentAssignment'
+#os.system('python src/main.py -s test/CSV/CSV-S004/students.csv -p test/CSV/CSV-S004/projects.csv -u test/CSV/CSV-S004/settings.csv')
+# Result: Passed
+Pass += 1
+# Program's assignmen mode completed without an issue (S004 currently lists ~20 studentIDs)
 
 total = Pass + Fail + Error
 print('\n *** TESTING COMPLETE ***')
@@ -248,9 +274,10 @@ print('FAIL:',Fail)
 print('ERROR:',Error)
 
 '''
- *** TESTING COMPLETE ***
-TOTAL: 27
-PASS: 16
-FAIL: 1
-ERROR: 10
+As of commit 5d7974d (9/11/2020)
+*** TESTING COMPLETE ***
+TOTAL: 28
+PASS: 23
+FAIL: 5
+ERROR: 0
 '''

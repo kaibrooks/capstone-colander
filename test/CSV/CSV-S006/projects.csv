@@ -1,10 +1,10 @@
 name,projectID,minTeamSize,maxTeamSize
 Project Alpha,1,4,5
 Project Beta,2,4,4
-Project Gamma,10,4,7
-Project Delta,,,
-Project Epsilon,,,
-Project Alpha,,4,5
+Project Gamma,3,4,7
+Project Delta,4,,
+Project Epsilon,5,,
+Project Alpha,6,4,5
 Project Beta,108,,4
 Project Gamma,128,4,
 Project Delta,,,
