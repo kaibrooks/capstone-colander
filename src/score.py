@@ -189,6 +189,4 @@ def scoringMode(groupAssignments):
     prints.score(f"teamSize score: {totalPTS}")
     prints.score(f"studentAvoid score: {totalPSA}")
 
-    prints.score(f"\nscore grand total = {score}")
-
     return score
