@@ -1,6 +1,4 @@
 # runs the assignment algorithm
-# kai brooks
-# github.com/kaibrooks/capstone-colander
 
 # standard libraries
 import numpy as np
@@ -8,7 +6,6 @@ from geneticalgorithm import geneticalgorithm
 
 # imports from the application
 import load_csv
-import prints
 import score
 
 # defs
@@ -25,12 +22,6 @@ def objf(soln): # objective function
     soln = list(map(int, soln))
 
     y = score.scoringMode(soln)
-    #y = score.pointsTeamSize(soln)
-    #y += score.pointsStudentPriority(soln)
-    #y += score.pointsAvoid(soln)
-    #y += score.pointsESLStudents(soln)
-    #y += score.pointsMaxLowGPAStudents(soln)
-    #y += score.pointsStudentChoice(soln)
 
     return -y # return negative for positive scoring
 
@@ -46,11 +37,11 @@ def run_ga(verbose=1):
     effort_scaling = load_csv.effort # scale the effort value for this algorithm, '100' taking roughly 8 hours
     num_projects = len(load_csv.projectIDs) # total projects available
     num_generations = load_csv.numStudents*num_projects*effort_scaling # scale generations based on input size
-    print(num_generations, '###')
-    var_bound = np.array([[0,num_projects - 1]]*load_csv.numStudents) # solution shape
+    #print(num_generations, '###')
+    var_bound = np.array([[0, num_projects - 1]] * load_csv.numStudents) # solution shape
     ga_params = {'max_num_iteration': num_generations,\
                     'population_size':100,\
-                    'mutation_probability':0.02,\
+                    'mutation_probability':0.1,\
                     'elit_ratio': 0.01,\
                     'crossover_probability': 0.5,\
                     'parents_portion': 0.3,\

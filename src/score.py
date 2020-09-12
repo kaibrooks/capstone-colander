@@ -1,6 +1,4 @@
-# Bliss Brass & Jaeyoon Lee
 # Functions for scoring the Genetic Algorithm (GA) are stored here
-# ##-##-2020
 
 import math  # ceil()
 import load_csv
@@ -58,7 +56,7 @@ def pointsESLStudents(groupAssignments):
     prints.debug(f"{groupESL} gESL After \n{groupSize} gSize After")
     # Awarding points
     for i in range(len(groupESL)):
-        if groupESL[i] <= maxESL and groupSize[i] > 0:
+        if groupESL[i] <= maxESL and groupSize[i] >= load_csv.minTeamSize[i]:
             totalPES += pointWeight
 
     return totalPES
@@ -103,7 +101,7 @@ def pointsMaxLowGPAStudents(groupAssignments):
 
     # iterates through maxLowGroup for points - also ignores empty groups
     for i in range(len(maxLowGroup)):
-        if maxLowGroup[i] <= maxLow and groupSize[i] > 0:
+        if maxLowGroup[i] <= maxLow and groupSize[i] >= load_csv.minTeamSize[i]:
             prints.debug(f"group: {load_csv.projectIDs[i]} satisfies the condition!")
             totalPML += weightPML
 
@@ -115,7 +113,9 @@ def pointsTeamSize(groupAssignments):
     global totalPTS
 
     totalPTS = 0
-    weightPTS = load_csv.weightTeamSize
+    weightMinPTS = load_csv.weightMinTeamSize
+    weightMaxPTS = load_csv.weightMaxTeamSize
+
     # initialize groupSize - counts how many students there are in each group
     groupSize = [0] * len(load_csv.projectIDs)
 
@@ -131,10 +131,14 @@ def pointsTeamSize(groupAssignments):
 
     # iterates through groupSize to identify group meeting the size constraints
     for i in range(len(groupSize)):
-        if load_csv.minTeamSize[i] <= groupSize[i] <= load_csv.maxTeamSize[i]:
+        if load_csv.minTeamSize[i] <= groupSize[i]:
             prints.debug(f"project: {load_csv.projectIDs[i]} satisfies the condition!")
-            prints.debug(f"Min:{load_csv.minTeamSize[i]} Max: {load_csv.maxTeamSize[i]} group size: {groupSize[i]}")
-            totalPTS += weightPTS
+            prints.debug(f"Min:{load_csv.minTeamSize[i]} group size: {groupSize[i]}")
+            totalPTS += weightMinPTS
+            if groupSize[i] <= load_csv.maxTeamSize[i]:
+                prints.debug(f"project: {load_csv.projectIDs[i]} satisfies the condition!")
+                prints.debug(f"Max: {load_csv.maxTeamSize[i]} group size: {groupSize[i]}")
+                totalPTS += weightMaxPTS
 
     return totalPTS
 
@@ -155,13 +159,13 @@ def pointsAvoid(groupAssignments):
         # skips student with empty avoid value
         if pd.isna(load_csv.studentAvoid[i]) is False:
             # stores studentAvoid data to 'avoid'
-            avoid = load_csv.studentAvoid[i]
+            avoid = int(load_csv.studentAvoid[i])
             prints.debug("======student loop======")
             prints.debug(f"student: {[i]} avoid: {avoid}")
-            prints.debug(f"student group: {load_csv.studentAssignment[i]}")
-            prints.debug(f"avoid group: {load_csv.studentAssignment[avoid]}")
+            prints.debug(f"student group: {groupAssignments[i]}")
+            prints.debug(f"avoid group: {groupAssignments[avoid]}")
             # identifies studentAvoid match within in same group
-            if load_csv.studentAssignment[i] == load_csv.studentAssignment[avoid]:
+            if groupAssignments[i] == groupAssignments[avoid]:
                 prints.debug("studentAvoid match found")
                 bad += 1
 
@@ -188,6 +192,13 @@ def scoringMode(groupAssignments):
     prints.score(f"score after teamSize = {score}")
     score += pointsAvoid(groupAssignments)
     prints.score(f"score after studentAvoid = {score}")
+
+    prints.score(f"\nstudentChoice score: {totalPSC}")
+    prints.score(f"ESLStudents score: {totalPES}")
+    prints.score(f"studentPriority score: {totalPSP}")
+    prints.score(f"maxLowGPA score: {totalPML}")
+    prints.score(f"teamSize score: {totalPTS}")
+    prints.score(f"studentAvoid score: {totalPSA}")
 
     prints.score(f"score grand total = {score}")
 
