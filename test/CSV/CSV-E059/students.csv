@@ -1,4 +1,4 @@
-studentName,studentID,studentGPA,studentESL,studentPriority,studentAvoid1,studentAvoid2,studentChoice1,studentChoice2,studentChoice3,studentChoice4, studentGPA
+studentName,studentID,studentGPA,studentESL,studentPriority,studentAvoid,studentAvoid2,studentChoice1,studentChoice2,studentChoice3,studentChoice4, studentGPA
 Virginia Tucker,75584243,2.2,0,0,68508141,41941339,1,2,3,4,
 Samantha Summer,44018487,2.66,0,0,41941339,,1,2,3,4,
 Kristen Mayall,42680431,2.87,1,0,,,1,2,3,4,

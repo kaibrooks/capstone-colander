@@ -81,9 +81,9 @@ Pass += 1
 # CSV-E005: missing studentPriority field name
 print('\n ::: CSV-E005 :::')
 os.system('python src/main.py -s test/CSV/CSV-E005/students.csv -p test/CSV/CSV-E005/projects.csv -u test/CSV/CSV-E005/settings.csv')
-# Result: Failed
-Fail += 1
-# KeyError: 'studentPriority'
+# Result: Passed
+Pass += 1
+# ERROR: Required studentPriority column header not found in the students csv file. Terminating Program.
 
 # CSV-E006: missing studentAvoid field name
 print('\n ::: CSV-E006 :::')
@@ -168,7 +168,7 @@ print('\n ::: CSV-E032 :::')
 #os.system('python src/main.py -s test/CSV/CSV-E032/students.csv -p test/CSV/CSV-E032/projects.csv -u test/CSV/CSV-E032/settings.csv')
 # Result: Fail
 Fail += 1
-# Score: 2205.0
+# Score: 2195.0
 # ** Program has completed running **
 # Program assigned every student but did not print an error for student 36327005 (who refers to themselves for Avoid)
 
@@ -191,24 +191,21 @@ os.system('python src/main.py -s test/CSV/CSV-E034/students.csv -p test/CSV/CSV-
 
 # CSV-E035: studentESL is not boolean
 print('\n ::: CSV-E035 :::')
-#os.system('python src/main.py -s test/CSV/CSV-E035/students.csv -p test/CSV/CSV-E035/projects.csv -u test/CSV/CSV-E035/settings.csv')
-# Result: Failed
-Fail += 1
+os.system('python src/main.py -s test/CSV/CSV-E035/students.csv -p test/CSV/CSV-E035/projects.csv -u test/CSV/CSV-E035/settings.csv')
+# Result: Passed
+Pass += 1
 # ERROR: Unexpected data found in studentESL, row 12 = '1'
-# Score: 1985.0
-# - Stopping early (no improvement) -
-# Program reported Error but proceeded to run assignment mode
+# ERROR: Program terminating due to errors in the following files: ['test/CSV/CSV-E035/students.csv']. See ERROR messages above for more info.
+
 
 # CSV-E036: studentPriority is not boolean
 print('\n ::: CSV-E036 :::')
-#os.system('python src/main.py -s test/CSV/CSV-E036/students.csv -p test/CSV/CSV-E036/projects.csv -u test/CSV/CSV-E036/settings.csv')
-# Result: Failed
-Fail += 1
+os.system('python src/main.py -s test/CSV/CSV-E036/students.csv -p test/CSV/CSV-E036/projects.csv -u test/CSV/CSV-E036/settings.csv')
+# Result: Passed
+Pass += 1
 # ERROR: Unexpected data found in studentPriority, row 10 = '1'
 # ERROR: Unexpected data found in studentPriority, row 16 = 'Falsse'
-# Score: 3895.0
-# - Stopping early (no improvement) -
-# Program reported Error but proceeded to run assignment mode
+# ERROR: Program terminating due to errors in the following files: ['test/CSV/CSV-E036/students.csv']. See ERROR messages above for more info.
 
 '''
 # test case deleted
@@ -223,9 +220,10 @@ os.system('python src/main.py -s test/CSV/CSV-E056/students.csv -p test/CSV/CSV-
 # CSV-E057: data partially filled in 'assignment' column in Scoring mode
 print('\n ::: CSV-E057 :::')
 os.system('python src/main.py -c -s test/CSV/CSV-E057/students.csv -p test/CSV/CSV-E057/projects.csv -u test/CSV/CSV-E057/settings.csv')
-# Result: Passed
-Pass += 1
-# ERROR: Empty field found in assignment column, row 0.
+# Result: Error
+Error += 1
+# TypeError: list indices must be integers or slices, not numpy.float64
+# does not find the error with assignment column (passed before)
 
 # CSV-E058: duplicated field names in student.csv (duplicate GPA columns in student.csv)
 print('\n ::: CSV-E058 :::')
@@ -274,10 +272,10 @@ print('FAIL:',Fail)
 print('ERROR:',Error)
 
 '''
-As of commit 5d7974d (9/11/2020)
-*** TESTING COMPLETE ***
+As of 9/12/2020
+ *** TESTING COMPLETE ***
 TOTAL: 28
-PASS: 23
-FAIL: 5
-ERROR: 0
+PASS: 25
+FAIL: 2
+ERROR: 1
 '''
