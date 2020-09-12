@@ -13,7 +13,7 @@ def findDuplicateCols(fileData, requiredCol, csvFile):
     # pandas dataframe appends '.1.' to duplicate columns so check if 'requiredCol'.1 exists
     newCol = str(requiredCol) + '.1'
     if newCol in fileData.columns:
-        prints.err("{0} column is duplicated in the {1}". format(requiredCol, csvFile))
+        prints.err("{0} column is duplicated in the {1}. Terminating Program". format(requiredCol, csvFile))
 
 
 # initialize maxValue to be used in verifying a value's range
@@ -55,6 +55,7 @@ def int_checker(columnName, rowName, fileData, minValue):
             if value.is_integer():
                 tempInt = int(value)
                 return True, tempInt, check_range(value, location, minValue)
+            prints.logerr("Value {0} in {1} is not a required int.".format(value, location))
             return True, value, True
         return False, value, False
 

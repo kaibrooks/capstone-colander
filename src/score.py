@@ -7,7 +7,7 @@ import prints
 
 
 def pointsStudentChoice(groupAssignments):
-    global totalPSC 
+    global totalPSC
     totalPSC = 0
     maxNumChoices = load_csv.numStudentChoices
     maxScore = load_csv.weightStudentChoice1
@@ -108,7 +108,7 @@ def pointsMaxLowGPAStudents(groupAssignments):
 
 # This calculates points for having met group size constraints
 def pointsTeamSize(groupAssignments):
-    global totalPTS 
+    global totalPTS
     totalPTS= 0
     weightMinPTS = load_csv.weightMinTeamSize
     weightMaxPTS = load_csv.weightMaxTeamSize
