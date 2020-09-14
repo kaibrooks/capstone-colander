@@ -25,7 +25,7 @@ def objf(soln): # objective function
 
     return -y # return negative for positive scoring
 
-def run_ga(verbose=1):
+def run_ga(mutationProbability, populationSize, eliteRatio, crossoverProbability, parentsPortion, verbose=1):
     """run the genetic algorithm
     arguments:
     verbose (optional, default True) -- (1/0) outputs running text and progress bar
@@ -36,14 +36,15 @@ def run_ga(verbose=1):
     # vars
     effort_scaling = load_csv.effort # scale the effort value for this algorithm, '100' taking roughly 8 hours
     num_projects = len(load_csv.projectIDs) # total projects available
-    num_generations = load_csv.numStudents*num_projects*effort_scaling # scale generations based on input size
+    num_generations = effort_scaling*1000 # scale generations based on input size
     var_bound = np.array([[0, num_projects - 1]] * load_csv.numStudents) # solution shape
-    ga_params = {'max_num_iteration': 2000,\
-                    'population_size':100,\
-                    'mutation_probability':0.2,\
-                    'elit_ratio': 0.01,\
-                    'crossover_probability': 0.5,\
-                    'parents_portion': 0.3,\
+    print(num_generations, populationSize, mutationProbability, eliteRatio, crossoverProbability, parentsPortion)
+    ga_params = {'max_num_iteration': num_generations,\
+                    'population_size':populationSize,\
+                    'mutation_probability':mutationProbability,\
+                    'elit_ratio': eliteRatio,\
+                    'crossover_probability': crossoverProbability,\
+                    'parents_portion': parentsPortion,\
                     'crossover_type':'uniform',\
                     'max_iteration_without_improv':None,\
                     'verbose':verbose,\
