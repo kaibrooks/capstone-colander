@@ -24,10 +24,21 @@ programMode = 'Assignment'
 # initialize score breakdown option to be disabled
 scoreBreakdown = False
 
+mutationProbability = 0.02
+populationSize = 100
+eliteRatio = 0.01
+crossoverProbability = 0.5
+parentsPortion = 0.3
 
 def argumentParser():
     global scoreBreakdown
     global programMode
+
+    global mutationProbability
+    global populationSize
+    global eliteRatio
+    global crossoverProbability
+    global parentsPortion
 
     # accepted command line arguments
     parser = argparse.ArgumentParser()
@@ -38,6 +49,11 @@ def argumentParser():
     parser.add_argument("-a", "--assign", help="Run program in Assignment mode", required=False, action='store_true')
     parser.add_argument("-c", "--score", help="Run the program in Scoring mode", required=False, action='store_true')
     parser.add_argument("-b", "--breakdown", help="Display score breakdown", required=False, action='store_true')
+    parser.add_argument("-mutation", "--mutation", help="Mutation Probability", required=False, action='store_true')
+    parser.add_argument("-population", "--population", help="Population Size", required=False, action='store_true')
+    parser.add_argument("-elite", "--elite", help="Population Size", required=False, action='store_true')
+    parser.add_argument("-crossover", "--crossover", help="Population Size", required=False, action='store_true')
+    parser.add_argument("-parents", "--parents", help="Population Size", required=False, action='store_true')
 
     argument = parser.parse_args()
 
@@ -58,6 +74,16 @@ def argumentParser():
             prints.warn("both Scoring (-c) and Assignment (-a) modes selected. Program will run in Assignment mode.")
     if argument.breakdown:
         scoreBreakdown = True
+    if argument.mutation:
+        mutationProbability = argument.mutation
+    if argument.population:
+        populationSize = argument.population
+    if argument.elite:
+        eliteRatio = argument.elite
+    if argument.crossover:
+        crossoverProbability = argument.crossover
+    if argument.parents:
+        parentsPortion = argument.parents
 
     # when running program in Assignment mode
     # if output user provided already exists when running in Assignment mode, warn user
@@ -131,7 +157,8 @@ if __name__ == "__main__":
                    " See ERROR messages above for more info.".format(errFiles))
 
     if programMode == 'Assignment':
-        optimalSolution = assign.run_ga()
+        optimalSolution = assign.run_ga(mutationProbability, populationSize, eliteRatio, crossoverProbability,
+                                        parentsPortion)
         optimalSolution.tolist()
         optimalSolution = list(map(int, optimalSolution))
         if scoreBreakdown:
@@ -145,3 +172,6 @@ if __name__ == "__main__":
         prints.gen("Assignment Score: {0}".format(finalScore))
 
     prints.gen("\n** Program has completed running **")
+
+now = datetime.today().strftime('%Y-%m-%d %H:%M:%S')  # get the date/time
+prints.gen("Program Finished {0}".format(now))  # print it
