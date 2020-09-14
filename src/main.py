@@ -6,6 +6,7 @@
 import argparse
 import os
 from datetime import datetime
+import time
 import pandas as pd
 # imports below are other python files used in this project
 # which are required to call their functions from main
@@ -18,12 +19,14 @@ import prints
 # startup information
 now = datetime.today().strftime('%Y-%m-%d %H:%M:%S')  # get the date/time
 prints.gen("Program started {0}".format(now))  # print it
+start = time.time()
 
 # default program mode
 programMode = 'Assignment'
 # initialize score breakdown option to be disabled
 scoreBreakdown = False
 
+# initialize default GA parameters
 mutationProbability = 0.02
 populationSize = 100
 eliteRatio = 0.01
@@ -49,11 +52,11 @@ def argumentParser():
     parser.add_argument("-a", "--assign", help="Run program in Assignment mode", required=False, action='store_true')
     parser.add_argument("-c", "--score", help="Run the program in Scoring mode", required=False, action='store_true')
     parser.add_argument("-b", "--breakdown", help="Display score breakdown", required=False, action='store_true')
-    parser.add_argument("-mutation", "--mutation", help="Mutation Probability", required=False, action='store_true')
-    parser.add_argument("-population", "--population", help="Population Size", required=False, action='store_true')
-    parser.add_argument("-elite", "--elite", help="Population Size", required=False, action='store_true')
-    parser.add_argument("-crossover", "--crossover", help="Population Size", required=False, action='store_true')
-    parser.add_argument("-parents", "--parents", help="Population Size", required=False, action='store_true')
+    parser.add_argument("-mutation", "--mutation", help="Mutation Probability", required=False, default=0.02)
+    parser.add_argument("-population", "--population", help="Population Size", required=False, default=100)
+    parser.add_argument("-elite", "--elite", help="Population Size", required=False, default=0.01)
+    parser.add_argument("-crossover", "--crossover", help="Population Size", required=False, default=0.5)
+    parser.add_argument("-parents", "--parents", help="Population Size", required=False, default=0.3)
 
     argument = parser.parse_args()
 
@@ -75,15 +78,31 @@ def argumentParser():
     if argument.breakdown:
         scoreBreakdown = True
     if argument.mutation:
-        mutationProbability = argument.mutation
+        mutationProbability = float(argument.mutation)
+        if mutationProbability < 0.0 or mutationProbability > 1.0:
+            prints.warn("Mutation Probability is out of required range, defaulting to 0.02")
+            mutationProbability = 0.02
     if argument.population:
-        populationSize = argument.population
+        try:
+            populationSize = int(argument.population)
+        except ValueError:
+            prints.warn("Population Size is not an integer, defaulting to 100")
+            populationSize = 100
     if argument.elite:
-        eliteRatio = argument.elite
+        eliteRatio = float(argument.elite)
+        if eliteRatio < 0.0 or eliteRatio > 1.0:
+            prints.warn("Elite Ratio is out of required range, defaulting to 0.01")
+            eliteRatio = 0.01
     if argument.crossover:
-        crossoverProbability = argument.crossover
+        crossoverProbability = float(argument.crossover)
+        if crossoverProbability < 0.0 or crossoverProbability > 1.0:
+            prints.warn("Crossover Probability is out of required range, defaulting to 0.5")
+            crossoverProbability = 0.5
     if argument.parents:
-        parentsPortion = argument.parents
+        parentsPortion = float(argument.parents)
+        if parentsPortion < 0.0 or parentsPortion > 1.0:
+            prints.warn("Parents Portion is out of required range, defaulting to 0.3")
+            parentsPortion = 0.3
 
     # when running program in Assignment mode
     # if output user provided already exists when running in Assignment mode, warn user
@@ -155,7 +174,6 @@ if __name__ == "__main__":
     if errFiles:
         prints.err("Program terminating due to errors in the following files: {0}."
                    " See ERROR messages above for more info.".format(errFiles))
-
     if programMode == 'Assignment':
         optimalSolution = assign.run_ga(mutationProbability, populationSize, eliteRatio, crossoverProbability,
                                         parentsPortion)
@@ -171,7 +189,6 @@ if __name__ == "__main__":
         finalScore = score.scoringMode(load_csv.studentAssignment)
         prints.gen("Assignment Score: {0}".format(finalScore))
 
-    prints.gen("\n** Program has completed running **")
-
-now = datetime.today().strftime('%Y-%m-%d %H:%M:%S')  # get the date/time
-prints.gen("Program Finished {0}".format(now))  # print it
+    end = time.time()
+    runTime = (end - start) / 60
+    prints.gen("\n** Program has completed with a run time of {0} minutes **".format(runTime))
