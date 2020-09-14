@@ -145,3 +145,6 @@ if __name__ == "__main__":
         prints.gen("Assignment Score: {0}".format(finalScore))
 
     prints.gen("\n** Program has completed running **")
+
+    now = datetime.today().strftime('%Y-%m-%d %H:%M:%S')  # get the date/time
+    prints.gen("Program Finished {0}".format(now))  # print it
