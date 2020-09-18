@@ -38,7 +38,7 @@ def run_ga(mutationProbability, populationSize, eliteRatio, crossoverProbability
     num_projects = len(load_csv.projectIDs) # total projects available
     num_generations = effort_scaling*1000 # scale generations based on input size
     var_bound = np.array([[0, num_projects - 1]] * load_csv.numStudents) # solution shape
-    print(num_generations, populationSize, mutationProbability, eliteRatio, crossoverProbability, parentsPortion)
+    print('Generations:', num_generations, 'Population:', populationSize, 'Mutation:', mutationProbability, 'EliteR:', eliteRatio, 'CrossO:', crossoverProbability, 'ParentP:', parentsPortion)
     ga_params = {'max_num_iteration': num_generations,\
                     'population_size':populationSize,\
                     'mutation_probability':mutationProbability,\
