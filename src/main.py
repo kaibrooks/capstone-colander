@@ -190,5 +190,5 @@ if __name__ == "__main__":
         prints.gen("Assignment Score: {0}".format(finalScore))
 
     end = time.time()
-    runTime = (end - start) / 60
+    runTime = round(((end - start) / 60),2)
     prints.gen("\n** Program has completed with a run time of {0} minutes **".format(runTime))
