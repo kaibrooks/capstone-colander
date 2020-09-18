@@ -7,7 +7,7 @@ import prints
 
 
 def pointsStudentChoice(groupAssignments):
-    global totalPSC 
+    global totalPSC
     totalPSC = 0
     maxNumChoices = load_csv.numStudentChoices
     maxScore = load_csv.weightStudentChoice1
@@ -108,7 +108,7 @@ def pointsMaxLowGPAStudents(groupAssignments):
 
 # This calculates points for having met group size constraints
 def pointsTeamSize(groupAssignments):
-    global totalPTS 
+    global totalPTS
     totalPTS= 0
     weightMinPTS = load_csv.weightMinTeamSize
     weightMaxPTS = load_csv.weightMaxTeamSize
@@ -128,13 +128,15 @@ def pointsTeamSize(groupAssignments):
 
     # iterates through groupSize to identify group meeting the size constraints
     for i in range(len(groupSize)):
+        if load_csv.minTeamSize[i]-1 > groupSize[i]:
+            totalPTS -= weightMinPTS
+            continue
         if load_csv.minTeamSize[i] <= groupSize[i]:
-            prints.debug(f"project: {load_csv.projectIDs[i]} satisfies the condition!")
-            prints.debug(f"Min:{load_csv.minTeamSize[i]} group size: {groupSize[i]}")
             totalPTS += weightMinPTS
+            if groupSize[i] > load_csv.maxTeamSize[i]+1:
+                totalPTS -= weightMaxPTS
+                continue
             if groupSize[i] <= load_csv.maxTeamSize[i]:
-                prints.debug(f"project: {load_csv.projectIDs[i]} satisfies the condition!")
-                prints.debug(f"Max: {load_csv.maxTeamSize[i]} group size: {groupSize[i]}")
                 totalPTS += weightMaxPTS
 
     return totalPTS
@@ -188,5 +190,7 @@ def scoringMode(groupAssignments):
     # prints.score(f"maxLowGPA score: {totalPML}")
     prints.score(f"teamSize score: {totalPTS}")
     # prints.score(f"studentAvoid score: {totalPSA}")
+
+    prints.score(f"\nscore grand total = {score}")
 
     return score

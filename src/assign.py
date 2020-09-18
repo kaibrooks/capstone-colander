@@ -34,6 +34,7 @@ def run_ga(mutationProbability, populationSize, eliteRatio, crossoverProbability
     """
 
     # vars
+    # 2000 generations is the current default (subject to change)
     effort_scaling = load_csv.effort # scale the effort value for this algorithm, '100' taking roughly 8 hours
     num_projects = len(load_csv.projectIDs) # total projects available
     num_generations = effort_scaling*1000 # scale generations based on input size
