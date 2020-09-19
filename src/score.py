@@ -128,7 +128,7 @@ def pointsTeamSize(groupAssignments):
 
     # iterates through groupSize to identify group meeting the size constraints
     for i in range(len(groupSize)):
-        if load_csv.minTeamSize[i]-1 > groupSize[i]:
+        if load_csv.minTeamSize[i]-1 > groupSize[i] and groupSize[i] > 0:
             totalPTS -= weightMinPTS
             continue
         if load_csv.minTeamSize[i] <= groupSize[i]:
