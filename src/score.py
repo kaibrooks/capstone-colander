@@ -21,11 +21,10 @@ def pointsStudentChoice(groupAssignments):
             prints.debug(f"ID {load_csv.studentID.iat[y]}, Assignment {groupAssignments[y]}, Choice {load_csv.studentChoiceN.iat[y, x]}")
             
             if pd.isna(load_csv.studentChoiceN.iat[y, x]):
-                if load_csv.studentChoiceN.iat[y, 0] == groupAssignments[y]: # May be deletable pending Zoe's feedback
-                        totalPSC += maxScore
-                        prints.debug(f"Score {totalPSC}")
-                        break
-
+                #if load_csv.studentChoiceN.iat[y, 0] == groupAssignments[y]: # May be deletable pending Zoe's feedback
+                        #totalPSC += maxScore
+                        #prints.debug(f"Score {totalPSC}")
+                        #break
                 totalPSC += math.ceil(maxScore / (2 ** x))
                 prints.debug(f"Score {totalPSC}")
                 break

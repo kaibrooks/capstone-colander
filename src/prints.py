@@ -5,7 +5,7 @@ import sys
 
 global debugMode
 global breakMode
-debugMode = 0
+debugMode = 0 # Works best in scoring mode
 breakMode = 0
 
 def debug(msg):
