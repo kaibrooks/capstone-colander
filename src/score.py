@@ -9,7 +9,7 @@ import prints
 def pointsStudentChoice(groupAssignments):
     global totalPSC
     totalPSC = 0
-    maxNumChoices = load_csv.numStudentChoices
+    #maxNumChoices = load_csv.numStudentChoices
     maxScore = load_csv.weightStudentChoice1
 
     prints.debug(f"\n\n========pointsStudentChoice========\n{groupAssignments}")
@@ -18,20 +18,41 @@ def pointsStudentChoice(groupAssignments):
     for y in range(len(load_csv.studentID)):
         for x in range(len(load_csv.studentChoiceN.columns)):
             # If NaN is detected gives score based on position x then breaks
-            prints.debug(
-                f"ID {load_csv.studentID.iat[y]}, Assignment {groupAssignments[y]}, Choice {load_csv.studentChoiceN.iat[y, x]}")
-
+            prints.debug(f"ID {load_csv.studentID.iat[y]}, Assignment {groupAssignments[y]}, Choice {load_csv.studentChoiceN.iat[y, x]}")
+            
             if pd.isna(load_csv.studentChoiceN.iat[y, x]):
-                totalPSC += math.ceil(maxScore - (maxScore / maxNumChoices) * x)
+                if load_csv.studentChoiceN.iat[y, 0] == groupAssignments[y]: # May be deletable pending Zoe's feedback
+                        totalPSC += maxScore
+                        prints.debug(f"Score {totalPSC}")
+                        break
+
+                totalPSC += math.ceil(maxScore / (2 ** x))
                 prints.debug(f"Score {totalPSC}")
                 break
 
             # If an assignment match is detected gives score based on position x then breaks
             else:
                 if load_csv.studentChoiceN.iat[y, x] == groupAssignments[y]:
-                    totalPSC += math.ceil(maxScore - (maxScore / maxNumChoices) * x)
+                    if load_csv.studentChoiceN.iat[y, 0] == groupAssignments[y]:
+                        totalPSC += maxScore
+                        prints.debug(f"Score {totalPSC}")
+                        break
+
+                    totalPSC += math.ceil(maxScore / (2 ** x))
                     prints.debug(f"Score {totalPSC}")
                     break
+
+            # if pd.isna(load_csv.studentChoiceN.iat[y, x]):
+            #     totalPSC += math.ceil(maxScore - (maxScore / maxNumChoices) * x)
+            #     prints.debug(f"Score {totalPSC}")
+            #     break
+
+            # # If an assignment match is detected gives score based on position x then breaks
+            # else:
+            #     if load_csv.studentChoiceN.iat[y, x] == groupAssignments[y]:
+            #         totalPSC += math.ceil(maxScore - (maxScore / maxNumChoices) * x)
+            #         prints.debug(f"Score {totalPSC}")
+            #         break
 
     return totalPSC
 
@@ -128,13 +149,13 @@ def pointsTeamSize(groupAssignments):
 
     # iterates through groupSize to identify group meeting the size constraints
     for i in range(len(groupSize)):
-        if load_csv.minTeamSize[i]-1 > groupSize[i] and groupSize[i] > 0:
+        if load_csv.minTeamSize[i] - 1 > groupSize[i] and groupSize[i] > 0:
             totalPTS -= weightMinPTS
             prints.debug(f"group{[i]} teamSize:{groupSize[i]} points:{totalPTS}")
             continue
         if load_csv.minTeamSize[i] <= groupSize[i]:
             totalPTS += weightMinPTS
-            if groupSize[i] > load_csv.maxTeamSize[i]+1:
+            if groupSize[i] > load_csv.maxTeamSize[i] + 1:
                 totalPTS -= weightMaxPTS
                 continue
             if groupSize[i] <= load_csv.maxTeamSize[i]:

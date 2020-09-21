@@ -23,6 +23,7 @@ start = time.time()
 
 # default program mode
 programMode = 'Assignment'
+
 # initialize score breakdown option to be disabled
 scoreBreakdown = False
 
