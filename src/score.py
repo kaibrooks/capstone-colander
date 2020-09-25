@@ -5,10 +5,16 @@ import load_csv
 import pandas as pd
 import prints
 
+#initialize global variables
+totalPSC = 0
+totalPES = 0
+totalPSP = 0
+totalPML = 0
+totalPTS = 0
+totalPSA = 0
 
 def pointsStudentChoice(groupAssignments):
     global totalPSC
-    totalPSC = 0
     #maxNumChoices = load_csv.numStudentChoices
     maxScore = load_csv.weightStudentChoice1
 
@@ -58,7 +64,6 @@ def pointsStudentChoice(groupAssignments):
 
 def pointsESLStudents(groupAssignments):
     global totalPES
-    totalPES = 0
 
     pointWeight = load_csv.weightMaxESLStudents
     maxESL = load_csv.maxESLStudents
@@ -83,7 +88,6 @@ def pointsESLStudents(groupAssignments):
 
 def pointsStudentPriority(groupAssignments):
     global totalPSP
-    totalPSP = 0
 
     # Checks if priority flag is set then checks if they got their first choice
     for i in range(len(load_csv.studentID)):
@@ -97,7 +101,6 @@ def pointsStudentPriority(groupAssignments):
 # This calculates points for having fewer students than maxLowGPAStudents in a group
 def pointsMaxLowGPAStudents(groupAssignments):
     global totalPML
-    totalPML = 0
 
     weightPML = load_csv.weightMaxLowGPAStudents
     minGPA = load_csv.lowGPAThreshold
@@ -129,7 +132,7 @@ def pointsMaxLowGPAStudents(groupAssignments):
 # This calculates points for having met group size constraints
 def pointsTeamSize(groupAssignments):
     global totalPTS
-    totalPTS= 0
+
     weightMinPTS = load_csv.weightMinTeamSize
     weightMaxPTS = load_csv.weightMaxTeamSize
 
@@ -154,8 +157,14 @@ def pointsTeamSize(groupAssignments):
             continue
         if load_csv.minTeamSize[i] <= groupSize[i]:
             totalPTS += weightMinPTS
+            if groupSize[i] > load_csv.maxTeamSize[i] + 2:
+                x = groupSize[i] - load_csv.maxTeamSize[i] - 1
+                totalPTS -= (weightMaxPTS * x)
+                prints.debug(f"group{[i]} teamSize:{groupSize[i]} points:{totalPTS}")
+                continue
             if groupSize[i] > load_csv.maxTeamSize[i] + 1:
                 totalPTS -= weightMaxPTS
+                prints.debug(f"group{[i]} teamSize:{groupSize[i]} points:{totalPTS}")
                 continue
             if groupSize[i] <= load_csv.maxTeamSize[i]:
                 totalPTS += weightMaxPTS
@@ -167,7 +176,7 @@ def pointsTeamSize(groupAssignments):
 # This calculates points for violating studentAvoid constraint
 def pointsAvoid(groupAssignments):
     global totalPSA
-    totalPSA = 0
+
     weightPSA = load_csv.weightAvoid
     # initializes bad - counts how many studentAvoid matches are found
     bad = 0
@@ -197,22 +206,26 @@ def pointsAvoid(groupAssignments):
 
 def scoringMode(groupAssignments):
     score = 0
-
-    score = pointsStudentChoice(groupAssignments)
-    #score += pointsESLStudents(groupAssignments)
-    #score += pointsStudentPriority(groupAssignments)
-
-    #score += pointsMaxLowGPAStudents(groupAssignments)
-    score += pointsTeamSize(groupAssignments)
-    #score += pointsAvoid(groupAssignments)
+    if load_csv.weightStudentChoice1:
+        score = pointsStudentChoice(groupAssignments)
+    if load_csv.weightMaxESLStudents:
+        score += pointsESLStudents(groupAssignments)
+    if load_csv.weightStudentPriority:
+        score += pointsStudentPriority(groupAssignments)
+    if load_csv.weightMaxLowGPAStudents:
+        score += pointsMaxLowGPAStudents(groupAssignments)
+    if load_csv.weightMinTeamSize and load_csv.weightMaxTeamSize:
+        score += pointsTeamSize(groupAssignments)
+    if load_csv.weightAvoid:
+        score += pointsAvoid(groupAssignments)
 
     prints.score(f"\nstudentChoice score: {totalPSC}")
-    #prints.score(f"ESLStudents score: {totalPES}")
-    #prints.score(f"studentPriority score: {totalPSP}")
-    #prints.score(f"maxLowGPA score: {totalPML}")
+    prints.score(f"ESLStudents score: {totalPES}")
+    prints.score(f"studentPriority score: {totalPSP}")
+    prints.score(f"maxLowGPA score: {totalPML}")
     prints.score(f"teamSize score: {totalPTS}")
-    #prints.score(f"studentAvoid score: {totalPSA}")
+    prints.score(f"studentAvoid score: {totalPSA}")
 
-    #prints.score(f"\nscore grand total = {score}")
+    prints.score(f"\nscore grand total = {score}")
 
     return score

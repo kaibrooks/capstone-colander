@@ -53,5 +53,5 @@ cor_score = 0
 
 # SCO-F011 - different studentChoiceN's filled
 print('\n::: SCO-F011 :::')
-cor_score = 550
+cor_score = 204
 # Result: Passed
