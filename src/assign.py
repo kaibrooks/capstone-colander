@@ -17,7 +17,7 @@ def objf(soln): # objective function
     y -- function value
     """
 
-    # Messy conversion from numpy array to list of ints
+    # Converting from numpy array to list of ints
     soln.tolist()
     soln = list(map(int, soln))
 

@@ -176,8 +176,7 @@ if __name__ == "__main__":
         prints.err("Program terminating due to errors in the following files: {0}."
                    " See ERROR messages above for more info.".format(errFiles))
     if programMode == 'Assignment':
-        optimalSolution = assign.run_ga(mutationProbability, populationSize, eliteRatio, crossoverProbability,
-                                        parentsPortion)
+        optimalSolution = assign.run_ga(mutationProbability, populationSize, eliteRatio, crossoverProbability, parentsPortion)
         optimalSolution.tolist()
         optimalSolution = list(map(int, optimalSolution))
         if scoreBreakdown:
