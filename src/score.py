@@ -214,7 +214,7 @@ def scoringMode(groupAssignments):
         score += pointsStudentPriority(groupAssignments)
     if load_csv.weightMaxLowGPAStudents:
         score += pointsMaxLowGPAStudents(groupAssignments)
-    if load_csv.weightMinTeamSize and load_csv.weightMaxTeamSize:
+    if load_csv.weightMinTeamSize or load_csv.weightMaxTeamSize:
         score += pointsTeamSize(groupAssignments)
     if load_csv.weightAvoid:
         score += pointsAvoid(groupAssignments)
