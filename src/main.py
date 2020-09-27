@@ -34,6 +34,7 @@ eliteRatio = 0.01
 crossoverProbability = 0.5
 parentsPortion = 0.3
 
+
 def argumentParser():
     global scoreBreakdown
     global programMode
@@ -190,5 +191,5 @@ if __name__ == "__main__":
         prints.gen("Assignment Score: {0}".format(finalScore))
 
     end = time.time()
-    runTime = round(((end - start) / 60),2)
+    runTime = round(((end - start) / 60), 2)
     prints.gen("\n** Program has completed with a run time of {0} minutes **".format(runTime))

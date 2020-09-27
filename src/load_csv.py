@@ -8,6 +8,7 @@ from pandas.api.types import is_numeric_dtype
 from pandas.api.types import is_bool_dtype
 from pandas.api.types import is_integer_dtype
 
+
 # function to look for duplicated required columns
 def findDuplicateCols(fileData, requiredCol, csvFile):
     # pandas dataframe appends '.1.' to duplicate columns so check if 'requiredCol'.1 exists
@@ -20,14 +21,16 @@ def findDuplicateCols(fileData, requiredCol, csvFile):
 maxValue = pow(2, 64) - 1
 
 '''
-Pandas CSV Dataframe info: If at least one field in a column contains a float, with the rest being integers, the 
-dataframe considers all values in the column to be floats. If at least one field in a column contains a string, 
-with the rest being either ints or floats, all values in the column are considered objects. Empty fields are 
-considered to be floats. The reason this is important is because the way the settings csv is formatted, there are 
-multiple fields in each column that are empty and per the requirements document, are ignored by the program. 
-This means that the user can fill those fields with random data of strings, ints, or floats and the program ignores 
+Pandas CSV Dataframe info: If at least one field in a column contains a float, with the rest being integers, the
+dataframe considers all values in the column to be floats. If at least one field in a column contains a string,
+with the rest being either ints or floats, all values in the column are considered objects. Empty fields are
+considered to be floats. The reason this is important is because the way the settings csv is formatted, there are
+multiple fields in each column that are empty and per the requirements document, are ignored by the program.
+This means that the user can fill those fields with random data of strings, ints, or floats and the program ignores
 it, but it effects the data type of the fields we need to verify are ints!
 '''
+
+
 # function to verify required values in the csv file are valid integers
 def int_checker(columnName, rowName, fileData, minValue):
     intErrFlag = False
@@ -35,9 +38,7 @@ def int_checker(columnName, rowName, fileData, minValue):
     # function to check if int is within required range
     def check_range(value, location, minValue):
         if (value < minValue) or (value > maxValue):
-            prints.logerr(
-                "Value {0} in {1} is an integer out of the required range."
-                    .format(value, location))
+            prints.logerr("Value {0} in {1} is an integer out of the required range.".format(value, location))
             return True
         return False
 
@@ -130,6 +131,7 @@ minGPAThreshold = 0.00
 maxGPAThreshold = 4.00
 defaultMaxTeamSize = 1
 defaultMinTeamSize = 1
+
 
 def settingsHandler(settingsFileData):
     global weightMaxLowGPAStudents
@@ -241,6 +243,7 @@ minTeamSize = []
 maxTeamSize = []
 projectIDs = []
 
+
 def projectsHandler(projectsFileData):
     # arrays indexed by project
     global minTeamSize
@@ -289,7 +292,7 @@ def projectsHandler(projectsFileData):
     try:
         projectIDGap = projectIDs[-1] * (projectIDs[0] + projectIDs[-1]) / 2 - sum(projectIDs)
     except ValueError:
-        projectIDGap = 0 # temp value to pass next if statement. Cause of error would have already been identified.
+        projectIDGap = 0  # temp value to pass next if statement. Cause of error would have already been identified.
     if not projectIDGap == 0:
         prints.warn("gap found in projectID sequence in the projects csv file.")
 
@@ -312,7 +315,6 @@ def studentsHandler(studentsFileData, progMode):
     global numStudentChoices
 
     errFlag = False
-
 
     def checkExists(dataSeries):
         errNan = False

@@ -13,11 +13,12 @@ import prints
 # totalPTS = 0
 # totalPSA = 0
 
+
 def pointsStudentChoice(groupAssignments):
     global totalPSC
     totalPSC = 0
 
-    #maxNumChoices = load_csv.numStudentChoices
+    # maxNumChoices = load_csv.numStudentChoices
     maxScore = load_csv.weightStudentChoice1
 
     prints.debug(f"\n\n========pointsStudentChoice========\n{groupAssignments}")
@@ -27,12 +28,8 @@ def pointsStudentChoice(groupAssignments):
         for x in range(len(load_csv.studentChoiceN.columns)):
             # If NaN is detected gives score based on position x then breaks
             prints.debug(f"ID {load_csv.studentID.iat[y]}, Assignment {groupAssignments[y]}, Choice {load_csv.studentChoiceN.iat[y, x]}")
-            
+
             if pd.isna(load_csv.studentChoiceN.iat[y, x]):
-                #if load_csv.studentChoiceN.iat[y, 0] == groupAssignments[y]: # May be deletable pending Zoe's feedback
-                        #totalPSC += maxScore
-                        #prints.debug(f"Score {totalPSC}")
-                        #break
                 totalPSC += math.ceil(maxScore / (2 ** x))
                 prints.debug(f"Score {totalPSC}")
                 break
@@ -91,7 +88,7 @@ def pointsESLStudents(groupAssignments):
 
 def pointsStudentPriority(groupAssignments):
     global totalPSP
-    totalPSP = 0 
+    totalPSP = 0
 
     # Checks if priority flag is set then checks if they got their first choice
     for i in range(len(load_csv.studentID)):
