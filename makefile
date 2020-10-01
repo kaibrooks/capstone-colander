@@ -29,8 +29,7 @@ install-python3-macos:
 uninstall:
 		@echo "\n${BLUE}Uninstalling packages...${NC}\n"
 		@pip3 uninstall -r requirements.txt
-		@sudo rm -rf io test src .github .vscode
-		@sudo rm .flake8 .gitignore Dockerfile LICENSE README.md build.sh requirements.txt
+		@sudo rm .gitignore LICENSE README.md requirements.txt assign.py geneticalgorithm.py write_csv.py prints.py main.py score.py load_csv.py
 
 uninstall-brew-macos:
 		@echo "\n${BLUE}Uninstalling Homebrew...${NC}\n"
