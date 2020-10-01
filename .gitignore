@@ -182,3 +182,7 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+*.code-workspace
+
+*.numbers
