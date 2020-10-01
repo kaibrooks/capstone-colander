@@ -10,11 +10,11 @@ NC='\033[0m' # no color
 
 install:
 		@echo "\n${BLUE}Installing packages...${NC}\n"
-		@curl "https://codeload.github.com/kaibrooks/capstone-colander/zip/dev" -o capstone.zip
+		@curl "https://codeload.github.com/kaibrooks/capstone-colander/zip/master" -o capstone.zip
 		@unzip capstone.zip
 		@rm capstone.zip
-		@sudo cp -R capstone-colander-dev/. .
-		@sudo rm -rf capstone-colander-dev
+		@sudo cp -R capstone-colander-master/. .
+		@sudo rm -rf capstone-colander-master
 		@pip3 install -r requirements.txt
 
 upgrade:
