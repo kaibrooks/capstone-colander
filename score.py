@@ -38,18 +38,6 @@ def pointsStudentChoice(groupAssignments):
                     prints.debug(f"Score {totalPSC}")
                     break
 
-            # if pd.isna(load_csv.studentChoiceN.iat[y, x]):
-            #     totalPSC += math.ceil(maxScore - (maxScore / maxNumChoices) * x)
-            #     prints.debug(f"Score {totalPSC}")
-            #     break
-
-            # # If an assignment match is detected gives score based on position x then breaks
-            # else:
-            #     if load_csv.studentChoiceN.iat[y, x] == groupAssignments[y]:
-            #         totalPSC += math.ceil(maxScore - (maxScore / maxNumChoices) * x)
-            #         prints.debug(f"Score {totalPSC}")
-            #         break
-
     return totalPSC
 
 
@@ -136,7 +124,6 @@ def pointsTeamSize(groupAssignments):
 
     # loop for counting group size
     for i in range(len(load_csv.studentID)):
-        # print(groupSize[groupAssignments[i]], groupAssignments[i], i)
         groupSize[groupAssignments[i]] += 1
 
     prints.debug("========pointsTeamSize========")
@@ -178,7 +165,6 @@ def pointsAvoid(groupAssignments):
     bad = 0
 
     prints.debug("========pointsAvoid========")
-    # prints.debug(f"{load_csv.studentAvoid}")
 
     for i in range(load_csv.numStudents):
         # skips student with empty avoid value
