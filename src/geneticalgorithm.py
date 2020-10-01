@@ -360,13 +360,14 @@ class geneticalgorithm():
         self.output_dict = {'variable': self.best_variable, 'function': \
             self.best_function}
 
-        if self.param['verbose']:
-            show = ' ' * 100
-            sys.stdout.write('\r%s' % (show))
+        # Commented out to fix our printing format
+        ##if self.param['verbose']:
+            ##show = ' ' * 100
+            ##sys.stdout.write('\r%s' % (show))
             ##sys.stdout.write('\r Best solution:\n %s' % (self.best_variable))
             ##sys.stdout.write('\n\nObjective function: %s' % (self.best_function))
-            sys.stdout.write('\nScore: %s' % abs(self.best_function))
-            sys.stdout.flush()
+            ##sys.stdout.write('\nScore: %s' % abs(self.best_function))
+            ##sys.stdout.flush()
 
         re = np.array(self.report)
         now = datetime.today().strftime('%Y-%m-%d %H:%M:%S')  ## pass from main?
@@ -378,7 +379,7 @@ class geneticalgorithm():
         plt.savefig('io/latest.png', dpi=300)
         plt.show()
 
-        #plt.savefig(sys.stdout.buffer)
+        # plt.savefig(sys.stdout.buffer)
 
         if self.stop_mniwi == True and self.param['verbose']:
             sys.stdout.write(early_stop_message)

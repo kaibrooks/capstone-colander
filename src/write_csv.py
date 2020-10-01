@@ -18,4 +18,4 @@ def outputCSV(studentFileData, outputFileName, optimalSolution):
 
     prints.debug(f"\n========outputCSV========\n\n{studentFileData} After")  # After changes output
     # Writes/Overwrites to a csv named outputFileName
-    studentFileData.to_csv(outputFileName, index=False)
+    studentFileData.to_csv(outputFileName, index=False, float_format="%.3f")

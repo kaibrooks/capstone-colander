@@ -188,7 +188,6 @@ if __name__ == "__main__":
         if scoreBreakdown:
             prints.breakMode = True
         finalScore = score.scoringMode(load_csv.studentAssignment)
-        prints.gen("Assignment Score: {0}".format(finalScore))
 
     end = time.time()
     runTime = round(((end - start) / 60), 2)
